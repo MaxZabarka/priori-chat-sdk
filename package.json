@@ -1,0 +1,26 @@
+{
+  "name": "priori-chat-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "codegen": "openapi-ts",
+    "codegen:watch": "openapi-ts --watch",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "test": "vitest run",
+    "lint": "eslint . --ext .ts",
+    "prepack": "pnpm codegen && pnpm build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.7.0",
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.77.0"
+  },
+  "dependencies": {
+    "@hey-api/client-fetch": "^0.13.1",
+    "axios": "^1.10.0",
+    "zod": "^3.25.68"
+  }
+}

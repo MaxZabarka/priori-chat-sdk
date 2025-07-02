@@ -1,0 +1,157 @@
+import { client } from "./client/client.gen.ts";
+import { createConversationImpl, listConversationsImpl, getConversationImpl } from "./methods/conversations";
+import type {
+  CreateConversationResponse,
+  ListConversationsResponse,
+  GetConversationResponse
+} from "./client/types.gen";
+import type {
+  ListConversationsOptions,
+  GetConversationOptions
+} from "./methods/conversations";
+import { Conversation, type ConversationOptions, type ConversationCallbacks } from "./conversation";
+
+export class ApiError extends Error {
+  name = 'ApiError';
+  status?: number;
+  method?: string;
+  url?: string;
+  payload?: unknown;
+
+  constructor({
+    message,
+    status,
+    method,
+    url,
+    payload,
+  }: {
+    message: string;
+    status?: number;
+    method?: string;
+    url?: string;
+    payload?: unknown;
+  }) {
+    super(message);
+    this.status = status;
+    this.method = method;
+    this.url = url;
+    this.payload = payload;
+  }
+}
+
+export interface CreateConversationOptions {
+  bot_id: string;
+  user_id: string;
+  create_user_if_not_exists?: boolean;
+  with_messages?: Array<{
+    text: string;
+    from_bot: boolean;
+    id?: string;
+    attached_media?: any;
+  }>;
+}
+
+export class PrioriChat {
+  private client = client;
+  private apiToken: string;
+
+  constructor(api_token: string, baseURL?: string) {
+    this.apiToken = api_token;
+
+    this.client.setConfig({
+      baseURL: baseURL || "https://api.prioros.com/v3/",
+      throwOnError: true,
+    });
+
+    this.setupErrorInterceptor();
+  }
+
+  private setupErrorInterceptor() {
+    this.client.instance.interceptors.response.use(
+      response => response,
+      (error) => {
+        const res = error.response;
+        const req = res?.config;
+        const data = res?.data;
+
+        const status = res?.status;
+        const method = req?.method?.toUpperCase();
+        const url = req?.url;
+
+        const hasJsonBody = res?.headers?.['content-type']?.includes('application/json');
+        const hasMessageField = data && typeof data === 'object' && 'message' in data;
+
+        if (hasJsonBody && hasMessageField) {
+          throw new ApiError({
+            message: `[${status} ${res.statusText}] ${method} ${url} ? ${String(data.message)}`,
+            status,
+            method,
+            url,
+            payload: data,
+          });
+        }
+
+        const parts: string[] = [];
+        if (status) parts.push(`[${status} ${res.statusText}]`);
+        if (method && url) parts.push(`${method} ${url}`);
+        if (data?.error) parts.push(`? ${String(data.error)}`);
+
+        error.message = parts.join(' ') || error.message;
+        error.meta = {
+          status,
+          method,
+          url,
+          payload: data,
+          response: res,
+        };
+
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  /**
+   * Creates a new conversation between a user and bot
+   * @param options - The conversation creation options
+   * @param options.bot_id - ID of the bot to associate with this conversation
+   * @param options.user_id - ID of the user to associate with this conversation
+   * @param options.create_user_if_not_exists - Whether to create the user if they don't exist (defaults to true)
+   * @param options.with_messages - Optional list of initial messages for the conversation
+   * @returns Promise resolving to the created conversation
+   */
+  async createConversation(options: CreateConversationOptions): Promise<CreateConversationResponse> {
+    return createConversationImpl.call(this, options);
+  }
+
+  /**
+   * Lists conversations with optional filtering
+   * @param options - Optional filtering options
+   * @param options.bot_id - Filter conversations by bot ID
+   * @param options.user_id - Filter conversations by user ID
+   * @returns Promise resolving to list of conversations
+   */
+  async listConversations(options?: ListConversationsOptions): Promise<ListConversationsResponse> {
+    return listConversationsImpl.call(this, options);
+  }
+
+  /**
+   * Retrieves a specific conversation by ID
+   * @param options - The conversation retrieval options
+   * @param options.id - The ID of the conversation to retrieve
+   * @returns Promise resolving to the conversation details
+   */
+  async getConversation(options: GetConversationOptions): Promise<GetConversationResponse> {
+    return getConversationImpl.call(this, options);
+  }
+
+  /**
+   * Creates a new Conversation instance for real-time messaging
+   * @param options - Conversation initialization options (conversation_id OR user_id + bot_id)
+   * @param callbacks - Event callbacks for handling messages and errors
+   * @returns Promise resolving to conversation instance and initial data
+   */
+  async conversation(options: ConversationOptions, callbacks?: ConversationCallbacks): Promise<{ conversation: Conversation; initialData: GetConversationResponse }> {
+    return Conversation.create(this, options, callbacks);
+  }
+}
+
