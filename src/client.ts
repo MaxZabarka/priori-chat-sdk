@@ -9,7 +9,7 @@ import type {
   ListConversationsOptions,
   GetConversationOptions
 } from "./methods/conversations";
-import { Conversation, type ConversationOptions, type ConversationCallbacks } from "./conversation";
+import { Conversation, type ConversationOptions, type ConversationCallbacks, type AttachedMedia } from "./conversation";
 
 export class ApiError extends Error {
   name = 'ApiError';
@@ -39,6 +39,9 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Options for creating a new conversation
+ */
 export interface CreateConversationOptions {
   bot_id: string;
   user_id: string;
@@ -47,7 +50,7 @@ export interface CreateConversationOptions {
     text: string;
     from_bot: boolean;
     id?: string;
-    attached_media?: any;
+    attached_media?: AttachedMedia;
   }>;
 }
 
@@ -118,6 +121,18 @@ export class PrioriChat {
    * @param options.create_user_if_not_exists - Whether to create the user if they don't exist (defaults to true)
    * @param options.with_messages - Optional list of initial messages for the conversation
    * @returns Promise resolving to the created conversation
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.createConversation({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   user_id: "user-123",
+   *   create_user_if_not_exists: true
+   * });
+   * 
+   * console.log(`Created conversation: ${result.conversation.id}`);
+   * ```
    */
   async createConversation(options: CreateConversationOptions): Promise<CreateConversationResponse> {
     return createConversationImpl.call(this, options);
@@ -129,6 +144,19 @@ export class PrioriChat {
    * @param options.bot_id - Filter conversations by bot ID
    * @param options.user_id - Filter conversations by user ID
    * @returns Promise resolving to list of conversations
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * // List all conversations
+   * const allConversations = await client.listConversations();
+   * 
+   * // List conversations for a specific user and bot
+   * const userConversations = await client.listConversations({
+   *   user_id: "user-123",
+   *   bot_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * ```
    */
   async listConversations(options?: ListConversationsOptions): Promise<ListConversationsResponse> {
     return listConversationsImpl.call(this, options);
@@ -139,6 +167,16 @@ export class PrioriChat {
    * @param options - The conversation retrieval options
    * @param options.id - The ID of the conversation to retrieve
    * @returns Promise resolving to the conversation details
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const conversation = await client.getConversation({
+   *   id: "87654321-4321-4321-4321-210987654321"
+   * });
+   * 
+   * console.log(`Found ${conversation.messages.length} messages`);
+   * ```
    */
   async getConversation(options: GetConversationOptions): Promise<GetConversationResponse> {
     return getConversationImpl.call(this, options);
@@ -149,6 +187,37 @@ export class PrioriChat {
    * @param options - Conversation initialization options (conversation_id OR user_id + bot_id)
    * @param callbacks - Event callbacks for handling messages and errors
    * @returns Promise resolving to conversation instance and initial data
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const { conversation, initialData } = await client.conversation(
+   *   { user_id: "user-123", bot_id: "12345678-1234-1234-1234-123456789012" },
+   *   {
+   *     onNewMessage: (message) => {
+   *       if (message.from_bot) {
+   *         console.log(`Bot: ${message.text}`);
+   *       }
+   *     },
+   *     onError: (error) => {
+   *       console.error("Conversation error:", error);
+   *     }
+   *   }
+   * );
+   * 
+   * // Print initial message history
+   * console.log(`Loaded ${initialData.messages.length} previous messages`);
+   * initialData.messages.forEach(msg => {
+   *   const sender = msg.from_bot ? "Bot" : "User";
+   *   console.log(`${sender}: ${msg.text}`);
+   * });
+   * 
+   * // Send a message to start/continue the conversation
+   * await conversation.sendMessage("Hello!");
+   * 
+   * // Continue the conversation by sending more messages
+   * // The onNewMessage callback will handle incoming bot responses
+   * ```
    */
   async conversation(options: ConversationOptions, callbacks?: ConversationCallbacks): Promise<{ conversation: Conversation; initialData: GetConversationResponse }> {
     return Conversation.create(this, options, callbacks);

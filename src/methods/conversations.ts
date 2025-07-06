@@ -23,6 +23,9 @@ export async function createConversationImpl(
   return result.data!;
 }
 
+/**
+ * Options for listing conversations
+ */
 export interface ListConversationsOptions {
   bot_id?: string;
   user_id?: string;
@@ -42,6 +45,9 @@ export async function listConversationsImpl(
   return result.data!;
 }
 
+/**
+ * Options for getting a conversation by ID
+ */
 export interface GetConversationOptions {
   id: string;
 }
