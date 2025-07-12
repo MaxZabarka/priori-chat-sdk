@@ -532,6 +532,13 @@ var getConversation = (options) => {
     ...options
   });
 };
+var getMemories = (options) => {
+  return (options.client ?? client).get({
+    responseType: "json",
+    url: "/api/conversations/{id}/memories",
+    ...options
+  });
+};
 var sendMessage = (options) => {
   return (options.client ?? client).post({
     url: "/api/conversations/{id}/messages",
@@ -786,6 +793,20 @@ var Conversation = class _Conversation {
   //     this.startPolling();
   //   }
   // }
+  /**
+   * Retrieves bot and user memories for this conversation.
+   * @returns Promise resolving to memories data containing bot_memories and user_memories arrays
+   */
+  async getMemories() {
+    if (!this.isInitialized) {
+      throw new Error("Conversation not initialized");
+    }
+    return (await getMemories({
+      path: {
+        id: this.conversationId
+      }
+    })).data;
+  }
   /**
    * Gets the current conversation ID.
    * @returns The conversation ID string

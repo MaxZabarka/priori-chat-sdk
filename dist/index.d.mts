@@ -57,11 +57,27 @@ type GetConversationResponse = {
      */
     user_id: string;
 };
+type GetMemoriesResponse = {
+    /**
+     * Bot memories for this conversation
+     */
+    bot_memories: Array<MemoryResponse>;
+    /**
+     * User memories for this conversation
+     */
+    user_memories: Array<MemoryResponse>;
+};
 type ListConversationsResponse = {
     /**
      * List of conversations
      */
     conversations: Array<ConversationHeader>;
+};
+type MemoryResponse = {
+    /**
+     * Text content of the memory
+     */
+    text: string;
 };
 type Message$1 = {
     attached_media?: Content | null;
@@ -310,6 +326,11 @@ declare class Conversation {
      */
     disconnect(): void;
     /**
+     * Retrieves bot and user memories for this conversation.
+     * @returns Promise resolving to memories data containing bot_memories and user_memories arrays
+     */
+    getMemories(): Promise<GetMemoriesResponse>;
+    /**
      * Gets the current conversation ID.
      * @returns The conversation ID string
      * @example
@@ -457,4 +478,4 @@ declare class PrioriChat {
     }>;
 }
 
-export { ApiError, type AttachedMedia, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type ConversationWithId, type ConversationWithUserBot, type CreateConversationOptions, type CreateConversationResponse, type GetConversationOptions, type GetConversationResponse, type ListConversationsOptions, type ListConversationsResponse, type Message, PrioriChat };
+export { ApiError, type AttachedMedia, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateConversationOptions, type CreateConversationResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListConversationsOptions, type ListConversationsResponse, type MemoryResponse, type Message, PrioriChat };
