@@ -177,6 +177,29 @@ paths:
                 $ref: '#/components/schemas/GetConversationResponse'
         '500':
           description: Internal server error
+  /api/conversations/{id}/memories:
+    get:
+      tags:
+      - conversations
+      operationId: get_memories
+      parameters:
+      - name: id
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Memories retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMemoriesResponse'
+        '404':
+          description: Conversation not found
+        '500':
+          description: Internal server error
   /api/conversations/{id}/messages:
     post:
       tags:
@@ -365,6 +388,22 @@ components:
         user_id:
           type: string
           description: ID of the user associated with this conversation
+    GetMemoriesResponse:
+      type: object
+      required:
+      - bot_memories
+      - user_memories
+      properties:
+        bot_memories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemoryResponse'
+          description: Bot memories for this conversation
+        user_memories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemoryResponse'
+          description: User memories for this conversation
     ListBotsResponse:
       type: object
       required:
@@ -393,6 +432,14 @@ components:
           - attached_media: null
             from_bot: true
             text: Hello!
+    MemoryResponse:
+      type: object
+      required:
+      - text
+      properties:
+        text:
+          type: string
+          description: Text content of the memory
     Message:
       type: object
       required:

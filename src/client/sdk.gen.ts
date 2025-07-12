@@ -26,6 +26,9 @@ import type {
   GetConversationData,
   GetConversationResponses,
   GetConversationErrors,
+  GetMemoriesData,
+  GetMemoriesResponses,
+  GetMemoriesErrors,
   SendMessageData,
   SendMessageResponses,
   SendMessageErrors,
@@ -168,6 +171,20 @@ export const getConversation = <ThrowOnError extends boolean = true>(
   >({
     responseType: "json",
     url: "/api/conversations/{id}",
+    ...options,
+  });
+};
+
+export const getMemories = <ThrowOnError extends boolean = true>(
+  options: Options<GetMemoriesData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetMemoriesResponses,
+    GetMemoriesErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/conversations/{id}/memories",
     ...options,
   });
 };

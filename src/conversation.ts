@@ -1,6 +1,6 @@
-import { sendMessage } from "./client/sdk.gen";
+import { sendMessage, getMemories } from "./client/sdk.gen";
 import type { PrioriChat } from "./client";
-import type { GetConversationResponse } from "./client/types.gen";
+import type { GetConversationResponse, GetMemoriesResponse } from "./client/types.gen";
 
 /**
  * Represents media content attached to a message
@@ -269,7 +269,7 @@ export class Conversation {
                 id: apiMessage.id || undefined,
                 text: apiMessage.text,
                 from_bot: apiMessage.from_bot,
-                attached_media: apiMessage.attached_media,
+                attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : undefined,
                 timestamp: new Date(),
               };
               this.callbacks.onNewMessage!(message);
@@ -331,7 +331,7 @@ export class Conversation {
           message: {
             text,
             from_bot: false,
-            attached_media: attachedMedia,
+            attached_media: attachedMedia ? { content_id: '', url: attachedMedia.url } : undefined,
           },
         },
       });
@@ -387,6 +387,22 @@ export class Conversation {
   //     this.startPolling();
   //   }
   // }
+
+  /**
+   * Retrieves bot and user memories for this conversation.
+   * @returns Promise resolving to memories data containing bot_memories and user_memories arrays
+   */
+  async getMemories(): Promise<GetMemoriesResponse> {
+    if (!this.isInitialized) {
+      throw new Error("Conversation not initialized");
+    }
+
+    return (await getMemories({
+      path: {
+        id: this.conversationId,
+      },
+    })).data;
+  }
 
   /**
    * Gets the current conversation ID.

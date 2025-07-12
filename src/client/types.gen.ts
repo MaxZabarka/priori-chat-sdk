@@ -109,6 +109,17 @@ export type GetConversationResponse = {
   user_id: string;
 };
 
+export type GetMemoriesResponse = {
+  /**
+   * Bot memories for this conversation
+   */
+  bot_memories: Array<MemoryResponse>;
+  /**
+   * User memories for this conversation
+   */
+  user_memories: Array<MemoryResponse>;
+};
+
 export type ListBotsResponse = {
   /**
    * List of all bots
@@ -121,6 +132,13 @@ export type ListConversationsResponse = {
    * List of conversations
    */
   conversations: Array<ConversationHeader>;
+};
+
+export type MemoryResponse = {
+  /**
+   * Text content of the memory
+   */
+  text: string;
 };
 
 export type Message = {
@@ -381,6 +399,39 @@ export type GetConversationResponses = {
 
 export type GetConversationResponse2 =
   GetConversationResponses[keyof GetConversationResponses];
+
+export type GetMemoriesData = {
+  body?: never;
+  path: {
+    /**
+     * Conversation ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: "/api/conversations/{id}/memories";
+};
+
+export type GetMemoriesErrors = {
+  /**
+   * Conversation not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type GetMemoriesResponses = {
+  /**
+   * Memories retrieved successfully
+   */
+  200: GetMemoriesResponse;
+};
+
+export type GetMemoriesResponse2 =
+  GetMemoriesResponses[keyof GetMemoriesResponses];
 
 export type SendMessageData = {
   body: SendMessageRequest;

@@ -16,7 +16,10 @@ export async function createConversationImpl(
       bot_id: options.bot_id,
       user_id: options.user_id,
       create_user_if_not_exists: options.create_user_if_not_exists,
-      with_messages: options.with_messages,
+      with_messages: options.with_messages?.map(msg => ({
+        ...msg,
+        attached_media: msg.attached_media ? { content_id: '', url: msg.attached_media.url } : undefined,
+      })),
     },
   });
 

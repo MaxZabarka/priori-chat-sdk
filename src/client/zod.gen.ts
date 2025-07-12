@@ -61,6 +61,15 @@ export const zGetConversationResponse = z.object({
   user_id: z.string(),
 });
 
+export const zMemoryResponse = z.object({
+  text: z.string(),
+});
+
+export const zGetMemoriesResponse = z.object({
+  bot_memories: z.array(zMemoryResponse),
+  user_memories: z.array(zMemoryResponse),
+});
+
 export const zListBotsResponse = z.object({
   bots: z.array(zBot),
 });
@@ -181,6 +190,19 @@ export const zGetConversationData = z.object({
  * Conversation retrieved successfully
  */
 export const zGetConversationResponse2 = zGetConversationResponse;
+
+export const zGetMemoriesData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Memories retrieved successfully
+ */
+export const zGetMemoriesResponse2 = zGetMemoriesResponse;
 
 export const zSendMessageData = z.object({
   body: zSendMessageRequest,
