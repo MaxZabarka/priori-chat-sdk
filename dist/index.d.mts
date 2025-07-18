@@ -146,7 +146,7 @@ interface AttachedMedia {
  *   text: "Just sent you a pic (;",
  *   from_bot: true,
  *   attached_media: { url: "https://example.com/image.jpg" },
- *   timestamp: new Date("Sat Jul 05 2025 16:20:05")
+ *   sent_at: new Date("Sat Jul 05 2025 16:20:05")
  * };
  * ```
  */
@@ -155,7 +155,7 @@ interface Message {
     text: string;
     from_bot: boolean;
     attached_media?: AttachedMedia;
-    timestamp?: Date;
+    sent_at?: Date;
 }
 /**
  * Configuration for retrieving a conversation by its unique ID

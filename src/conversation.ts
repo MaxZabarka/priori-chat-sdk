@@ -31,7 +31,7 @@ export interface AttachedMedia {
  *   text: "Just sent you a pic (;",
  *   from_bot: true,
  *   attached_media: { url: "https://example.com/image.jpg" },
- *   sent_at: new Date("Sat Jul 05 2025 16:20:05") 
+ *   sent_at: Math.floor(new Date("Sat Jul 05 2025 16:20:05") / 1000) // All dates in Priori API are represented as unix timestamps
  * };
  * ```
  */
@@ -40,7 +40,7 @@ export interface Message {
   text: string;
   from_bot: boolean;
   attached_media?: AttachedMedia;
-  sent_at?: Date;
+  sent_at?: number;
 }
 
 /**
@@ -270,7 +270,7 @@ export class Conversation {
                 text: apiMessage.text,
                 from_bot: apiMessage.from_bot,
                 attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : undefined,
-                sent_at: new Date(),
+                sent_at: Math.floor(Date.now() / 1000)
               };
               this.callbacks.onNewMessage!(message);
             });
@@ -314,7 +314,7 @@ export class Conversation {
       from_bot: false,
       attached_media: attachedMedia,
       id: `temp-${Date.now()}`,
-      sent_at: new Date(),
+      sent_at: Math.floor(Date.now() / 1000)
     };
 
     // Optimistically fire the new message event
