@@ -140,9 +140,7 @@ export class PrioriChat {
 
   /**
    * Lists conversations with optional filtering
-   * @param options - Optional filtering options
-   * @param options.bot_id - Filter conversations by bot ID
-   * @param options.user_id - Filter conversations by user ID
+   * @param options - Optional filtering options including bot_id, user_id, conversation_id, min_messages, max_messages, message_content, min_last_message_date, max_last_message_date
    * @returns Promise resolving to list of conversations
    * @example
    * ```ts

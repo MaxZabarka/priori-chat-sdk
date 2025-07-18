@@ -161,6 +161,12 @@ export const zListConversationsData = z.object({
     .object({
       bot_id: z.union([z.string(), z.null()]).optional(),
       user_id: z.union([z.string(), z.null()]).optional(),
+      conversation_id: z.union([z.string(), z.null()]).optional(),
+      min_messages: z.union([z.number().int(), z.null()]).optional(),
+      max_messages: z.union([z.number().int(), z.null()]).optional(),
+      message_content: z.union([z.string(), z.null()]).optional(),
+      min_last_message_date: z.union([z.number().int(), z.null()]).optional(),
+      max_last_message_date: z.union([z.number().int(), z.null()]).optional(),
     })
     .optional(),
 });

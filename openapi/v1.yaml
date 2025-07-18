@@ -128,6 +128,52 @@ paths:
         schema:
           type: string
           nullable: true
+      - name: conversation_id
+        in: query
+        description: Filter conversations by specific conversation ID
+        required: false
+        schema:
+          type: string
+          nullable: true
+      - name: min_messages
+        in: query
+        description: Filter conversations with at least this many messages
+        required: false
+        schema:
+          type: integer
+          format: int32
+          nullable: true
+      - name: max_messages
+        in: query
+        description: Filter conversations with at most this many messages
+        required: false
+        schema:
+          type: integer
+          format: int32
+          nullable: true
+      - name: message_content
+        in: query
+        description: Search for conversations containing this text in messages
+        required: false
+        schema:
+          type: string
+          nullable: true
+      - name: min_last_message_date
+        in: query
+        description: Filter conversations with last message after this timestamp (Unix epoch)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          nullable: true
+      - name: max_last_message_date
+        in: query
+        description: Filter conversations with last message before this timestamp (Unix epoch)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          nullable: true
       responses:
         '200':
           description: Conversations retrieved successfully

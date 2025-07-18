@@ -335,6 +335,30 @@ export type ListConversationsData = {
      * Filter conversations by user ID
      */
     user_id?: string | null;
+    /**
+     * Filter conversations by specific conversation ID
+     */
+    conversation_id?: string | null;
+    /**
+     * Filter conversations with at least this many messages
+     */
+    min_messages?: number | null;
+    /**
+     * Filter conversations with at most this many messages
+     */
+    max_messages?: number | null;
+    /**
+     * Search for conversations containing this text in messages
+     */
+    message_content?: string | null;
+    /**
+     * Filter conversations with last message after this timestamp (Unix epoch)
+     */
+    min_last_message_date?: number | null;
+    /**
+     * Filter conversations with last message before this timestamp (Unix epoch)
+     */
+    max_last_message_date?: number | null;
   };
   url: "/api/conversations";
 };

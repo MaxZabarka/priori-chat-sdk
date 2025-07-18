@@ -651,7 +651,7 @@ var Conversation = class _Conversation {
                 text: apiMessage.text,
                 from_bot: apiMessage.from_bot,
                 attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : void 0,
-                sent_at: /* @__PURE__ */ new Date()
+                sent_at: Math.floor(Date.now() / 1e3)
               };
               this.callbacks.onNewMessage(message);
             });
@@ -692,7 +692,7 @@ var Conversation = class _Conversation {
       from_bot: false,
       attached_media: attachedMedia,
       id: `temp-${Date.now()}`,
-      sent_at: /* @__PURE__ */ new Date()
+      sent_at: Math.floor(Date.now() / 1e3)
     };
     if (this.callbacks.onNewMessage) {
       this.callbacks.onNewMessage(message);

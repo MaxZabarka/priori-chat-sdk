@@ -146,7 +146,7 @@ interface AttachedMedia {
  *   text: "Just sent you a pic (;",
  *   from_bot: true,
  *   attached_media: { url: "https://example.com/image.jpg" },
- *   sent_at: new Date("Sat Jul 05 2025 16:20:05")
+ *   sent_at: Math.floor(new Date("Sat Jul 05 2025 16:20:05") / 1000) // All dates in Priori API are represented as unix timestamps
  * };
  * ```
  */
@@ -155,7 +155,7 @@ interface Message {
     text: string;
     from_bot: boolean;
     attached_media?: AttachedMedia;
-    sent_at?: Date;
+    sent_at?: number;
 }
 /**
  * Configuration for retrieving a conversation by its unique ID
