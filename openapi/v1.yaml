@@ -288,6 +288,7 @@ components:
       - id
       - bot_id
       - user_id
+      - message_count
       properties:
         bot_id:
           type: string
@@ -297,9 +298,19 @@ components:
           type: string
           description: Unique identifier for the conversation
           example: conv_abc123def456
+        last_message:
+          allOf:
+          - $ref: '#/components/schemas/Message'
+          nullable: true
+        message_count:
+          type: integer
+          format: int32
+          description: Total number of messages in this conversation
+          example: 42
+          minimum: 0
         user_id:
           type: string
-          description: ID of the bot associated with this conversation
+          description: ID of the user associated with this conversation
           example: user_123
     CreateBotRequest:
       type: object
@@ -445,6 +456,7 @@ components:
       required:
       - text
       - from_bot
+      - sent_at
       properties:
         attached_media:
           allOf:
@@ -458,6 +470,11 @@ components:
           type: string
           description: Unique identifier for the content
           nullable: true
+        sent_at:
+          type: integer
+          format: int64
+          description: Unix timestamp when the message was sent
+          example: 1640995200
         text:
           type: string
           description: The text content of the message
@@ -465,6 +482,7 @@ components:
       example:
         attached_media: null
         from_bot: true
+        sent_at: 1640995200
         text: Heyyy how are you??
     SendMessageRequest:
       type: object

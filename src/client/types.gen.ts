@@ -50,8 +50,13 @@ export type ConversationHeader = {
    * Unique identifier for the conversation
    */
   id: string;
+  last_message?: Message | null;
   /**
-   * ID of the bot associated with this conversation
+   * Total number of messages in this conversation
+   */
+  message_count: number;
+  /**
+   * ID of the user associated with this conversation
    */
   user_id: string;
 };
@@ -151,6 +156,10 @@ export type Message = {
    * Unique identifier for the content
    */
   id?: string | null;
+  /**
+   * Unix timestamp when the message was sent
+   */
+  sent_at: number;
   /**
    * The text content of the message
    */

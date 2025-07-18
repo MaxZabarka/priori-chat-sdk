@@ -16,6 +16,7 @@ export const zMessage = z.object({
   attached_media: z.union([zContent, z.null()]).optional(),
   from_bot: z.boolean(),
   id: z.union([z.string(), z.null()]).optional(),
+  sent_at: z.coerce.bigint(),
   text: z.string(),
 });
 
@@ -29,6 +30,8 @@ export const zConversation = z.object({
 export const zConversationHeader = z.object({
   bot_id: z.string(),
   id: z.string(),
+  last_message: z.union([zMessage, z.null()]).optional(),
+  message_count: z.number().int().gte(0),
   user_id: z.string(),
 });
 
