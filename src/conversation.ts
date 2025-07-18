@@ -329,6 +329,7 @@ export class Conversation {
         },
         body: {
           message: {
+            sent_at: null,
             text,
             from_bot: false,
             attached_media: attachedMedia ? { content_id: '', url: attachedMedia.url } : undefined,

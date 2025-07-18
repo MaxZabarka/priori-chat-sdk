@@ -159,7 +159,7 @@ export type Message = {
   /**
    * Unix timestamp when the message was sent
    */
-  sent_at: number;
+  sent_at?: number | null;
   /**
    * The text content of the message
    */

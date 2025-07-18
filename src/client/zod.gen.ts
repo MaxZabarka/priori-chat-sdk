@@ -16,7 +16,7 @@ export const zMessage = z.object({
   attached_media: z.union([zContent, z.null()]).optional(),
   from_bot: z.boolean(),
   id: z.union([z.string(), z.null()]).optional(),
-  sent_at: z.coerce.bigint(),
+  sent_at: z.union([z.coerce.bigint(), z.null()]).optional(),
   text: z.string(),
 });
 

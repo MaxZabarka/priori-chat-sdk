@@ -456,7 +456,6 @@ components:
       required:
       - text
       - from_bot
-      - sent_at
       properties:
         attached_media:
           allOf:
@@ -475,6 +474,7 @@ components:
           format: int64
           description: Unix timestamp when the message was sent
           example: 1640995200
+          nullable: true
         text:
           type: string
           description: The text content of the message
