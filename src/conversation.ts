@@ -31,7 +31,7 @@ export interface AttachedMedia {
  *   text: "Just sent you a pic (;",
  *   from_bot: true,
  *   attached_media: { url: "https://example.com/image.jpg" },
- *   timestamp: new Date("Sat Jul 05 2025 16:20:05") 
+ *   sent_at: new Date("Sat Jul 05 2025 16:20:05") 
  * };
  * ```
  */
@@ -40,7 +40,7 @@ export interface Message {
   text: string;
   from_bot: boolean;
   attached_media?: AttachedMedia;
-  timestamp?: Date;
+  sent_at?: Date;
 }
 
 /**
@@ -270,7 +270,7 @@ export class Conversation {
                 text: apiMessage.text,
                 from_bot: apiMessage.from_bot,
                 attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : undefined,
-                timestamp: new Date(),
+                sent_at: new Date(),
               };
               this.callbacks.onNewMessage!(message);
             });
@@ -314,7 +314,7 @@ export class Conversation {
       from_bot: false,
       attached_media: attachedMedia,
       id: `temp-${Date.now()}`,
-      timestamp: new Date(),
+      sent_at: new Date(),
     };
 
     // Optimistically fire the new message event
@@ -329,7 +329,6 @@ export class Conversation {
         },
         body: {
           message: {
-            sent_at: null,
             text,
             from_bot: false,
             attached_media: attachedMedia ? { content_id: '', url: attachedMedia.url } : undefined,

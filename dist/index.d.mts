@@ -35,8 +35,13 @@ type ConversationHeader = {
      * Unique identifier for the conversation
      */
     id: string;
+    last_message?: Message$1 | null;
     /**
-     * ID of the bot associated with this conversation
+     * Total number of messages in this conversation
+     */
+    message_count: number;
+    /**
+     * ID of the user associated with this conversation
      */
     user_id: string;
 };
@@ -89,6 +94,10 @@ type Message$1 = {
      * Unique identifier for the content
      */
     id?: string | null;
+    /**
+     * Unix timestamp when the message was sent
+     */
+    sent_at?: number | null;
     /**
      * The text content of the message
      */
