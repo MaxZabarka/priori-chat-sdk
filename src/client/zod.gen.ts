@@ -27,11 +27,20 @@ export const zConversation = z.object({
   user_id: z.union([z.string(), z.null()]).optional(),
 });
 
+export const zSearchedMessage = z.object({
+  from_bot: z.boolean(),
+  match_end: z.number().int().gte(0),
+  match_start: z.number().int().gte(0),
+  message_text: z.string(),
+  sent_at: z.coerce.bigint(),
+});
+
 export const zConversationHeader = z.object({
   bot_id: z.string(),
   id: z.string(),
   last_message: z.union([zMessage, z.null()]).optional(),
   message_count: z.number().int().gte(0),
+  searched_message: z.union([zSearchedMessage, z.null()]).optional(),
   user_id: z.string(),
 });
 

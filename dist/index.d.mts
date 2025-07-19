@@ -1,3 +1,13 @@
+type Bot = {
+    /**
+     * Unique identifier for the bot
+     */
+    id: string;
+    /**
+     * Name of the bot
+     */
+    name: string;
+};
 type Content = {
     /**
      * Unique identifier for the content
@@ -40,13 +50,26 @@ type ConversationHeader = {
      * Total number of messages in this conversation
      */
     message_count: number;
+    searched_message?: SearchedMessage | null;
     /**
      * ID of the user associated with this conversation
      */
     user_id: string;
 };
+type CreateBotRequest = {
+    /**
+     * Name of the bot
+     */
+    name: string;
+};
+type CreateBotResponse = {
+    bot: Bot;
+};
 type CreateConversationResponse = {
     conversation: Conversation$1;
+};
+type GetBotResponse = {
+    bot: Bot;
 };
 type GetConversationResponse = {
     /**
@@ -71,6 +94,12 @@ type GetMemoriesResponse = {
      * User memories for this conversation
      */
     user_memories: Array<MemoryResponse>;
+};
+type ListBotsResponse = {
+    /**
+     * List of all bots
+     */
+    bots: Array<Bot>;
 };
 type ListConversationsResponse = {
     /**
@@ -103,13 +132,114 @@ type Message$1 = {
      */
     text: string;
 };
+type SearchedMessage = {
+    /**
+     * Whether this message was sent by the bot
+     */
+    from_bot: boolean;
+    /**
+     * End index of the match within the message text
+     */
+    match_end: number;
+    /**
+     * Start index of the match within the message text
+     */
+    match_start: number;
+    /**
+     * The text content of the matched message
+     */
+    message_text: string;
+    /**
+     * Unix timestamp when the message was sent
+     */
+    sent_at: number;
+};
+type UpdateBotRequest = {
+    /**
+     * New name of the bot
+     */
+    name: string;
+};
+type UpdateBotResponse = {
+    bot: Bot;
+};
+type DeleteBotData = {
+    body?: never;
+    path: {
+        /**
+         * Bot identifier
+         */
+        bot_id: string;
+    };
+    query?: never;
+    url: "/api/bots/{bot_id}";
+};
+type GetBotData = {
+    body?: never;
+    path: {
+        /**
+         * Bot identifier
+         */
+        bot_id: string;
+    };
+    query?: never;
+    url: "/api/bots/{bot_id}";
+};
+type UpdateBotData = {
+    body: UpdateBotRequest;
+    path: {
+        /**
+         * Bot identifier
+         */
+        bot_id: string;
+    };
+    query?: never;
+    url: "/api/bots/{bot_id}";
+};
+type ListConversationsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Filter conversations by bot ID
+         */
+        bot_id?: string | null;
+        /**
+         * Filter conversations by user ID
+         */
+        user_id?: string | null;
+        /**
+         * Filter conversations by specific conversation ID
+         */
+        conversation_id?: string | null;
+        /**
+         * Filter conversations with at least this many messages
+         */
+        min_messages?: number | null;
+        /**
+         * Filter conversations with at most this many messages
+         */
+        max_messages?: number | null;
+        /**
+         * Search for conversations containing this text in messages
+         */
+        message_content?: string | null;
+        /**
+         * Filter conversations with last message after this timestamp (Unix epoch)
+         */
+        min_last_message_date?: number | null;
+        /**
+         * Filter conversations with last message before this timestamp (Unix epoch)
+         */
+        max_last_message_date?: number | null;
+    };
+    url: "/api/conversations";
+};
 
 /**
  * Options for listing conversations
  */
-interface ListConversationsOptions {
-    bot_id?: string;
-    user_id?: string;
+interface ListConversationsOptions extends NonNullable<ListConversationsData['query']> {
 }
 /**
  * Options for getting a conversation by ID
@@ -408,9 +538,7 @@ declare class PrioriChat {
     createConversation(options: CreateConversationOptions): Promise<CreateConversationResponse>;
     /**
      * Lists conversations with optional filtering
-     * @param options - Optional filtering options
-     * @param options.bot_id - Filter conversations by bot ID
-     * @param options.user_id - Filter conversations by user ID
+     * @param options - Optional filtering options including bot_id, user_id, conversation_id, min_messages, max_messages, message_content, min_last_message_date, max_last_message_date
      * @returns Promise resolving to list of conversations
      * @example
      * ```ts
@@ -485,6 +613,74 @@ declare class PrioriChat {
         conversation: Conversation;
         initialData: GetConversationResponse;
     }>;
+    /**
+     * Creates a new bot
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.createBot({
+     *   name: "My Assistant Bot"
+     * });
+     *
+     * console.log(`Created bot: ${result.bot.id}`);
+     * ```
+     */
+    createBot(options: CreateBotRequest): Promise<CreateBotResponse>;
+    /**
+     * Lists all bots
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.listBots();
+     * console.log(`Found ${result.bots.length} bots`);
+     * ```
+     */
+    listBots(): Promise<ListBotsResponse>;
+    /**
+     * Retrieves a specific bot by ID
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.getBot({
+     *   bot_id: "12345678-1234-1234-1234-123456789012"
+     * });
+     *
+     * console.log(`Bot name: ${result.bot.name}`);
+     * ```
+     */
+    getBot(options: GetBotData['path']): Promise<GetBotResponse>;
+    /**
+     * Updates an existing bot
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.updateBot({
+     *   bot_id: "12345678-1234-1234-1234-123456789012",
+     *   name: "Updated Bot Name"
+     * });
+     *
+     * console.log(`Updated bot: ${result.bot.name}`);
+     * ```
+     */
+    updateBot(options: UpdateBotData['path'] & UpdateBotData['body']): Promise<UpdateBotResponse>;
+    /**
+     * Deletes a bot
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * await client.deleteBot({
+     *   bot_id: "12345678-1234-1234-1234-123456789012"
+     * });
+     *
+     * console.log("Bot deleted successfully");
+     * ```
+     */
+    deleteBot(options: DeleteBotData['path']): Promise<void>;
 }
 
-export { ApiError, type AttachedMedia, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateConversationOptions, type CreateConversationResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListConversationsOptions, type ListConversationsResponse, type MemoryResponse, type Message, PrioriChat };
+export { ApiError, type AttachedMedia, type Bot, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateBotRequest, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListBotsResponse, type ListConversationsOptions, type ListConversationsResponse, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse };

@@ -17,5 +17,13 @@ export type {
   GetMemoriesResponse,
   MemoryResponse,
   Conversation as ConversationType,
+  SearchedMessage,
+  Bot,
+  CreateBotRequest,
+  CreateBotResponse,
+  GetBotResponse,
+  ListBotsResponse,
+  UpdateBotRequest,
+  UpdateBotResponse
 } from "./client/types.gen";
 

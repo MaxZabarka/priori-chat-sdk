@@ -1,9 +1,18 @@
 import { client } from "./client/client.gen.ts";
 import { createConversationImpl, listConversationsImpl, getConversationImpl } from "./methods/conversations";
+import { createBotImpl, listBotsImpl, getBotImpl, updateBotImpl, deleteBotImpl } from "./methods/bots";
 import type {
   CreateConversationResponse,
   ListConversationsResponse,
-  GetConversationResponse
+  GetConversationResponse,
+  CreateBotRequest,
+  CreateBotResponse,
+  ListBotsResponse,
+  GetBotData,
+  GetBotResponse,
+  UpdateBotData,
+  UpdateBotResponse,
+  DeleteBotData
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -219,6 +228,89 @@ export class PrioriChat {
    */
   async conversation(options: ConversationOptions, callbacks?: ConversationCallbacks): Promise<{ conversation: Conversation; initialData: GetConversationResponse }> {
     return Conversation.create(this, options, callbacks);
+  }
+
+  /**
+   * Creates a new bot
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.createBot({
+   *   name: "My Assistant Bot"
+   * });
+   * 
+   * console.log(`Created bot: ${result.bot.id}`);
+   * ```
+   */
+  async createBot(options: CreateBotRequest): Promise<CreateBotResponse> {
+    return createBotImpl.call(this, options);
+  }
+
+  /**
+   * Lists all bots
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.listBots();
+   * console.log(`Found ${result.bots.length} bots`);
+   * ```
+   */
+  async listBots(): Promise<ListBotsResponse> {
+    return listBotsImpl.call(this);
+  }
+
+  /**
+   * Retrieves a specific bot by ID
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.getBot({
+   *   bot_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * 
+   * console.log(`Bot name: ${result.bot.name}`);
+   * ```
+   */
+  async getBot(options: GetBotData['path']): Promise<GetBotResponse> {
+    return getBotImpl.call(this, options);
+  }
+
+  /**
+   * Updates an existing bot
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.updateBot({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   name: "Updated Bot Name"
+   * });
+   * 
+   * console.log(`Updated bot: ${result.bot.name}`);
+   * ```
+   */
+  async updateBot(options: UpdateBotData['path'] & UpdateBotData['body']): Promise<UpdateBotResponse> {
+    return updateBotImpl.call(this, options);
+  }
+
+  /**
+   * Deletes a bot
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * await client.deleteBot({
+   *   bot_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * 
+   * console.log("Bot deleted successfully");
+   * ```
+   */
+  async deleteBot(options: DeleteBotData['path']): Promise<void> {
+    return deleteBotImpl.call(this, options);
   }
 }
 

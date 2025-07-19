@@ -23,9 +23,10 @@
   "packageManager": "pnpm@10.7.0",
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.77.0",
+    "@microsoft/api-extractor": "^7.52.8",
     "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
-    "typedoc": "^0.28.7"
+    "typedoc": "^0.28.7",
+    "typescript": "^5.0.0"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.13.1",

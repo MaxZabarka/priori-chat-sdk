@@ -471,6 +471,48 @@ var client = createClient(
 );
 
 // src/client/sdk.gen.ts
+var listBots = (options) => {
+  return (options?.client ?? client).get({
+    responseType: "json",
+    url: "/api/bots",
+    ...options
+  });
+};
+var createBot = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/bots",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var deleteBot = (options) => {
+  return (options.client ?? client).delete({
+    url: "/api/bots/{bot_id}",
+    ...options
+  });
+};
+var getBot = (options) => {
+  return (options.client ?? client).get({
+    responseType: "json",
+    url: "/api/bots/{bot_id}",
+    ...options
+  });
+};
+var updateBot = (options) => {
+  return (options.client ?? client).put({
+    responseType: "json",
+    url: "/api/bots/{bot_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
 var listConversations = (options) => {
   return (options?.client ?? client).get({
     responseType: "json",
@@ -531,10 +573,7 @@ async function createConversationImpl(options) {
 }
 async function listConversationsImpl(options) {
   const result = await listConversations({
-    query: options ? {
-      bot_id: options.bot_id,
-      user_id: options.user_id
-    } : void 0
+    query: options
   });
   return result.data;
 }
@@ -545,6 +584,37 @@ async function getConversationImpl(options) {
     }
   });
   return result.data;
+}
+
+// src/methods/bots.ts
+async function createBotImpl(options) {
+  const result = await createBot({
+    body: options
+  });
+  return result.data;
+}
+async function listBotsImpl() {
+  const result = await listBots();
+  return result.data;
+}
+async function getBotImpl(options) {
+  const result = await getBot({
+    path: options
+  });
+  return result.data;
+}
+async function updateBotImpl(options) {
+  const { bot_id, ...body } = options;
+  const result = await updateBot({
+    path: { bot_id },
+    body
+  });
+  return result.data;
+}
+async function deleteBotImpl(options) {
+  await deleteBot({
+    path: options
+  });
 }
 
 // src/conversation.ts
@@ -880,9 +950,7 @@ var PrioriChat = class {
   }
   /**
    * Lists conversations with optional filtering
-   * @param options - Optional filtering options
-   * @param options.bot_id - Filter conversations by bot ID
-   * @param options.user_id - Filter conversations by user ID
+   * @param options - Optional filtering options including bot_id, user_id, conversation_id, min_messages, max_messages, message_content, min_last_message_date, max_last_message_date
    * @returns Promise resolving to list of conversations
    * @example
    * ```ts
@@ -959,6 +1027,84 @@ var PrioriChat = class {
    */
   async conversation(options, callbacks) {
     return Conversation.create(this, options, callbacks);
+  }
+  /**
+   * Creates a new bot
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.createBot({
+   *   name: "My Assistant Bot"
+   * });
+   * 
+   * console.log(`Created bot: ${result.bot.id}`);
+   * ```
+   */
+  async createBot(options) {
+    return createBotImpl.call(this, options);
+  }
+  /**
+   * Lists all bots
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.listBots();
+   * console.log(`Found ${result.bots.length} bots`);
+   * ```
+   */
+  async listBots() {
+    return listBotsImpl.call(this);
+  }
+  /**
+   * Retrieves a specific bot by ID
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.getBot({
+   *   bot_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * 
+   * console.log(`Bot name: ${result.bot.name}`);
+   * ```
+   */
+  async getBot(options) {
+    return getBotImpl.call(this, options);
+  }
+  /**
+   * Updates an existing bot
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.updateBot({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   name: "Updated Bot Name"
+   * });
+   * 
+   * console.log(`Updated bot: ${result.bot.name}`);
+   * ```
+   */
+  async updateBot(options) {
+    return updateBotImpl.call(this, options);
+  }
+  /**
+   * Deletes a bot
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * await client.deleteBot({
+   *   bot_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * 
+   * console.log("Bot deleted successfully");
+   * ```
+   */
+  async deleteBot(options) {
+    return deleteBotImpl.call(this, options);
   }
 };
 export {

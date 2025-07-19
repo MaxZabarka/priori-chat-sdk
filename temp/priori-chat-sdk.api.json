@@ -1,0 +1,2660 @@
+{
+  "metadata": {
+    "toolPackage": "@microsoft/api-extractor",
+    "toolVersion": "7.52.8",
+    "schemaVersion": 1011,
+    "oldestForwardsCompatibleVersion": 1001,
+    "tsdocConfig": {
+      "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+      "noStandardTags": true,
+      "tagDefinitions": [
+        {
+          "tagName": "@alpha",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@beta",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@defaultValue",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@decorator",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@deprecated",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@eventProperty",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@example",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@experimental",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@inheritDoc",
+          "syntaxKind": "inline"
+        },
+        {
+          "tagName": "@internal",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@label",
+          "syntaxKind": "inline"
+        },
+        {
+          "tagName": "@link",
+          "syntaxKind": "inline",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@override",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@packageDocumentation",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@param",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@privateRemarks",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@public",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@readonly",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@remarks",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@returns",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@sealed",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@see",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@throws",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@typeParam",
+          "syntaxKind": "block",
+          "allowMultiple": true
+        },
+        {
+          "tagName": "@virtual",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@betaDocumentation",
+          "syntaxKind": "modifier"
+        },
+        {
+          "tagName": "@internalRemarks",
+          "syntaxKind": "block"
+        },
+        {
+          "tagName": "@preapproved",
+          "syntaxKind": "modifier"
+        }
+      ],
+      "supportForTags": {
+        "@alpha": true,
+        "@beta": true,
+        "@defaultValue": true,
+        "@decorator": true,
+        "@deprecated": true,
+        "@eventProperty": true,
+        "@example": true,
+        "@experimental": true,
+        "@inheritDoc": true,
+        "@internal": true,
+        "@label": true,
+        "@link": true,
+        "@override": true,
+        "@packageDocumentation": true,
+        "@param": true,
+        "@privateRemarks": true,
+        "@public": true,
+        "@readonly": true,
+        "@remarks": true,
+        "@returns": true,
+        "@sealed": true,
+        "@see": true,
+        "@throws": true,
+        "@typeParam": true,
+        "@virtual": true,
+        "@betaDocumentation": true,
+        "@internalRemarks": true,
+        "@preapproved": true
+      },
+      "reportUnsupportedHtmlElements": false
+    }
+  },
+  "kind": "Package",
+  "canonicalReference": "priori-chat-sdk!",
+  "docComment": "",
+  "name": "priori-chat-sdk",
+  "preserveMemberOrder": false,
+  "members": [
+    {
+      "kind": "EntryPoint",
+      "canonicalReference": "priori-chat-sdk!",
+      "name": "",
+      "preserveMemberOrder": false,
+      "members": [
+        {
+          "kind": "Class",
+          "canonicalReference": "priori-chat-sdk!ApiError:class",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "declare class ApiError extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "Error",
+              "canonicalReference": "!Error:interface"
+            },
+            {
+              "kind": "Content",
+              "text": " "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "isAbstract": false,
+          "name": "ApiError",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "Constructor",
+              "canonicalReference": "priori-chat-sdk!ApiError:constructor(1)",
+              "docComment": "/**\n * Constructs a new instance of the `ApiError` class\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "constructor({ message, status, method, url, payload, }: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "{\n        message: string;\n        status?: number;\n        method?: string;\n        url?: string;\n        payload?: unknown;\n    }"
+                },
+                {
+                  "kind": "Content",
+                  "text": ");"
+                }
+              ],
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "{ message, status, method, url, payload, }",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ]
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "priori-chat-sdk!ApiError#method:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "method?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "method",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "priori-chat-sdk!ApiError#name:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "name: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "name",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "priori-chat-sdk!ApiError#payload:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "payload?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "unknown"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "payload",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "priori-chat-sdk!ApiError#status:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "status?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "number"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "status",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "priori-chat-sdk!ApiError#url:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "url?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "url",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            }
+          ],
+          "extendsTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          },
+          "implementsTokenRanges": []
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "priori-chat-sdk!AttachedMedia:interface",
+          "docComment": "/**\n * Represents media content attached to a message\n *\n * @example\n * ```ts\n * const media: AttachedMedia = {\n *   url: \"https://example.com/image.jpg\"\n * };\n *\n * // Use with message\n * await conversation.sendMessage(\"Check out this image!\", media);\n * ```\n *\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "interface AttachedMedia "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "AttachedMedia",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!AttachedMedia#url:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "url: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "url",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!Bot:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type Bot = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    id: string;\n    name: string;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "Bot",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "Class",
+          "canonicalReference": "priori-chat-sdk!Conversation:class",
+          "docComment": "/**\n * Represents a conversation between a user and a bot. Provides real-time message handling through it's methods and callbacks\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "declare class Conversation "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "isAbstract": false,
+          "name": "Conversation",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!Conversation.create:member(1)",
+              "docComment": "/**\n * Creates a new conversation instance and initializes it.\n *\n * @param client - The PrioriChat client instance\n *\n * @param options - Configuration options for the conversation\n *\n * @param callbacks - Event callbacks for handling conversation events\n *\n * @returns Promise resolving to the conversation instance and initial data containing message history\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * const { conversation, initialData } = await Conversation.create(\n *   client,\n *   { user_id: \"user-123\", bot_id: \"12345678-1234-1234-1234-123456789012\" },\n *   {\n *     onNewMessage: (message) => {\n *       console.log(`${message.from_bot ? 'Bot' : 'User'}: ${message.text}`);\n *     },\n *     onError: (error) => {\n *       console.error(\"Error:\", error);\n *     }\n *   }\n * );\n *\n * // Print message history\n * initialData.messages.forEach(msg => {\n *   console.log(`${msg.from_bot ? 'Bot' : 'User'}: ${msg.text}`);\n * });\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "static create(client: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "PrioriChat",
+                  "canonicalReference": "priori-chat-sdk!PrioriChat:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", options: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ConversationOptions",
+                  "canonicalReference": "priori-chat-sdk!ConversationOptions:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", callbacks?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ConversationCallbacks",
+                  "canonicalReference": "priori-chat-sdk!ConversationCallbacks:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n        conversation: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Conversation",
+                  "canonicalReference": "priori-chat-sdk!Conversation:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        initialData: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GetConversationResponse",
+                  "canonicalReference": "priori-chat-sdk!GetConversationResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    }>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": true,
+              "returnTypeTokenRange": {
+                "startIndex": 7,
+                "endIndex": 13
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "client",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "callbacks",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 5,
+                    "endIndex": 6
+                  },
+                  "isOptional": true
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "create"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!Conversation#disconnect:member(1)",
+              "docComment": "/**\n * Stops polling for new messages and cleans up resources. Call this method when you're done with the conversation to prevent memory leaks.\n *\n * @example\n * ```ts\n * // Always disconnect when done\n * conversation.disconnect();\n *\n * // Or use in React useEffect cleanup\n * useEffect(() => {\n *   const setupConversation = async () => {\n *     const { conversation } = await client.conversation(...);\n *     setConversation(conversation);\n *   };\n *\n *   setupConversation();\n *\n *   return () => {\n *     conversation?.disconnect();\n *   };\n * }, []);\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "disconnect(): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "void"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "disconnect"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!Conversation#getMemories:member(1)",
+              "docComment": "/**\n * Retrieves bot and user memories for this conversation.\n *\n * @returns Promise resolving to memories data containing bot_memories and user_memories arrays\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getMemories(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GetMemoriesResponse",
+                  "canonicalReference": "priori-chat-sdk!GetMemoriesResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getMemories"
+            },
+            {
+              "kind": "Property",
+              "canonicalReference": "priori-chat-sdk!Conversation#id:member",
+              "docComment": "/**\n * Gets the current conversation ID.\n *\n * @returns The conversation ID string\n *\n * @example\n * ```ts\n * console.log(`Current conversation: ${conversation.id}`);\n * // Output: Current conversation: 87654321-4321-4321-4321-210987654321\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "get id(): "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": true,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isStatic": false,
+              "isProtected": false,
+              "isAbstract": false
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!Conversation#sendMessage:member(1)",
+              "docComment": "/**\n * Sends a message to the conversation\n *\n * @param text - The text content of the message\n *\n * @param attachedMedia - Optional attached media content\n *\n * @returns Promise that resolves when message is sent\n *\n * @example\n * ```ts\n * // Send a simple text message\n * await conversation.sendMessage(\"Hello, how can you help me?\");\n *\n * // Send a message with media attachment\n * await conversation.sendMessage(\"Here's an image\", {\n *   url: \"https://example.com/image.jpg\"\n * });\n *\n * // Continue the conversation by sending more messages\n * // The onNewMessage callback will handle bot responses\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "sendMessage(text: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", attachedMedia?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "AttachedMedia",
+                  "canonicalReference": "priori-chat-sdk!AttachedMedia:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<void>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "text",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "attachedMedia",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": true
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "sendMessage"
+            }
+          ],
+          "implementsTokenRanges": []
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "priori-chat-sdk!ConversationCallbacks:interface",
+          "docComment": "/**\n * Callback functions for handling conversation events\n *\n * @example\n * ```ts\n * const callbacks: ConversationCallbacks = {\n *   onInitialData: (data) => {\n *     console.log(`Loaded ${data.messages.length} previous messages`);\n *     data.messages.forEach(msg => {\n *       console.log(`${msg.from_bot ? 'Bot' : 'User'}: ${msg.text}`);\n *     });\n *   },\n *   onNewMessage: (message) => {\n *     if (message.from_bot) {\n *       console.log(`Bot: ${message.text}`);\n *     } else {\n *       console.log(`User: ${message.text}`);\n *     }\n *   },\n *   onError: (error) => {\n *     console.error('Conversation error:', error.message);\n *   }\n * };\n *\n * const { conversation } = await client.conversation(options, callbacks);\n * ```\n *\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "interface ConversationCallbacks "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ConversationCallbacks",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!ConversationCallbacks#onError:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "onError?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "(error: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Error",
+                  "canonicalReference": "!Error:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => void"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "onError",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 4
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!ConversationCallbacks#onInitialData:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "onInitialData?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "(data: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GetConversationResponse",
+                  "canonicalReference": "priori-chat-sdk!GetConversationResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => void"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "onInitialData",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 4
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!ConversationCallbacks#onNewMessage:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "onNewMessage?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "(message: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Message",
+                  "canonicalReference": "priori-chat-sdk!Message:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": ") => void"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "onNewMessage",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 4
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!ConversationHeader:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type ConversationHeader = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    bot_id: string;\n    id: string;\n    last_message?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Message$1",
+              "canonicalReference": "priori-chat-sdk!~Message$1:type"
+            },
+            {
+              "kind": "Content",
+              "text": " | null;\n    message_count: number;\n    searched_message?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "SearchedMessage",
+              "canonicalReference": "priori-chat-sdk!SearchedMessage:type"
+            },
+            {
+              "kind": "Content",
+              "text": " | null;\n    user_id: string;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ConversationHeader",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 6
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!ConversationOptions:type",
+          "docComment": "/**\n * Union type for conversation configuration options. You can either specify a conversation_id directly, or provide user_id + bot_id to find/create the unique conversation between that user and bot.\n *\n * @example\n * ```ts\n * // Option 1: Use existing conversation ID\n * const byId: ConversationOptions = {\n *   conversation_id: \"87654321-4321-4321-4321-210987654321\"\n * };\n *\n * // Option 2: Use user + bot pair (will find existing or create new)\n * const byUserBot: ConversationOptions = {\n *   user_id: \"user-123\",\n *   bot_id: \"12345678-1234-1234-1234-123456789012\"\n * };\n * ```\n *\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type ConversationOptions = "
+            },
+            {
+              "kind": "Reference",
+              "text": "ConversationWithId",
+              "canonicalReference": "priori-chat-sdk!ConversationWithId:interface"
+            },
+            {
+              "kind": "Content",
+              "text": " | "
+            },
+            {
+              "kind": "Reference",
+              "text": "ConversationWithUserBot",
+              "canonicalReference": "priori-chat-sdk!ConversationWithUserBot:interface"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ConversationOptions",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!ConversationType:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type Conversation$1 = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    bot_id: string;\n    id: string;\n    messages: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "Message$1",
+              "canonicalReference": "priori-chat-sdk!~Message$1:type"
+            },
+            {
+              "kind": "Content",
+              "text": ">;\n    user_id?: string | null;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ConversationType",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 6
+          }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "priori-chat-sdk!ConversationWithId:interface",
+          "docComment": "/**\n * Configuration for retrieving a conversation by its unique ID\n *\n * @example\n * ```ts\n * const config: ConversationWithId = {\n *   conversation_id: \"87654321-4321-4321-4321-210987654321\"\n * };\n *\n * const { conversation } = await client.conversation(config);\n * ```\n *\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "interface ConversationWithId "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ConversationWithId",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!ConversationWithId#conversation_id:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "conversation_id: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "conversation_id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!ConversationWithId#pollingInterval:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "pollingInterval?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "number"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "pollingInterval",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "priori-chat-sdk!ConversationWithUserBot:interface",
+          "docComment": "/**\n * Configuration for retrieving or creating a conversation by user and bot pair. Note: There can only be one conversation between a specific user_id and bot_id. If a conversation already exists, it will be retrieved; otherwise, a new one will be created.\n *\n * @example\n * ```ts\n * const config: ConversationWithUserBot = {\n *   user_id: \"user-123\",\n *   bot_id: \"12345678-1234-1234-1234-123456789012\"\n * };\n *\n * // This will either find the existing conversation or create a new one\n * const { conversation } = await client.conversation(config);\n * ```\n *\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "interface ConversationWithUserBot "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ConversationWithUserBot",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!ConversationWithUserBot#bot_id:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "bot_id: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "bot_id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!ConversationWithUserBot#pollingInterval:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "pollingInterval?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "number"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "pollingInterval",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!ConversationWithUserBot#user_id:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "user_id: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "user_id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!CreateBotRequest:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type CreateBotRequest = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    name: string;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "CreateBotRequest",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!CreateBotResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type CreateBotResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    bot: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Bot",
+              "canonicalReference": "priori-chat-sdk!Bot:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "CreateBotResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "priori-chat-sdk!CreateConversationOptions:interface",
+          "docComment": "/**\n * Options for creating a new conversation\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "interface CreateConversationOptions "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "CreateConversationOptions",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!CreateConversationOptions#bot_id:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "bot_id: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "bot_id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!CreateConversationOptions#create_user_if_not_exists:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "create_user_if_not_exists?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "boolean"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "create_user_if_not_exists",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!CreateConversationOptions#user_id:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "user_id: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "user_id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!CreateConversationOptions#with_messages:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "with_messages?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Array",
+                  "canonicalReference": "!Array:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n        text: string;\n        from_bot: boolean;\n        id?: string;\n        attached_media?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "AttachedMedia",
+                  "canonicalReference": "priori-chat-sdk!AttachedMedia:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    }>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "with_messages",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!CreateConversationResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type CreateConversationResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    conversation: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Conversation$1",
+              "canonicalReference": "priori-chat-sdk!ConversationType:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "CreateConversationResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!GetBotResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type GetBotResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    bot: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Bot",
+              "canonicalReference": "priori-chat-sdk!Bot:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "GetBotResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "priori-chat-sdk!GetConversationOptions:interface",
+          "docComment": "/**\n * Options for getting a conversation by ID\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "interface GetConversationOptions "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "GetConversationOptions",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!GetConversationOptions#id:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "id: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!GetConversationResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type GetConversationResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    bot_id: string;\n    messages: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "Message$1",
+              "canonicalReference": "priori-chat-sdk!~Message$1:type"
+            },
+            {
+              "kind": "Content",
+              "text": ">;\n    user_id: string;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "GetConversationResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 6
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!GetMemoriesResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type GetMemoriesResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    bot_memories: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "MemoryResponse",
+              "canonicalReference": "priori-chat-sdk!MemoryResponse:type"
+            },
+            {
+              "kind": "Content",
+              "text": ">;\n    user_memories: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "MemoryResponse",
+              "canonicalReference": "priori-chat-sdk!MemoryResponse:type"
+            },
+            {
+              "kind": "Content",
+              "text": ">;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "GetMemoriesResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 10
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!ListBotsResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type ListBotsResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    bots: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "Bot",
+              "canonicalReference": "priori-chat-sdk!Bot:type"
+            },
+            {
+              "kind": "Content",
+              "text": ">;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ListBotsResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 6
+          }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "priori-chat-sdk!ListConversationsOptions:interface",
+          "docComment": "/**\n * Options for listing conversations\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "interface ListConversationsOptions extends "
+            },
+            {
+              "kind": "Reference",
+              "text": "NonNullable",
+              "canonicalReference": "!NonNullable:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "ListConversationsData",
+              "canonicalReference": "priori-chat-sdk!~ListConversationsData:type"
+            },
+            {
+              "kind": "Content",
+              "text": "['query']>"
+            },
+            {
+              "kind": "Content",
+              "text": " "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ListConversationsOptions",
+          "preserveMemberOrder": false,
+          "members": [],
+          "extendsTokenRanges": [
+            {
+              "startIndex": 1,
+              "endIndex": 5
+            }
+          ]
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!ListConversationsResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type ListConversationsResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    conversations: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Array",
+              "canonicalReference": "!Array:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "ConversationHeader",
+              "canonicalReference": "priori-chat-sdk!ConversationHeader:type"
+            },
+            {
+              "kind": "Content",
+              "text": ">;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "ListConversationsResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 6
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!MemoryResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type MemoryResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    text: string;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "MemoryResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "priori-chat-sdk!Message:interface",
+          "docComment": "/**\n * Represents a message in the conversation\n *\n * @example\n * ```ts\n * const userMessage: Message = {\n *   text: \"Hey there!\",\n *   from_bot: false,\n * };\n *\n * const botMessageWithMedia: Message = {\n *   text: \"Just sent you a pic (;\",\n *   from_bot: true,\n *   attached_media: { url: \"https://example.com/image.jpg\" },\n *   sent_at: Math.floor(new Date(\"Sat Jul 05 2025 16:20:05\") / 1000) // All dates in Priori API are represented as unix timestamps\n * };\n * ```\n *\n */\n",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "interface Message "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "Message",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!Message#attached_media:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "attached_media?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "AttachedMedia",
+                  "canonicalReference": "priori-chat-sdk!AttachedMedia:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "attached_media",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!Message#from_bot:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "from_bot: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "boolean"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "from_bot",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!Message#id:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "id?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!Message#sent_at:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "sent_at?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "number"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "sent_at",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "priori-chat-sdk!Message#text:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "text: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "text",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "Class",
+          "canonicalReference": "priori-chat-sdk!PrioriChat:class",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "declare class PrioriChat "
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "isAbstract": false,
+          "name": "PrioriChat",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "Constructor",
+              "canonicalReference": "priori-chat-sdk!PrioriChat:constructor(1)",
+              "docComment": "/**\n * Constructs a new instance of the `PrioriChat` class\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "constructor(api_token: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", baseURL?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ");"
+                }
+              ],
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "api_token",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "baseURL",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": true
+                }
+              ]
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#conversation:member(1)",
+              "docComment": "/**\n * Creates a new Conversation instance for real-time messaging\n *\n * @param options - Conversation initialization options (conversation_id OR user_id + bot_id)\n *\n * @param callbacks - Event callbacks for handling messages and errors\n *\n * @returns Promise resolving to conversation instance and initial data\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * const { conversation, initialData } = await client.conversation(\n *   { user_id: \"user-123\", bot_id: \"12345678-1234-1234-1234-123456789012\" },\n *   {\n *     onNewMessage: (message) => {\n *       if (message.from_bot) {\n *         console.log(`Bot: ${message.text}`);\n *       }\n *     },\n *     onError: (error) => {\n *       console.error(\"Conversation error:\", error);\n *     }\n *   }\n * );\n *\n * // Print initial message history\n * console.log(`Loaded ${initialData.messages.length} previous messages`);\n * initialData.messages.forEach(msg => {\n *   const sender = msg.from_bot ? \"Bot\" : \"User\";\n *   console.log(`${sender}: ${msg.text}`);\n * });\n *\n * // Send a message to start/continue the conversation\n * await conversation.sendMessage(\"Hello!\");\n *\n * // Continue the conversation by sending more messages\n * // The onNewMessage callback will handle incoming bot responses\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "conversation(options: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ConversationOptions",
+                  "canonicalReference": "priori-chat-sdk!ConversationOptions:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ", callbacks?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ConversationCallbacks",
+                  "canonicalReference": "priori-chat-sdk!ConversationCallbacks:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<{\n        conversation: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Conversation",
+                  "canonicalReference": "priori-chat-sdk!Conversation:class"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n        initialData: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GetConversationResponse",
+                  "canonicalReference": "priori-chat-sdk!GetConversationResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";\n    }>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 11
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                },
+                {
+                  "parameterName": "callbacks",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 3,
+                    "endIndex": 4
+                  },
+                  "isOptional": true
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "conversation"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#createBot:member(1)",
+              "docComment": "/**\n * Creates a new bot\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * const result = await client.createBot({\n *   name: \"My Assistant Bot\"\n * });\n *\n * console.log(`Created bot: ${result.bot.id}`);\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "createBot(options: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CreateBotRequest",
+                  "canonicalReference": "priori-chat-sdk!CreateBotRequest:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CreateBotResponse",
+                  "canonicalReference": "priori-chat-sdk!CreateBotResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "createBot"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#createConversation:member(1)",
+              "docComment": "/**\n * Creates a new conversation between a user and bot\n *\n * @param options - The conversation creation options\n *\n * @param  - options.bot_id - ID of the bot to associate with this conversation\n *\n * @param  - options.user_id - ID of the user to associate with this conversation\n *\n * @param  - options.create_user_if_not_exists - Whether to create the user if they don't exist (defaults to true)\n *\n * @param  - options.with_messages - Optional list of initial messages for the conversation\n *\n * @returns Promise resolving to the created conversation\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * const result = await client.createConversation({\n *   bot_id: \"12345678-1234-1234-1234-123456789012\",\n *   user_id: \"user-123\",\n *   create_user_if_not_exists: true\n * });\n *\n * console.log(`Created conversation: ${result.conversation.id}`);\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "createConversation(options: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CreateConversationOptions",
+                  "canonicalReference": "priori-chat-sdk!CreateConversationOptions:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "CreateConversationResponse",
+                  "canonicalReference": "priori-chat-sdk!CreateConversationResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "createConversation"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#deleteBot:member(1)",
+              "docComment": "/**\n * Deletes a bot\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * await client.deleteBot({\n *   bot_id: \"12345678-1234-1234-1234-123456789012\"\n * });\n *\n * console.log(\"Bot deleted successfully\");\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "deleteBot(options: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "DeleteBotData",
+                  "canonicalReference": "priori-chat-sdk!~DeleteBotData:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "['path']"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<void>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 4,
+                "endIndex": 6
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 3
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "deleteBot"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#getBot:member(1)",
+              "docComment": "/**\n * Retrieves a specific bot by ID\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * const result = await client.getBot({\n *   bot_id: \"12345678-1234-1234-1234-123456789012\"\n * });\n *\n * console.log(`Bot name: ${result.bot.name}`);\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getBot(options: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GetBotData",
+                  "canonicalReference": "priori-chat-sdk!~GetBotData:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "['path']"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GetBotResponse",
+                  "canonicalReference": "priori-chat-sdk!GetBotResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 4,
+                "endIndex": 8
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 3
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getBot"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#getConversation:member(1)",
+              "docComment": "/**\n * Retrieves a specific conversation by ID\n *\n * @param options - The conversation retrieval options\n *\n * @param  - options.id - The ID of the conversation to retrieve\n *\n * @returns Promise resolving to the conversation details\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * const conversation = await client.getConversation({\n *   id: \"87654321-4321-4321-4321-210987654321\"\n * });\n *\n * console.log(`Found ${conversation.messages.length} messages`);\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "getConversation(options: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GetConversationOptions",
+                  "canonicalReference": "priori-chat-sdk!GetConversationOptions:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "GetConversationResponse",
+                  "canonicalReference": "priori-chat-sdk!GetConversationResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "getConversation"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#listBots:member(1)",
+              "docComment": "/**\n * Lists all bots\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * const result = await client.listBots();\n * console.log(`Found ${result.bots.length} bots`);\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "listBots(): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ListBotsResponse",
+                  "canonicalReference": "priori-chat-sdk!ListBotsResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "listBots"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#listConversations:member(1)",
+              "docComment": "/**\n * Lists conversations with optional filtering\n *\n * @param options - Optional filtering options including bot_id, user_id, conversation_id, min_messages, max_messages, message_content, min_last_message_date, max_last_message_date\n *\n * @returns Promise resolving to list of conversations\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * // List all conversations\n * const allConversations = await client.listConversations();\n *\n * // List conversations for a specific user and bot\n * const userConversations = await client.listConversations({\n *   user_id: \"user-123\",\n *   bot_id: \"12345678-1234-1234-1234-123456789012\"\n * });\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "listConversations(options?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ListConversationsOptions",
+                  "canonicalReference": "priori-chat-sdk!ListConversationsOptions:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ListConversationsResponse",
+                  "canonicalReference": "priori-chat-sdk!ListConversationsResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 7
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": true
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "listConversations"
+            },
+            {
+              "kind": "Method",
+              "canonicalReference": "priori-chat-sdk!PrioriChat#updateBot:member(1)",
+              "docComment": "/**\n * Updates an existing bot\n *\n * @example\n * ```ts\n * const client = new PrioriChat(\"your-api-key\");\n *\n * const result = await client.updateBot({\n *   bot_id: \"12345678-1234-1234-1234-123456789012\",\n *   name: \"Updated Bot Name\"\n * });\n *\n * console.log(`Updated bot: ${result.bot.name}`);\n * ```\n *\n */\n",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "updateBot(options: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "UpdateBotData",
+                  "canonicalReference": "priori-chat-sdk!~UpdateBotData:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "['path'] & "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "UpdateBotData",
+                  "canonicalReference": "priori-chat-sdk!~UpdateBotData:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "['body']"
+                },
+                {
+                  "kind": "Content",
+                  "text": "): "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Promise",
+                  "canonicalReference": "!Promise:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<"
+                },
+                {
+                  "kind": "Reference",
+                  "text": "UpdateBotResponse",
+                  "canonicalReference": "priori-chat-sdk!UpdateBotResponse:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ">"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isStatic": false,
+              "returnTypeTokenRange": {
+                "startIndex": 6,
+                "endIndex": 10
+              },
+              "releaseTag": "Public",
+              "isProtected": false,
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "options",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 5
+                  },
+                  "isOptional": false
+                }
+              ],
+              "isOptional": false,
+              "isAbstract": false,
+              "name": "updateBot"
+            }
+          ],
+          "implementsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!SearchedMessage:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type SearchedMessage = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    from_bot: boolean;\n    match_end: number;\n    match_start: number;\n    message_text: string;\n    sent_at: number;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "SearchedMessage",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!UpdateBotRequest:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type UpdateBotRequest = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    name: string;\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "UpdateBotRequest",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "priori-chat-sdk!UpdateBotResponse:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type UpdateBotResponse = "
+            },
+            {
+              "kind": "Content",
+              "text": "{\n    bot: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Bot",
+              "canonicalReference": "priori-chat-sdk!Bot:type"
+            },
+            {
+              "kind": "Content",
+              "text": ";\n}"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "dist/index.d.ts",
+          "releaseTag": "Public",
+          "name": "UpdateBotResponse",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 4
+          }
+        }
+      ]
+    }
+  ]
+}

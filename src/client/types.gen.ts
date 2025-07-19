@@ -55,6 +55,7 @@ export type ConversationHeader = {
    * Total number of messages in this conversation
    */
   message_count: number;
+  searched_message?: SearchedMessage | null;
   /**
    * ID of the user associated with this conversation
    */
@@ -164,6 +165,29 @@ export type Message = {
    * The text content of the message
    */
   text: string;
+};
+
+export type SearchedMessage = {
+  /**
+   * Whether this message was sent by the bot
+   */
+  from_bot: boolean;
+  /**
+   * End index of the match within the message text
+   */
+  match_end: number;
+  /**
+   * Start index of the match within the message text
+   */
+  match_start: number;
+  /**
+   * The text content of the matched message
+   */
+  message_text: string;
+  /**
+   * Unix timestamp when the message was sent
+   */
+  sent_at: number;
 };
 
 export type SendMessageRequest = {
