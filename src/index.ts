@@ -24,6 +24,12 @@ export type {
   GetBotResponse,
   ListBotsResponse,
   UpdateBotRequest,
-  UpdateBotResponse
+  UpdateBotResponse,
+  CreateApiKeyRequest,
+  CreateApiKeyResponse,
+  ListApiKeysResponse,
+  DeactivateApiKeyData,
+  DeactivateApiKeyResponse,
+  ApiKeyInfo
 } from "./client/types.gen";
 

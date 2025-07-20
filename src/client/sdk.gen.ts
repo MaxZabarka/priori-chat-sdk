@@ -2,6 +2,15 @@
 
 import type { Options as ClientOptions, TDataShape, Client } from "./client";
 import type {
+  ListApiKeysData,
+  ListApiKeysResponses,
+  ListApiKeysErrors,
+  CreateApiKeyData,
+  CreateApiKeyResponses,
+  CreateApiKeyErrors,
+  DeactivateApiKeyData,
+  DeactivateApiKeyResponses,
+  DeactivateApiKeyErrors,
   ListBotsData,
   ListBotsResponses,
   ListBotsErrors,
@@ -50,6 +59,52 @@ export type Options<
    * used to access values that aren't defined as part of the SDK function.
    */
   meta?: Record<string, unknown>;
+};
+
+export const listApiKeys = <ThrowOnError extends boolean = true>(
+  options?: Options<ListApiKeysData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ListApiKeysResponses,
+    ListApiKeysErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/api-keys",
+    ...options,
+  });
+};
+
+export const createApiKey = <ThrowOnError extends boolean = true>(
+  options: Options<CreateApiKeyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    CreateApiKeyResponses,
+    CreateApiKeyErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/api-keys",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const deactivateApiKey = <ThrowOnError extends boolean = true>(
+  options: Options<DeactivateApiKeyData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    DeactivateApiKeyResponses,
+    DeactivateApiKeyErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/api-keys/{key_id}",
+    ...options,
+  });
 };
 
 export const listBots = <ThrowOnError extends boolean = true>(

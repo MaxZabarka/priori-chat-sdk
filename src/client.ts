@@ -1,6 +1,7 @@
 import { client } from "./client/client.gen.ts";
 import { createConversationImpl, listConversationsImpl, getConversationImpl } from "./methods/conversations";
 import { createBotImpl, listBotsImpl, getBotImpl, updateBotImpl, deleteBotImpl } from "./methods/bots";
+import { listApiKeysImpl, createApiKeyImpl, deactivateApiKeyImpl } from "./methods/apiKeys";
 import type {
   CreateConversationResponse,
   ListConversationsResponse,
@@ -12,7 +13,13 @@ import type {
   GetBotResponse,
   UpdateBotData,
   UpdateBotResponse,
-  DeleteBotData
+  DeleteBotData,
+  CreateApiKeyData,
+  CreateApiKeyResponse,
+  ListApiKeysResponse,
+  DeactivateApiKeyData,
+  DeactivateApiKeyResponse,
+  CreateApiKeyRequest
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -324,6 +331,55 @@ export class PrioriChat {
    */
   async deleteBot(options: DeleteBotData['path']): Promise<void> {
     return deleteBotImpl.call(this, options);
+  }
+
+  /**
+   * Lists all API keys
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.listApiKeys();
+   * console.log(`Found ${result.api_keys.length} API keys`);
+   * ```
+   */
+  async listApiKeys(): Promise<ListApiKeysResponse> {
+    return listApiKeysImpl.call(this);
+  }
+
+  /**
+   * Creates a new API key
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.createApiKey({
+   *   name: "My API Key"
+   * });
+   * 
+   * console.log(`Created API key: ${result.key_info.id}`);
+   * console.log(`API key: ${result.api_key}`);
+   * ```
+   */
+  async createApiKey(options: CreateApiKeyData['body']): Promise<CreateApiKeyResponse> {
+    return createApiKeyImpl.call(this, options);
+  }
+
+  /**
+   * Deactivates an API key
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.deactivateApiKey({
+   *   key_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * 
+   * console.log(result.message);
+   * ```
+   */
+  async deactivateApiKey(options: DeactivateApiKeyData['path']): Promise<DeactivateApiKeyResponse> {
+    return deactivateApiKeyImpl.call(this, options);
   }
 }
 

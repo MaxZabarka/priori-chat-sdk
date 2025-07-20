@@ -2,10 +2,10 @@ import { PrioriChat } from "../src";
 import * as readline from "readline";
 import { randomUUID } from "crypto";
 
-const BOT_ID = "fb5d58b8-745f-4f68-b3a7-680821c4988d";
+const BOT_ID = "cb7f780e-63a8-444e-b93f-96494ed13aae";
 const USER_TOKEN = "test";
 
-const client = new PrioriChat("demo-api-key", "http://localhost:3000");
+const client = new PrioriChat("sk_mydevelo_b522b8dc264049c64e83a791867b54d6", "http://localhost:3000");
 
 const rl = readline.createInterface({
   input: process.stdin,

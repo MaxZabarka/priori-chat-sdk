@@ -2,6 +2,17 @@
 
 import { z } from "zod";
 
+/**
+ * Represents an API key info (without the actual key)
+ */
+export const zApiKeyInfo = z.object({
+  created_at: z.string().datetime(),
+  id: z.string().uuid(),
+  is_active: z.boolean(),
+  key_prefix: z.string(),
+  name: z.string(),
+});
+
 export const zBot = z.object({
   id: z.string(),
   name: z.string(),
@@ -44,6 +55,15 @@ export const zConversationHeader = z.object({
   user_id: z.string(),
 });
 
+export const zCreateApiKeyRequest = z.object({
+  name: z.string(),
+});
+
+export const zCreateApiKeyResponse = z.object({
+  api_key: z.string(),
+  key_info: zApiKeyInfo,
+});
+
 export const zCreateBotRequest = z.object({
   name: z.string(),
 });
@@ -61,6 +81,10 @@ export const zCreateConversationRequest = z.object({
 
 export const zCreateConversationResponse = z.object({
   conversation: zConversation,
+});
+
+export const zDeactivateApiKeyResponse = z.object({
+  message: z.string(),
 });
 
 export const zGetBotResponse = z.object({
@@ -82,6 +106,10 @@ export const zGetMemoriesResponse = z.object({
   user_memories: z.array(zMemoryResponse),
 });
 
+export const zListApiKeysResponse = z.object({
+  api_keys: z.array(zApiKeyInfo),
+});
+
 export const zListBotsResponse = z.object({
   bots: z.array(zBot),
 });
@@ -101,6 +129,41 @@ export const zUpdateBotRequest = z.object({
 export const zUpdateBotResponse = z.object({
   bot: zBot,
 });
+
+export const zListApiKeysData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * API keys retrieved successfully
+ */
+export const zListApiKeysResponse2 = zListApiKeysResponse;
+
+export const zCreateApiKeyData = z.object({
+  body: zCreateApiKeyRequest,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * API key created successfully
+ */
+export const zCreateApiKeyResponse2 = zCreateApiKeyResponse;
+
+export const zDeactivateApiKeyData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    key_id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * API key deactivated successfully
+ */
+export const zDeactivateApiKeyResponse2 = zDeactivateApiKeyResponse;
 
 export const zListBotsData = z.object({
   body: z.never().optional(),
@@ -127,7 +190,7 @@ export const zCreateBotResponse2 = zCreateBotResponse;
 export const zDeleteBotData = z.object({
   body: z.never().optional(),
   path: z.object({
-    bot_id: z.string(),
+    bot_id: z.string().uuid(),
   }),
   query: z.never().optional(),
 });
@@ -140,7 +203,7 @@ export const zDeleteBotResponse = z.void();
 export const zGetBotData = z.object({
   body: z.never().optional(),
   path: z.object({
-    bot_id: z.string(),
+    bot_id: z.string().uuid(),
   }),
   query: z.never().optional(),
 });
@@ -153,7 +216,7 @@ export const zGetBotResponse2 = zGetBotResponse;
 export const zUpdateBotData = z.object({
   body: zUpdateBotRequest,
   path: z.object({
-    bot_id: z.string(),
+    bot_id: z.string().uuid(),
   }),
   query: z.never().optional(),
 });
