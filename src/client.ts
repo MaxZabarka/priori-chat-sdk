@@ -81,6 +81,7 @@ export class PrioriChat {
 
   setAuthHeader(authHeader: string) {
     this.authHeader = authHeader;
+    this.setupAuthInterceptor();
   }
 
   private setupAuthInterceptor() {

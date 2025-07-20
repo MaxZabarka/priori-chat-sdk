@@ -513,6 +513,7 @@ declare class PrioriChat {
     private client;
     private authHeader;
     constructor(api_token: string, baseURL?: string);
+    setAuthHeader(authHeader: string): void;
     private setupAuthInterceptor;
     private setupErrorInterceptor;
     /**

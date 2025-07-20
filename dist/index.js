@@ -924,6 +924,9 @@ var PrioriChat = class {
     this.setupAuthInterceptor();
     this.setupErrorInterceptor();
   }
+  setAuthHeader(authHeader) {
+    this.authHeader = authHeader;
+  }
   setupAuthInterceptor() {
     this.client.instance.interceptors.request.use((config) => {
       config.headers.set("Authorization", `Bearer ${this.authHeader}`);
