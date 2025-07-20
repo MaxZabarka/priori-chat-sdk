@@ -65,17 +65,25 @@ export interface CreateConversationOptions {
 
 export class PrioriChat {
   private client = client;
-  private apiToken: string;
+  private authHeader: string;
 
   constructor(api_token: string, baseURL?: string) {
-    this.apiToken = api_token;
+    this.authHeader = api_token;
 
     this.client.setConfig({
       baseURL: baseURL || "https://api.prioros.com/v3/",
       throwOnError: true,
     });
 
+    this.setupAuthInterceptor();
     this.setupErrorInterceptor();
+  }
+
+  private setupAuthInterceptor() {
+    this.client.instance.interceptors.request.use((config) => {
+      config.headers.set('Authorization', `Bearer ${this.authHeader}`);
+      return config;
+    });
   }
 
   private setupErrorInterceptor() {
