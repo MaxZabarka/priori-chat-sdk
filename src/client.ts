@@ -2,6 +2,7 @@ import { client } from "./client/client.gen.ts";
 import { createConversationImpl, listConversationsImpl, getConversationImpl } from "./methods/conversations";
 import { createBotImpl, listBotsImpl, getBotImpl, updateBotImpl, deleteBotImpl } from "./methods/bots";
 import { listApiKeysImpl, createApiKeyImpl, deactivateApiKeyImpl } from "./methods/apiKeys";
+import { listContentImpl, uploadContentImpl, deleteContentImpl } from "./methods/content";
 import type {
   CreateConversationResponse,
   ListConversationsResponse,
@@ -19,7 +20,13 @@ import type {
   ListApiKeysResponse,
   DeactivateApiKeyData,
   DeactivateApiKeyResponse,
-  CreateApiKeyRequest
+  CreateApiKeyRequest,
+  ListContentData,
+  ListContentResponse,
+  UploadContentData,
+  UploadContentResponse,
+  DeleteContentData,
+  DeleteContentResponse
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -380,6 +387,68 @@ export class PrioriChat {
    */
   async deactivateApiKey(options: DeactivateApiKeyData['path']): Promise<DeactivateApiKeyResponse> {
     return deactivateApiKeyImpl.call(this, options);
+  }
+
+  /**
+   * Lists content for a bot with optional filtering
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * // List all content for a bot
+   * const result = await client.listContent({
+   *   bot_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * 
+   * // List with search and filtering
+   * const filteredResult = await client.listContent({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   search: "vacation pics",
+   *   media_type: "image",
+   *   limit: 10
+   * });
+   * 
+   * console.log(`Found ${result.content.length} items`);
+   * ```
+   */
+  async listContent(options: ListContentData['query']): Promise<ListContentResponse> {
+    return listContentImpl.call(this, options);
+  }
+
+  /**
+   * Uploads content from an image URL to a bot
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.uploadContent({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   image_url: "https://example.com/image.jpg"
+   * });
+   * 
+   * console.log(`Uploaded content: ${result.content.content_id}`);
+   * console.log(`Content URL: ${result.content.url}`);
+   * ```
+   */
+  async uploadContent(options: UploadContentData['body']): Promise<UploadContentResponse> {
+    return uploadContentImpl.call(this, options);
+  }
+
+  /**
+   * Deletes content by ID
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.deleteContent({
+   *   content_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+   * });
+   * 
+   * console.log(result.message); // "Content deleted successfully"
+   * ```
+   */
+  async deleteContent(options: DeleteContentData['path']): Promise<DeleteContentResponse> {
+    return deleteContentImpl.call(this, options);
   }
 }
 

@@ -177,6 +177,99 @@ paths:
           description: Bot not found
         '500':
           description: Internal server error
+  /api/content:
+    get:
+      tags:
+      - content
+      operationId: list_content
+      parameters:
+      - name: bot_id
+        in: query
+        description: Bot identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: 'Maximum number of items to return (default: 30, max: 30)'
+        required: false
+        schema:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+      - name: search
+        in: query
+        description: Search query for semantic content search
+        required: false
+        schema:
+          type: string
+          nullable: true
+      - name: media_type
+        in: query
+        description: 'Media type filter: ''image'' or ''video'' (defaults to all types if not specified)'
+        required: false
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/MediaTypeFilter'
+          nullable: true
+      responses:
+        '200':
+          description: Content list retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListContentResponse'
+        '400':
+          description: Invalid query parameters
+        '404':
+          description: Bot not found
+        '500':
+          description: Internal server error
+    post:
+      tags:
+      - content
+      operationId: upload_content
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadContentRequest'
+        required: true
+      responses:
+        '200':
+          description: Content uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadContentResponse'
+        '400':
+          description: Invalid request - URL is not an image or bot not found
+        '500':
+          description: Internal server error
+  /api/content/{content_id}:
+    delete:
+      tags:
+      - content
+      operationId: delete_content
+      parameters:
+      - name: content_id
+        in: path
+        description: Content identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Content deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteContentResponse'
+        '404':
+          description: Content not found
+        '500':
+          description: Internal server error
   /api/conversations:
     get:
       tags:
@@ -370,6 +463,7 @@ components:
       properties:
         id:
           type: string
+          format: uuid
           description: Unique identifier for the bot
           example: 550e8400-e29b-41d4-a716-446655440000
         name:
@@ -383,19 +477,20 @@ components:
       type: object
       required:
       - url
-      - content_id
       properties:
         content_id:
           type: string
           description: Unique identifier for the content
           example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+          nullable: true
         url:
           type: string
+          format: uri
           description: URL to the attached media
           example: https://your-cdn/link-to-image.jpg
       example:
         content_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
-        url: https://s3.us-east-005.backblazeb2.com/clonetwin/image-123.jpg
+        url: https://s3.us-east-005.backblazeb2.com/priori-chat/image-123.jpg
     Conversation:
       type: object
       required:
@@ -405,6 +500,7 @@ components:
       properties:
         bot_id:
           type: string
+          format: uuid
           description: ID of the bot associated with this conversation
         id:
           type: string
@@ -424,11 +520,11 @@ components:
       required:
       - id
       - bot_id
-      - user_id
       - message_count
       properties:
         bot_id:
           type: string
+          format: uuid
           description: ID of the bot associated with this conversation
           example: 550e8400-e29b-41d4-a716-446655440000
         id:
@@ -453,6 +549,7 @@ components:
           type: string
           description: ID of the user associated with this conversation
           example: user_123
+          nullable: true
     CreateApiKeyRequest:
       type: object
       required:
@@ -502,6 +599,7 @@ components:
       properties:
         bot_id:
           type: string
+          format: uuid
           description: ID of the bot to associate with this conversation
           example: 550e8400-e29b-41d4-a716-446655440000
         create_user_if_not_exists:
@@ -546,6 +644,15 @@ components:
         message:
           type: string
           description: Success message
+    DeleteContentResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+          description: Success message
+          example: Content deleted successfully
     GetBotResponse:
       type: object
       required:
@@ -558,10 +665,10 @@ components:
       required:
       - messages
       - bot_id
-      - user_id
       properties:
         bot_id:
           type: string
+          format: uuid
           description: ID of the bot associated with this conversation
         messages:
           type: array
@@ -571,6 +678,7 @@ components:
         user_id:
           type: string
           description: ID of the user associated with this conversation
+          nullable: true
     GetMemoriesResponse:
       type: object
       required:
@@ -607,6 +715,42 @@ components:
           items:
             $ref: '#/components/schemas/Bot'
           description: List of all bots
+    ListContentQuery:
+      type: object
+      required:
+      - bot_id
+      properties:
+        bot_id:
+          type: string
+          format: uuid
+          description: ID of the bot to list content for
+          example: 550e8400-e29b-41d4-a716-446655440000
+        limit:
+          type: integer
+          format: int32
+          description: 'Maximum number of content items to return (default: 30, max: 30)'
+          example: 20
+          nullable: true
+          minimum: 0
+        media_type:
+          allOf:
+          - $ref: '#/components/schemas/MediaTypeFilter'
+          nullable: true
+        search:
+          type: string
+          description: Search query for semantic content search
+          example: cats playing in a garden
+          nullable: true
+    ListContentResponse:
+      type: object
+      required:
+      - content
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Content'
+          description: List of content items
     ListConversationsResponse:
       type: object
       required:
@@ -625,6 +769,11 @@ components:
           - attached_media: null
             from_bot: true
             text: Hello!
+    MediaTypeFilter:
+      type: string
+      enum:
+      - image
+      - video
     MemoryResponse:
       type: object
       required:
@@ -649,6 +798,7 @@ components:
           example: false
         id:
           type: string
+          format: uuid
           description: Unique identifier for the content
           nullable: true
         sent_at:
@@ -725,6 +875,31 @@ components:
       properties:
         bot:
           $ref: '#/components/schemas/Bot'
+    UploadContentRequest:
+      type: object
+      required:
+      - image_url
+      - bot_id
+      properties:
+        bot_id:
+          type: string
+          format: uuid
+          description: ID of the bot this content belongs to
+          example: 550e8400-e29b-41d4-a716-446655440000
+        image_url:
+          type: string
+          description: URL of the image to upload
+          example: https://example.com/image.jpg
+      example:
+        bot_id: 550e8400-e29b-41d4-a716-446655440000
+        image_url: https://example.com/image.jpg
+    UploadContentResponse:
+      type: object
+      required:
+      - content
+      properties:
+        content:
+          $ref: '#/components/schemas/Content'
 tags:
 - name: conversations
   description: Conversation management endpoints
@@ -734,3 +909,5 @@ tags:
   description: Bot management endpoints
 - name: api-keys
   description: API key management endpoints
+- name: content
+  description: Content management endpoints

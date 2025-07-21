@@ -26,7 +26,7 @@ export type Content = {
   /**
    * Unique identifier for the content
    */
-  content_id: string;
+  content_id?: string | null;
   /**
    * URL to the attached media
    */
@@ -70,7 +70,7 @@ export type ConversationHeader = {
   /**
    * ID of the user associated with this conversation
    */
-  user_id: string;
+  user_id?: string | null;
 };
 
 export type CreateApiKeyRequest = {
@@ -129,6 +129,13 @@ export type DeactivateApiKeyResponse = {
   message: string;
 };
 
+export type DeleteContentResponse = {
+  /**
+   * Success message
+   */
+  message: string;
+};
+
 export type GetBotResponse = {
   bot: Bot;
 };
@@ -145,7 +152,7 @@ export type GetConversationResponse = {
   /**
    * ID of the user associated with this conversation
    */
-  user_id: string;
+  user_id?: string | null;
 };
 
 export type GetMemoriesResponse = {
@@ -173,12 +180,37 @@ export type ListBotsResponse = {
   bots: Array<Bot>;
 };
 
+export type ListContentQuery = {
+  /**
+   * ID of the bot to list content for
+   */
+  bot_id: string;
+  /**
+   * Maximum number of content items to return (default: 30, max: 30)
+   */
+  limit?: number | null;
+  media_type?: MediaTypeFilter | null;
+  /**
+   * Search query for semantic content search
+   */
+  search?: string | null;
+};
+
+export type ListContentResponse = {
+  /**
+   * List of content items
+   */
+  content: Array<Content>;
+};
+
 export type ListConversationsResponse = {
   /**
    * List of conversations
    */
   conversations: Array<ConversationHeader>;
 };
+
+export type MediaTypeFilter = "image" | "video";
 
 export type MemoryResponse = {
   /**
@@ -243,6 +275,21 @@ export type UpdateBotRequest = {
 
 export type UpdateBotResponse = {
   bot: Bot;
+};
+
+export type UploadContentRequest = {
+  /**
+   * ID of the bot this content belongs to
+   */
+  bot_id: string;
+  /**
+   * URL of the image to upload
+   */
+  image_url: string;
+};
+
+export type UploadContentResponse = {
+  content: Content;
 };
 
 export type ListApiKeysData = {
@@ -487,6 +534,116 @@ export type UpdateBotResponses = {
 };
 
 export type UpdateBotResponse2 = UpdateBotResponses[keyof UpdateBotResponses];
+
+export type ListContentData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Bot identifier
+     */
+    bot_id: string;
+    /**
+     * Maximum number of items to return (default: 30, max: 30)
+     */
+    limit?: number | null;
+    /**
+     * Search query for semantic content search
+     */
+    search?: string | null;
+    /**
+     * Media type filter: 'image' or 'video' (defaults to all types if not specified)
+     */
+    media_type?: MediaTypeFilter | null;
+  };
+  url: "/api/content";
+};
+
+export type ListContentErrors = {
+  /**
+   * Invalid query parameters
+   */
+  400: unknown;
+  /**
+   * Bot not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type ListContentResponses = {
+  /**
+   * Content list retrieved successfully
+   */
+  200: ListContentResponse;
+};
+
+export type ListContentResponse2 =
+  ListContentResponses[keyof ListContentResponses];
+
+export type UploadContentData = {
+  body: UploadContentRequest;
+  path?: never;
+  query?: never;
+  url: "/api/content";
+};
+
+export type UploadContentErrors = {
+  /**
+   * Invalid request - URL is not an image or bot not found
+   */
+  400: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type UploadContentResponses = {
+  /**
+   * Content uploaded successfully
+   */
+  200: UploadContentResponse;
+};
+
+export type UploadContentResponse2 =
+  UploadContentResponses[keyof UploadContentResponses];
+
+export type DeleteContentData = {
+  body?: never;
+  path: {
+    /**
+     * Content identifier
+     */
+    content_id: string;
+  };
+  query?: never;
+  url: "/api/content/{content_id}";
+};
+
+export type DeleteContentErrors = {
+  /**
+   * Content not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type DeleteContentResponses = {
+  /**
+   * Content deleted successfully
+   */
+  200: DeleteContentResponse;
+};
+
+export type DeleteContentResponse2 =
+  DeleteContentResponses[keyof DeleteContentResponses];
 
 export type ListConversationsData = {
   body?: never;

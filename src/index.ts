@@ -30,6 +30,13 @@ export type {
   ListApiKeysResponse,
   DeactivateApiKeyData,
   DeactivateApiKeyResponse,
-  ApiKeyInfo
+  ApiKeyInfo,
+  Content,
+  ListContentQuery,
+  ListContentResponse,
+  UploadContentRequest,
+  UploadContentResponse,
+  DeleteContentResponse,
+  MediaTypeFilter
 } from "./client/types.gen";
 

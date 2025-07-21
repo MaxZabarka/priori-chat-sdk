@@ -507,6 +507,31 @@ var client = createClient(
 );
 
 // src/client/sdk.gen.ts
+var listApiKeys = (options) => {
+  return (options?.client ?? client).get({
+    responseType: "json",
+    url: "/api/api-keys",
+    ...options
+  });
+};
+var createApiKey = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/api-keys",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var deactivateApiKey = (options) => {
+  return (options.client ?? client).delete({
+    responseType: "json",
+    url: "/api/api-keys/{key_id}",
+    ...options
+  });
+};
 var listBots = (options) => {
   return (options?.client ?? client).get({
     responseType: "json",
@@ -651,6 +676,24 @@ async function deleteBotImpl(options) {
   await deleteBot({
     path: options
   });
+}
+
+// src/methods/apiKeys.ts
+async function listApiKeysImpl() {
+  const result = await listApiKeys();
+  return result.data;
+}
+async function createApiKeyImpl(options) {
+  const result = await createApiKey({
+    body: options
+  });
+  return result.data;
+}
+async function deactivateApiKeyImpl(options) {
+  const result = await deactivateApiKey({
+    path: options
+  });
+  return result.data;
 }
 
 // src/conversation.ts
@@ -1152,6 +1195,52 @@ var PrioriChat = class {
    */
   async deleteBot(options) {
     return deleteBotImpl.call(this, options);
+  }
+  /**
+   * Lists all API keys
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.listApiKeys();
+   * console.log(`Found ${result.api_keys.length} API keys`);
+   * ```
+   */
+  async listApiKeys() {
+    return listApiKeysImpl.call(this);
+  }
+  /**
+   * Creates a new API key
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.createApiKey({
+   *   name: "My API Key"
+   * });
+   * 
+   * console.log(`Created API key: ${result.key_info.id}`);
+   * console.log(`API key: ${result.api_key}`);
+   * ```
+   */
+  async createApiKey(options) {
+    return createApiKeyImpl.call(this, options);
+  }
+  /**
+   * Deactivates an API key
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.deactivateApiKey({
+   *   key_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * 
+   * console.log(result.message);
+   * ```
+   */
+  async deactivateApiKey(options) {
+    return deactivateApiKeyImpl.call(this, options);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

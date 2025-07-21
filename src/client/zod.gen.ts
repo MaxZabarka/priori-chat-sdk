@@ -14,25 +14,25 @@ export const zApiKeyInfo = z.object({
 });
 
 export const zBot = z.object({
-  id: z.string(),
+  id: z.string().uuid(),
   name: z.string(),
 });
 
 export const zContent = z.object({
-  content_id: z.string(),
-  url: z.string(),
+  content_id: z.union([z.string(), z.null()]).optional(),
+  url: z.string().url(),
 });
 
 export const zMessage = z.object({
   attached_media: z.union([zContent, z.null()]).optional(),
   from_bot: z.boolean(),
-  id: z.union([z.string(), z.null()]).optional(),
+  id: z.union([z.string().uuid(), z.null()]).optional(),
   sent_at: z.union([z.coerce.bigint(), z.null()]).optional(),
   text: z.string(),
 });
 
 export const zConversation = z.object({
-  bot_id: z.string(),
+  bot_id: z.string().uuid(),
   id: z.string(),
   messages: z.array(zMessage),
   user_id: z.union([z.string(), z.null()]).optional(),
@@ -47,12 +47,12 @@ export const zSearchedMessage = z.object({
 });
 
 export const zConversationHeader = z.object({
-  bot_id: z.string(),
+  bot_id: z.string().uuid(),
   id: z.string(),
   last_message: z.union([zMessage, z.null()]).optional(),
   message_count: z.number().int().gte(0),
   searched_message: z.union([zSearchedMessage, z.null()]).optional(),
-  user_id: z.string(),
+  user_id: z.union([z.string(), z.null()]).optional(),
 });
 
 export const zCreateApiKeyRequest = z.object({
@@ -73,7 +73,7 @@ export const zCreateBotResponse = z.object({
 });
 
 export const zCreateConversationRequest = z.object({
-  bot_id: z.string(),
+  bot_id: z.string().uuid(),
   create_user_if_not_exists: z.union([z.boolean(), z.null()]).optional(),
   user_id: z.string(),
   with_messages: z.union([z.array(zMessage), z.null()]).optional(),
@@ -87,14 +87,18 @@ export const zDeactivateApiKeyResponse = z.object({
   message: z.string(),
 });
 
+export const zDeleteContentResponse = z.object({
+  message: z.string(),
+});
+
 export const zGetBotResponse = z.object({
   bot: zBot,
 });
 
 export const zGetConversationResponse = z.object({
-  bot_id: z.string(),
+  bot_id: z.string().uuid(),
   messages: z.array(zMessage),
-  user_id: z.string(),
+  user_id: z.union([z.string(), z.null()]).optional(),
 });
 
 export const zMemoryResponse = z.object({
@@ -114,6 +118,19 @@ export const zListBotsResponse = z.object({
   bots: z.array(zBot),
 });
 
+export const zMediaTypeFilter = z.enum(["image", "video"]);
+
+export const zListContentQuery = z.object({
+  bot_id: z.string().uuid(),
+  limit: z.union([z.number().int().gte(0), z.null()]).optional(),
+  media_type: z.union([zMediaTypeFilter, z.null()]).optional(),
+  search: z.union([z.string(), z.null()]).optional(),
+});
+
+export const zListContentResponse = z.object({
+  content: z.array(zContent),
+});
+
 export const zListConversationsResponse = z.object({
   conversations: z.array(zConversationHeader),
 });
@@ -128,6 +145,15 @@ export const zUpdateBotRequest = z.object({
 
 export const zUpdateBotResponse = z.object({
   bot: zBot,
+});
+
+export const zUploadContentRequest = z.object({
+  bot_id: z.string().uuid(),
+  image_url: z.string(),
+});
+
+export const zUploadContentResponse = z.object({
+  content: zContent,
 });
 
 export const zListApiKeysData = z.object({
@@ -225,6 +251,46 @@ export const zUpdateBotData = z.object({
  * Bot updated successfully
  */
 export const zUpdateBotResponse2 = zUpdateBotResponse;
+
+export const zListContentData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    bot_id: z.string(),
+    limit: z.union([z.number().int().gte(0), z.null()]).optional(),
+    search: z.union([z.string(), z.null()]).optional(),
+    media_type: z.union([zMediaTypeFilter, z.null()]).optional(),
+  }),
+});
+
+/**
+ * Content list retrieved successfully
+ */
+export const zListContentResponse2 = zListContentResponse;
+
+export const zUploadContentData = z.object({
+  body: zUploadContentRequest,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * Content uploaded successfully
+ */
+export const zUploadContentResponse2 = zUploadContentResponse;
+
+export const zDeleteContentData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    content_id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Content deleted successfully
+ */
+export const zDeleteContentResponse2 = zDeleteContentResponse;
 
 export const zListConversationsData = z.object({
   body: z.never().optional(),

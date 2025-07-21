@@ -1,3 +1,13 @@
+/**
+ * Represents an API key info (without the actual key)
+ */
+type ApiKeyInfo = {
+    created_at: string;
+    id: string;
+    is_active: boolean;
+    key_prefix: string;
+    name: string;
+};
 type Bot = {
     /**
      * Unique identifier for the bot
@@ -56,6 +66,19 @@ type ConversationHeader = {
      */
     user_id: string;
 };
+type CreateApiKeyRequest = {
+    /**
+     * Name/description for the API key
+     */
+    name: string;
+};
+type CreateApiKeyResponse = {
+    /**
+     * The generated API key (only shown once)
+     */
+    api_key: string;
+    key_info: ApiKeyInfo;
+};
 type CreateBotRequest = {
     /**
      * Name of the bot
@@ -67,6 +90,12 @@ type CreateBotResponse = {
 };
 type CreateConversationResponse = {
     conversation: Conversation$1;
+};
+type DeactivateApiKeyResponse = {
+    /**
+     * Success message
+     */
+    message: string;
 };
 type GetBotResponse = {
     bot: Bot;
@@ -94,6 +123,12 @@ type GetMemoriesResponse = {
      * User memories for this conversation
      */
     user_memories: Array<MemoryResponse>;
+};
+type ListApiKeysResponse = {
+    /**
+     * List of API keys for the client
+     */
+    api_keys: Array<ApiKeyInfo>;
 };
 type ListBotsResponse = {
     /**
@@ -162,6 +197,23 @@ type UpdateBotRequest = {
 };
 type UpdateBotResponse = {
     bot: Bot;
+};
+type CreateApiKeyData = {
+    body: CreateApiKeyRequest;
+    path?: never;
+    query?: never;
+    url: "/api/api-keys";
+};
+type DeactivateApiKeyData = {
+    body?: never;
+    path: {
+        /**
+         * API key ID to deactivate
+         */
+        key_id: string;
+    };
+    query?: never;
+    url: "/api/api-keys/{key_id}";
 };
 type DeleteBotData = {
     body?: never;
@@ -683,6 +735,46 @@ declare class PrioriChat {
      * ```
      */
     deleteBot(options: DeleteBotData['path']): Promise<void>;
+    /**
+     * Lists all API keys
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.listApiKeys();
+     * console.log(`Found ${result.api_keys.length} API keys`);
+     * ```
+     */
+    listApiKeys(): Promise<ListApiKeysResponse>;
+    /**
+     * Creates a new API key
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.createApiKey({
+     *   name: "My API Key"
+     * });
+     *
+     * console.log(`Created API key: ${result.key_info.id}`);
+     * console.log(`API key: ${result.api_key}`);
+     * ```
+     */
+    createApiKey(options: CreateApiKeyData['body']): Promise<CreateApiKeyResponse>;
+    /**
+     * Deactivates an API key
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.deactivateApiKey({
+     *   key_id: "12345678-1234-1234-1234-123456789012"
+     * });
+     *
+     * console.log(result.message);
+     * ```
+     */
+    deactivateApiKey(options: DeactivateApiKeyData['path']): Promise<DeactivateApiKeyResponse>;
 }
 
-export { ApiError, type AttachedMedia, type Bot, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateBotRequest, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListBotsResponse, type ListConversationsOptions, type ListConversationsResponse, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse };
+export { ApiError, type ApiKeyInfo, type AttachedMedia, type Bot, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequest, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListConversationsOptions, type ListConversationsResponse, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse };

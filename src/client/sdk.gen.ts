@@ -26,6 +26,15 @@ import type {
   UpdateBotData,
   UpdateBotResponses,
   UpdateBotErrors,
+  ListContentData,
+  ListContentResponses,
+  ListContentErrors,
+  UploadContentData,
+  UploadContentResponses,
+  UploadContentErrors,
+  DeleteContentData,
+  DeleteContentResponses,
+  DeleteContentErrors,
   ListConversationsData,
   ListConversationsResponses,
   ListConversationsErrors,
@@ -181,6 +190,52 @@ export const updateBot = <ThrowOnError extends boolean = true>(
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+};
+
+export const listContent = <ThrowOnError extends boolean = true>(
+  options: Options<ListContentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ListContentResponses,
+    ListContentErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/content",
+    ...options,
+  });
+};
+
+export const uploadContent = <ThrowOnError extends boolean = true>(
+  options: Options<UploadContentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    UploadContentResponses,
+    UploadContentErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/content",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const deleteContent = <ThrowOnError extends boolean = true>(
+  options: Options<DeleteContentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    DeleteContentResponses,
+    DeleteContentErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/content/{content_id}",
+    ...options,
   });
 };
 
