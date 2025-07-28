@@ -22,7 +22,7 @@ type Content = {
     /**
      * Unique identifier for the content
      */
-    content_id: string;
+    content_id?: string | null;
     /**
      * URL to the attached media
      */
@@ -64,7 +64,7 @@ type ConversationHeader = {
     /**
      * ID of the user associated with this conversation
      */
-    user_id: string;
+    user_id?: string | null;
 };
 type CreateApiKeyRequest = {
     /**
@@ -97,6 +97,12 @@ type DeactivateApiKeyResponse = {
      */
     message: string;
 };
+type DeleteContentResponse = {
+    /**
+     * Success message
+     */
+    message: string;
+};
 type GetBotResponse = {
     bot: Bot;
 };
@@ -112,7 +118,7 @@ type GetConversationResponse = {
     /**
      * ID of the user associated with this conversation
      */
-    user_id: string;
+    user_id?: string | null;
 };
 type GetMemoriesResponse = {
     /**
@@ -136,12 +142,34 @@ type ListBotsResponse = {
      */
     bots: Array<Bot>;
 };
+type ListContentQuery = {
+    /**
+     * ID of the bot to list content for
+     */
+    bot_id: string;
+    /**
+     * Maximum number of content items to return (default: 30, max: 30)
+     */
+    limit?: number | null;
+    media_type?: MediaTypeFilter | null;
+    /**
+     * Search query for semantic content search
+     */
+    search?: string | null;
+};
+type ListContentResponse = {
+    /**
+     * List of content items
+     */
+    content: Array<Content>;
+};
 type ListConversationsResponse = {
     /**
      * List of conversations
      */
     conversations: Array<ConversationHeader>;
 };
+type MediaTypeFilter = "image" | "video";
 type MemoryResponse = {
     /**
      * Text content of the memory
@@ -198,6 +226,19 @@ type UpdateBotRequest = {
 type UpdateBotResponse = {
     bot: Bot;
 };
+type UploadContentRequest = {
+    /**
+     * ID of the bot this content belongs to
+     */
+    bot_id: string;
+    /**
+     * URL of the image to upload
+     */
+    image_url: string;
+};
+type UploadContentResponse = {
+    content: Content;
+};
 type CreateApiKeyData = {
     body: CreateApiKeyRequest;
     path?: never;
@@ -247,6 +288,46 @@ type UpdateBotData = {
     };
     query?: never;
     url: "/api/bots/{bot_id}";
+};
+type ListContentData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Bot identifier
+         */
+        bot_id: string;
+        /**
+         * Maximum number of items to return (default: 30, max: 30)
+         */
+        limit?: number | null;
+        /**
+         * Search query for semantic content search
+         */
+        search?: string | null;
+        /**
+         * Media type filter: 'image' or 'video' (defaults to all types if not specified)
+         */
+        media_type?: MediaTypeFilter | null;
+    };
+    url: "/api/content";
+};
+type UploadContentData = {
+    body: UploadContentRequest;
+    path?: never;
+    query?: never;
+    url: "/api/content";
+};
+type DeleteContentData = {
+    body?: never;
+    path: {
+        /**
+         * Content identifier
+         */
+        content_id: string;
+    };
+    query?: never;
+    url: "/api/content/{content_id}";
 };
 type ListConversationsData = {
     body?: never;
@@ -775,6 +856,59 @@ declare class PrioriChat {
      * ```
      */
     deactivateApiKey(options: DeactivateApiKeyData['path']): Promise<DeactivateApiKeyResponse>;
+    /**
+     * Lists content for a bot with optional filtering
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * // List all content for a bot
+     * const result = await client.listContent({
+     *   bot_id: "12345678-1234-1234-1234-123456789012"
+     * });
+     *
+     * // List with search and filtering
+     * const filteredResult = await client.listContent({
+     *   bot_id: "12345678-1234-1234-1234-123456789012",
+     *   search: "vacation pics",
+     *   media_type: "image",
+     *   limit: 10
+     * });
+     *
+     * console.log(`Found ${result.content.length} items`);
+     * ```
+     */
+    listContent(options: ListContentData['query']): Promise<ListContentResponse>;
+    /**
+     * Uploads content from an image URL to a bot
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.uploadContent({
+     *   bot_id: "12345678-1234-1234-1234-123456789012",
+     *   image_url: "https://example.com/image.jpg"
+     * });
+     *
+     * console.log(`Uploaded content: ${result.content.content_id}`);
+     * console.log(`Content URL: ${result.content.url}`);
+     * ```
+     */
+    uploadContent(options: UploadContentData['body']): Promise<UploadContentResponse>;
+    /**
+     * Deletes content by ID
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.deleteContent({
+     *   content_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+     * });
+     *
+     * console.log(result.message); // "Content deleted successfully"
+     * ```
+     */
+    deleteContent(options: DeleteContentData['path']): Promise<DeleteContentResponse>;
 }
 
-export { ApiError, type ApiKeyInfo, type AttachedMedia, type Bot, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequest, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListConversationsOptions, type ListConversationsResponse, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse };
+export { ApiError, type ApiKeyInfo, type AttachedMedia, type Bot, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequest, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse, type UploadContentRequest, type UploadContentResponse };

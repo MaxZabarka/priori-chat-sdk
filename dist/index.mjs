@@ -538,6 +538,31 @@ var updateBot = (options) => {
     }
   });
 };
+var listContent = (options) => {
+  return (options.client ?? client).get({
+    responseType: "json",
+    url: "/api/content",
+    ...options
+  });
+};
+var uploadContent = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/content",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var deleteContent = (options) => {
+  return (options.client ?? client).delete({
+    responseType: "json",
+    url: "/api/content/{content_id}",
+    ...options
+  });
+};
 var listConversations = (options) => {
   return (options?.client ?? client).get({
     responseType: "json",
@@ -655,6 +680,26 @@ async function createApiKeyImpl(options) {
 }
 async function deactivateApiKeyImpl(options) {
   const result = await deactivateApiKey({
+    path: options
+  });
+  return result.data;
+}
+
+// src/methods/content.ts
+async function listContentImpl(options) {
+  const result = await listContent({
+    query: options
+  });
+  return result.data;
+}
+async function uploadContentImpl(options) {
+  const result = await uploadContent({
+    body: options
+  });
+  return result.data;
+}
+async function deleteContentImpl(options) {
+  const result = await deleteContent({
     path: options
   });
   return result.data;
@@ -1205,6 +1250,65 @@ var PrioriChat = class {
    */
   async deactivateApiKey(options) {
     return deactivateApiKeyImpl.call(this, options);
+  }
+  /**
+   * Lists content for a bot with optional filtering
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * // List all content for a bot
+   * const result = await client.listContent({
+   *   bot_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   * 
+   * // List with search and filtering
+   * const filteredResult = await client.listContent({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   search: "vacation pics",
+   *   media_type: "image",
+   *   limit: 10
+   * });
+   * 
+   * console.log(`Found ${result.content.length} items`);
+   * ```
+   */
+  async listContent(options) {
+    return listContentImpl.call(this, options);
+  }
+  /**
+   * Uploads content from an image URL to a bot
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.uploadContent({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   image_url: "https://example.com/image.jpg"
+   * });
+   * 
+   * console.log(`Uploaded content: ${result.content.content_id}`);
+   * console.log(`Content URL: ${result.content.url}`);
+   * ```
+   */
+  async uploadContent(options) {
+    return uploadContentImpl.call(this, options);
+  }
+  /**
+   * Deletes content by ID
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   * 
+   * const result = await client.deleteContent({
+   *   content_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+   * });
+   * 
+   * console.log(result.message); // "Content deleted successfully"
+   * ```
+   */
+  async deleteContent(options) {
+    return deleteContentImpl.call(this, options);
   }
 };
 export {

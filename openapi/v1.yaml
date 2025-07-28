@@ -433,6 +433,40 @@ paths:
           description: Internal server error
 components:
   schemas:
+    APIModerationCategory:
+      type: string
+      enum:
+      - underage_site_use
+      - sexual_minors
+      - beastiality
+      - sexual_violence
+      - prompt_injection
+    APIModerationInfo:
+      type: object
+      required:
+      - category
+      - reasoning
+      - severity
+      properties:
+        category:
+          $ref: '#/components/schemas/APIModerationCategory'
+        reasoning:
+          type: string
+          description: Explanation of why this message was flagged
+          example: User explicitly stated they are 16 years old, which is under the required age of 18 for this site.
+        severity:
+          $ref: '#/components/schemas/APIModerationSeverity'
+      example:
+        category: underage_site_use
+        reasoning: User explicitly stated they are 16 years old, which is under the required age of 18 for this site.
+        severity: Critical
+    APIModerationSeverity:
+      type: string
+      enum:
+      - Low
+      - Medium
+      - High
+      - Critical
     ApiKeyInfo:
       type: object
       description: Represents an API key info (without the actual key)
@@ -739,7 +773,7 @@ components:
         search:
           type: string
           description: Search query for semantic content search
-          example: cats playing in a garden
+          example: hawaii vacation
           nullable: true
     ListContentResponse:
       type: object
@@ -800,6 +834,17 @@ components:
           type: string
           format: uuid
           description: Unique identifier for the content
+          nullable: true
+        message_tone:
+          type: string
+          description: |-
+            What tone was used to generate the message (useful only for debug or display in admin
+            panel. Does nothing as input parameter, only output)
+          example: Flirty
+          nullable: true
+        moderation:
+          allOf:
+          - $ref: '#/components/schemas/APIModerationInfo'
           nullable: true
         sent_at:
           type: integer
@@ -888,7 +933,7 @@ components:
           example: 550e8400-e29b-41d4-a716-446655440000
         image_url:
           type: string
-          description: URL of the image to upload
+          description: URL of the image to upload (can be a remote URL like https://example.com/image.jpg or a data URL like data:image/jpeg;base64,...)
           example: https://example.com/image.jpg
       example:
         bot_id: 550e8400-e29b-41d4-a716-446655440000

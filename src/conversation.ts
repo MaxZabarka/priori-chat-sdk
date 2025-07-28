@@ -1,6 +1,6 @@
 import { sendMessage, getMemories } from "./client/sdk.gen";
 import type { PrioriChat } from "./client";
-import type { GetConversationResponse, GetMemoriesResponse } from "./client/types.gen";
+import type { GetConversationResponse, GetMemoriesResponse, ApiModerationInfo } from "./client/types.gen";
 
 /**
  * Represents media content attached to a message
@@ -41,6 +41,7 @@ export interface Message {
   from_bot: boolean;
   attached_media?: AttachedMedia;
   sent_at?: number;
+  moderation?: ApiModerationInfo;
 }
 
 /**

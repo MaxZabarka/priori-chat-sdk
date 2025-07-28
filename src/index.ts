@@ -37,6 +37,9 @@ export type {
   UploadContentRequest,
   UploadContentResponse,
   DeleteContentResponse,
-  MediaTypeFilter
+  MediaTypeFilter,
+  ApiModerationInfo,
+  ApiModerationCategory,
+  ApiModerationSeverity
 } from "./client/types.gen";
 

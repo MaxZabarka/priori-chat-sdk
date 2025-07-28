@@ -2,6 +2,27 @@
 
 import { z } from "zod";
 
+export const zApiModerationCategory = z.enum([
+  "underage_site_use",
+  "sexual_minors",
+  "beastiality",
+  "sexual_violence",
+  "prompt_injection",
+]);
+
+export const zApiModerationSeverity = z.enum([
+  "Low",
+  "Medium",
+  "High",
+  "Critical",
+]);
+
+export const zApiModerationInfo = z.object({
+  category: zApiModerationCategory,
+  reasoning: z.string(),
+  severity: zApiModerationSeverity,
+});
+
 /**
  * Represents an API key info (without the actual key)
  */
@@ -27,6 +48,8 @@ export const zMessage = z.object({
   attached_media: z.union([zContent, z.null()]).optional(),
   from_bot: z.boolean(),
   id: z.union([z.string().uuid(), z.null()]).optional(),
+  message_tone: z.union([z.string(), z.null()]).optional(),
+  moderation: z.union([zApiModerationInfo, z.null()]).optional(),
   sent_at: z.union([z.coerce.bigint(), z.null()]).optional(),
   text: z.string(),
 });
