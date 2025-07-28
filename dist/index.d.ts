@@ -1,3 +1,13 @@
+type ApiModerationCategory = "underage_site_use" | "sexual_minors" | "beastiality" | "sexual_violence" | "prompt_injection";
+type ApiModerationInfo = {
+    category: ApiModerationCategory;
+    /**
+     * Explanation of why this message was flagged
+     */
+    reasoning: string;
+    severity: ApiModerationSeverity;
+};
+type ApiModerationSeverity = "Low" | "Medium" | "High" | "Critical";
 /**
  * Represents an API key info (without the actual key)
  */
@@ -187,6 +197,12 @@ type Message$1 = {
      */
     id?: string | null;
     /**
+     * What tone was used to generate the message (useful only for debug or display in admin
+     * panel. Does nothing as input parameter, only output)
+     */
+    message_tone?: string | null;
+    moderation?: ApiModerationInfo | null;
+    /**
      * Unix timestamp when the message was sent
      */
     sent_at?: number | null;
@@ -232,7 +248,7 @@ type UploadContentRequest = {
      */
     bot_id: string;
     /**
-     * URL of the image to upload
+     * URL of the image to upload (can be a remote URL like https://example.com/image.jpg or a data URL like data:image/jpeg;base64,...)
      */
     image_url: string;
 };
@@ -419,6 +435,7 @@ interface Message {
     from_bot: boolean;
     attached_media?: AttachedMedia;
     sent_at?: number;
+    moderation?: ApiModerationInfo;
 }
 /**
  * Configuration for retrieving a conversation by its unique ID
@@ -911,4 +928,4 @@ declare class PrioriChat {
     deleteContent(options: DeleteContentData['path']): Promise<DeleteContentResponse>;
 }
 
-export { ApiError, type ApiKeyInfo, type AttachedMedia, type Bot, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequest, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse, type UploadContentRequest, type UploadContentResponse };
+export { ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequest, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse, type UploadContentRequest, type UploadContentResponse };

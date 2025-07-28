@@ -42,6 +42,7 @@ export interface Message {
   attached_media?: AttachedMedia;
   sent_at?: number;
   moderation?: ApiModerationInfo;
+  message_tone?: string;
 }
 
 /**
@@ -271,7 +272,10 @@ export class Conversation {
                 text: apiMessage.text,
                 from_bot: apiMessage.from_bot,
                 attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : undefined,
-                sent_at: Math.floor(Date.now() / 1000)
+                sent_at: Math.floor(Date.now() / 1000),
+                moderation: apiMessage.moderation || undefined,
+                message_tone: apiMessage.message_tone || undefined
+
               };
               this.callbacks.onNewMessage!(message);
             });
