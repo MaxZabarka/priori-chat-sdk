@@ -41,6 +41,9 @@ import type {
   CreateConversationData,
   CreateConversationResponses,
   CreateConversationErrors,
+  UpdateConversationData,
+  UpdateConversationResponses,
+  UpdateConversationErrors,
   GetConversationData,
   GetConversationResponses,
   GetConversationErrors,
@@ -263,6 +266,24 @@ export const createConversation = <ThrowOnError extends boolean = true>(
   >({
     responseType: "json",
     url: "/api/conversations",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const updateConversation = <ThrowOnError extends boolean = true>(
+  options: Options<UpdateConversationData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    UpdateConversationResponses,
+    UpdateConversationErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/conversations/{conversation_id}",
     ...options,
     headers: {
       "Content-Type": "application/json",

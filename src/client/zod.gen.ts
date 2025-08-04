@@ -2,6 +2,11 @@
 
 import { z } from "zod";
 
+export const zApiAttribute = z.object({
+  name: z.string(),
+  value: z.string(),
+});
+
 export const zApiModerationCategory = z.enum([
   "underage_site_use",
   "sexual_minors",
@@ -35,6 +40,8 @@ export const zApiKeyInfo = z.object({
 });
 
 export const zBot = z.object({
+  attributes: z.array(zApiAttribute),
+  freeform: z.string(),
   id: z.string().uuid(),
   name: z.string(),
 });
@@ -88,6 +95,8 @@ export const zCreateApiKeyResponse = z.object({
 });
 
 export const zCreateBotRequest = z.object({
+  attributes: z.array(zApiAttribute).optional(),
+  freeform: z.union([z.string(), z.null()]).optional(),
   name: z.string(),
 });
 
@@ -99,6 +108,7 @@ export const zCreateConversationRequest = z.object({
   bot_id: z.string().uuid(),
   create_user_if_not_exists: z.union([z.boolean(), z.null()]).optional(),
   user_id: z.string(),
+  webhook: z.union([z.string().url(), z.null()]).optional(),
   with_messages: z.union([z.array(zMessage), z.null()]).optional(),
 });
 
@@ -163,11 +173,21 @@ export const zSendMessageRequest = z.object({
 });
 
 export const zUpdateBotRequest = z.object({
-  name: z.string(),
+  attributes: z.array(zApiAttribute).optional(),
+  freeform: z.union([z.string(), z.null()]).optional(),
+  name: z.union([z.string(), z.null()]).optional(),
 });
 
 export const zUpdateBotResponse = z.object({
   bot: zBot,
+});
+
+export const zUpdateConversationRequestBody = z.object({
+  webhook: z.union([z.string().url(), z.null()]).optional(),
+});
+
+export const zUpdateConversationResponse = z.object({
+  success: z.boolean(),
 });
 
 export const zUploadContentRequest = z.object({
@@ -347,6 +367,19 @@ export const zCreateConversationData = z.object({
  * Conversation created successfully
  */
 export const zCreateConversationResponse2 = zCreateConversationResponse;
+
+export const zUpdateConversationData = z.object({
+  body: zUpdateConversationRequestBody,
+  path: z.object({
+    conversation_id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Conversation updated successfully
+ */
+export const zUpdateConversationResponse2 = zUpdateConversationResponse;
 
 export const zGetConversationData = z.object({
   body: z.never().optional(),

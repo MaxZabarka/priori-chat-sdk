@@ -40,6 +40,7 @@ export type {
   MediaTypeFilter,
   ApiModerationInfo,
   ApiModerationCategory,
-  ApiModerationSeverity
+  ApiModerationSeverity,
+  ApiAttribute
 } from "./client/types.gen";
 
