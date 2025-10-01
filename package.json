@@ -1,6 +1,6 @@
 {
   "name": "priori-chat-sdk",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "TypeScript SDK for Priori Chat API",
   "main": "src/index.ts",
   "module": "dist/index.mjs",
