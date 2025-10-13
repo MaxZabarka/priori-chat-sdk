@@ -1,3 +1,13 @@
+type ApiAttribute = {
+    /**
+     * Name of the attribute
+     */
+    name: string;
+    /**
+     * Value of the attribute
+     */
+    value: string;
+};
 type ApiModerationCategory = "underage_site_use" | "sexual_minors" | "beastiality" | "sexual_violence" | "prompt_injection";
 type ApiModerationInfo = {
     category: ApiModerationCategory;
@@ -19,6 +29,14 @@ type ApiKeyInfo = {
     name: string;
 };
 type Bot = {
+    /**
+     * List of bot attributes
+     */
+    attributes: Array<ApiAttribute>;
+    /**
+     * Freeform text description
+     */
+    freeform: string;
     /**
      * Unique identifier for the bot
      */
@@ -89,7 +107,15 @@ type CreateApiKeyResponse = {
     api_key: string;
     key_info: ApiKeyInfo;
 };
-type CreateBotRequest = {
+type CreateBotRequestBody = {
+    /**
+     * List of bot attributes
+     */
+    attributes?: Array<ApiAttribute>;
+    /**
+     * Freeform text description
+     */
+    freeform?: string | null;
     /**
      * Name of the bot
      */
@@ -126,9 +152,17 @@ type GetConversationResponse = {
      */
     messages: Array<Message$1>;
     /**
+     * Whether to have the bot capable of responding in multiple messages (more realistic)
+     */
+    segment?: boolean | null;
+    /**
      * ID of the user associated with this conversation
      */
     user_id?: string | null;
+    /**
+     * Optional webhook URL to call when messages are received in this conversation
+     */
+    webhook?: string | null;
 };
 type GetMemoriesResponse = {
     /**
@@ -235,9 +269,17 @@ type SearchedMessage = {
 };
 type UpdateBotRequest = {
     /**
-     * New name of the bot
+     * List of bot attributes
      */
-    name: string;
+    attributes?: Array<ApiAttribute>;
+    /**
+     * Freeform text description
+     */
+    freeform?: string | null;
+    /**
+     * Name of the bot
+     */
+    name?: string | null;
 };
 type UpdateBotResponse = {
     bot: Bot;
@@ -436,6 +478,7 @@ interface Message {
     attached_media?: AttachedMedia;
     sent_at?: number;
     moderation?: ApiModerationInfo;
+    message_tone?: string;
 }
 /**
  * Configuration for retrieving a conversation by its unique ID
@@ -778,7 +821,7 @@ declare class PrioriChat {
      * console.log(`Created bot: ${result.bot.id}`);
      * ```
      */
-    createBot(options: CreateBotRequest): Promise<CreateBotResponse>;
+    createBot(options: CreateBotRequestBody): Promise<CreateBotResponse>;
     /**
      * Lists all bots
      * @example
@@ -803,7 +846,7 @@ declare class PrioriChat {
      * console.log(`Bot name: ${result.bot.name}`);
      * ```
      */
-    getBot(options: GetBotData['path']): Promise<GetBotResponse>;
+    getBot(options: GetBotData["path"]): Promise<GetBotResponse>;
     /**
      * Updates an existing bot
      * @example
@@ -818,7 +861,7 @@ declare class PrioriChat {
      * console.log(`Updated bot: ${result.bot.name}`);
      * ```
      */
-    updateBot(options: UpdateBotData['path'] & UpdateBotData['body']): Promise<UpdateBotResponse>;
+    updateBot(options: UpdateBotData["path"] & UpdateBotData["body"]): Promise<UpdateBotResponse>;
     /**
      * Deletes a bot
      * @example
@@ -832,7 +875,7 @@ declare class PrioriChat {
      * console.log("Bot deleted successfully");
      * ```
      */
-    deleteBot(options: DeleteBotData['path']): Promise<void>;
+    deleteBot(options: DeleteBotData["path"]): Promise<void>;
     /**
      * Lists all API keys
      * @example
@@ -858,7 +901,7 @@ declare class PrioriChat {
      * console.log(`API key: ${result.api_key}`);
      * ```
      */
-    createApiKey(options: CreateApiKeyData['body']): Promise<CreateApiKeyResponse>;
+    createApiKey(options: CreateApiKeyData["body"]): Promise<CreateApiKeyResponse>;
     /**
      * Deactivates an API key
      * @example
@@ -872,7 +915,7 @@ declare class PrioriChat {
      * console.log(result.message);
      * ```
      */
-    deactivateApiKey(options: DeactivateApiKeyData['path']): Promise<DeactivateApiKeyResponse>;
+    deactivateApiKey(options: DeactivateApiKeyData["path"]): Promise<DeactivateApiKeyResponse>;
     /**
      * Lists content for a bot with optional filtering
      * @example
@@ -895,7 +938,7 @@ declare class PrioriChat {
      * console.log(`Found ${result.content.length} items`);
      * ```
      */
-    listContent(options: ListContentData['query']): Promise<ListContentResponse>;
+    listContent(options: ListContentData["query"]): Promise<ListContentResponse>;
     /**
      * Uploads content from an image URL to a bot
      * @example
@@ -911,7 +954,7 @@ declare class PrioriChat {
      * console.log(`Content URL: ${result.content.url}`);
      * ```
      */
-    uploadContent(options: UploadContentData['body']): Promise<UploadContentResponse>;
+    uploadContent(options: UploadContentData["body"]): Promise<UploadContentResponse>;
     /**
      * Deletes content by ID
      * @example
@@ -925,7 +968,7 @@ declare class PrioriChat {
      * console.log(result.message); // "Content deleted successfully"
      * ```
      */
-    deleteContent(options: DeleteContentData['path']): Promise<DeleteContentResponse>;
+    deleteContent(options: DeleteContentData["path"]): Promise<DeleteContentResponse>;
 }
 
-export { ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequest, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse, type UploadContentRequest, type UploadContentResponse };
+export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse, type UploadContentRequest, type UploadContentResponse };

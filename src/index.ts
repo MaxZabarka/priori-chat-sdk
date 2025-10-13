@@ -8,7 +8,10 @@ export {
   type ConversationWithId,
   type ConversationWithUserBot,
 } from "./conversation";
-export { type ListConversationsOptions, type GetConversationOptions } from "./methods/conversations";
+export {
+  type ListConversationsOptions,
+  type GetConversationOptions,
+} from "./methods/conversations";
 export type {
   CreateConversationResponse,
   GetConversationResponse,
@@ -19,7 +22,7 @@ export type {
   Conversation as ConversationType,
   SearchedMessage,
   Bot,
-  CreateBotRequest,
+  CreateBotRequestBody,
   CreateBotResponse,
   GetBotResponse,
   ListBotsResponse,
@@ -41,6 +44,5 @@ export type {
   ApiModerationInfo,
   ApiModerationCategory,
   ApiModerationSeverity,
-  ApiAttribute
+  ApiAttribute,
 } from "./client/types.gen";
-

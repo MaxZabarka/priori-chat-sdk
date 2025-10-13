@@ -1,13 +1,31 @@
 import { client } from "./client/client.gen.ts";
-import { createConversationImpl, listConversationsImpl, getConversationImpl } from "./methods/conversations";
-import { createBotImpl, listBotsImpl, getBotImpl, updateBotImpl, deleteBotImpl } from "./methods/bots";
-import { listApiKeysImpl, createApiKeyImpl, deactivateApiKeyImpl } from "./methods/apiKeys";
-import { listContentImpl, uploadContentImpl, deleteContentImpl } from "./methods/content";
+import {
+  createConversationImpl,
+  listConversationsImpl,
+  getConversationImpl,
+} from "./methods/conversations";
+import {
+  createBotImpl,
+  listBotsImpl,
+  getBotImpl,
+  updateBotImpl,
+  deleteBotImpl,
+} from "./methods/bots";
+import {
+  listApiKeysImpl,
+  createApiKeyImpl,
+  deactivateApiKeyImpl,
+} from "./methods/apiKeys";
+import {
+  listContentImpl,
+  uploadContentImpl,
+  deleteContentImpl,
+} from "./methods/content";
 import type {
   CreateConversationResponse,
   ListConversationsResponse,
   GetConversationResponse,
-  CreateBotRequest,
+  CreateBotRequestBody,
   CreateBotResponse,
   ListBotsResponse,
   GetBotData,
@@ -26,16 +44,21 @@ import type {
   UploadContentData,
   UploadContentResponse,
   DeleteContentData,
-  DeleteContentResponse
+  DeleteContentResponse,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
-  GetConversationOptions
+  GetConversationOptions,
 } from "./methods/conversations";
-import { Conversation, type ConversationOptions, type ConversationCallbacks, type AttachedMedia } from "./conversation";
+import {
+  Conversation,
+  type ConversationOptions,
+  type ConversationCallbacks,
+  type AttachedMedia,
+} from "./conversation";
 
 export class ApiError extends Error {
-  name = 'ApiError';
+  name = "ApiError";
   status?: number;
   method?: string;
   url?: string;
@@ -100,14 +123,14 @@ export class PrioriChat {
 
   private setupAuthInterceptor() {
     this.client.instance.interceptors.request.use((config) => {
-      config.headers.set('Authorization', `Bearer ${this.authHeader}`);
+      config.headers.set("Authorization", `Bearer ${this.authHeader}`);
       return config;
     });
   }
 
   private setupErrorInterceptor() {
     this.client.instance.interceptors.response.use(
-      response => response,
+      (response) => response,
       (error) => {
         const res = error.response;
         const req = res?.config;
@@ -117,8 +140,10 @@ export class PrioriChat {
         const method = req?.method?.toUpperCase();
         const url = req?.url;
 
-        const hasJsonBody = res?.headers?.['content-type']?.includes('application/json');
-        const hasMessageField = data && typeof data === 'object' && 'message' in data;
+        const hasJsonBody =
+          res?.headers?.["content-type"]?.includes("application/json");
+        const hasMessageField =
+          data && typeof data === "object" && "message" in data;
 
         if (hasJsonBody && hasMessageField) {
           throw new ApiError({
@@ -135,7 +160,7 @@ export class PrioriChat {
         if (method && url) parts.push(`${method} ${url}`);
         if (data?.error) parts.push(`? ${String(data.error)}`);
 
-        error.message = parts.join(' ') || error.message;
+        error.message = parts.join(" ") || error.message;
         error.meta = {
           status,
           method,
@@ -145,7 +170,7 @@ export class PrioriChat {
         };
 
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -160,17 +185,19 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.createConversation({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
    *   user_id: "user-123",
    *   create_user_if_not_exists: true
    * });
-   * 
+   *
    * console.log(`Created conversation: ${result.conversation.id}`);
    * ```
    */
-  async createConversation(options: CreateConversationOptions): Promise<CreateConversationResponse> {
+  async createConversation(
+    options: CreateConversationOptions,
+  ): Promise<CreateConversationResponse> {
     return createConversationImpl.call(this, options);
   }
 
@@ -181,10 +208,10 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * // List all conversations
    * const allConversations = await client.listConversations();
-   * 
+   *
    * // List conversations for a specific user and bot
    * const userConversations = await client.listConversations({
    *   user_id: "user-123",
@@ -192,7 +219,9 @@ export class PrioriChat {
    * });
    * ```
    */
-  async listConversations(options?: ListConversationsOptions): Promise<ListConversationsResponse> {
+  async listConversations(
+    options?: ListConversationsOptions,
+  ): Promise<ListConversationsResponse> {
     return listConversationsImpl.call(this, options);
   }
 
@@ -204,15 +233,17 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const conversation = await client.getConversation({
    *   id: "87654321-4321-4321-4321-210987654321"
    * });
-   * 
+   *
    * console.log(`Found ${conversation.messages.length} messages`);
    * ```
    */
-  async getConversation(options: GetConversationOptions): Promise<GetConversationResponse> {
+  async getConversation(
+    options: GetConversationOptions,
+  ): Promise<GetConversationResponse> {
     return getConversationImpl.call(this, options);
   }
 
@@ -224,7 +255,7 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const { conversation, initialData } = await client.conversation(
    *   { user_id: "user-123", bot_id: "12345678-1234-1234-1234-123456789012" },
    *   {
@@ -238,22 +269,28 @@ export class PrioriChat {
    *     }
    *   }
    * );
-   * 
+   *
    * // Print initial message history
    * console.log(`Loaded ${initialData.messages.length} previous messages`);
    * initialData.messages.forEach(msg => {
    *   const sender = msg.from_bot ? "Bot" : "User";
    *   console.log(`${sender}: ${msg.text}`);
    * });
-   * 
+   *
    * // Send a message to start/continue the conversation
    * await conversation.sendMessage("Hello!");
-   * 
+   *
    * // Continue the conversation by sending more messages
    * // The onNewMessage callback will handle incoming bot responses
    * ```
    */
-  async conversation(options: ConversationOptions, callbacks?: ConversationCallbacks): Promise<{ conversation: Conversation; initialData: GetConversationResponse }> {
+  async conversation(
+    options: ConversationOptions,
+    callbacks?: ConversationCallbacks,
+  ): Promise<{
+    conversation: Conversation;
+    initialData: GetConversationResponse;
+  }> {
     return Conversation.create(this, options, callbacks);
   }
 
@@ -262,15 +299,15 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.createBot({
    *   name: "My Assistant Bot"
    * });
-   * 
+   *
    * console.log(`Created bot: ${result.bot.id}`);
    * ```
    */
-  async createBot(options: CreateBotRequest): Promise<CreateBotResponse> {
+  async createBot(options: CreateBotRequestBody): Promise<CreateBotResponse> {
     return createBotImpl.call(this, options);
   }
 
@@ -279,7 +316,7 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.listBots();
    * console.log(`Found ${result.bots.length} bots`);
    * ```
@@ -293,15 +330,15 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.getBot({
    *   bot_id: "12345678-1234-1234-1234-123456789012"
    * });
-   * 
+   *
    * console.log(`Bot name: ${result.bot.name}`);
    * ```
    */
-  async getBot(options: GetBotData['path']): Promise<GetBotResponse> {
+  async getBot(options: GetBotData["path"]): Promise<GetBotResponse> {
     return getBotImpl.call(this, options);
   }
 
@@ -310,16 +347,18 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.updateBot({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
    *   name: "Updated Bot Name"
    * });
-   * 
+   *
    * console.log(`Updated bot: ${result.bot.name}`);
    * ```
    */
-  async updateBot(options: UpdateBotData['path'] & UpdateBotData['body']): Promise<UpdateBotResponse> {
+  async updateBot(
+    options: UpdateBotData["path"] & UpdateBotData["body"],
+  ): Promise<UpdateBotResponse> {
     return updateBotImpl.call(this, options);
   }
 
@@ -328,15 +367,15 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * await client.deleteBot({
    *   bot_id: "12345678-1234-1234-1234-123456789012"
    * });
-   * 
+   *
    * console.log("Bot deleted successfully");
    * ```
    */
-  async deleteBot(options: DeleteBotData['path']): Promise<void> {
+  async deleteBot(options: DeleteBotData["path"]): Promise<void> {
     return deleteBotImpl.call(this, options);
   }
 
@@ -345,7 +384,7 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.listApiKeys();
    * console.log(`Found ${result.api_keys.length} API keys`);
    * ```
@@ -359,16 +398,18 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.createApiKey({
    *   name: "My API Key"
    * });
-   * 
+   *
    * console.log(`Created API key: ${result.key_info.id}`);
    * console.log(`API key: ${result.api_key}`);
    * ```
    */
-  async createApiKey(options: CreateApiKeyData['body']): Promise<CreateApiKeyResponse> {
+  async createApiKey(
+    options: CreateApiKeyData["body"],
+  ): Promise<CreateApiKeyResponse> {
     return createApiKeyImpl.call(this, options);
   }
 
@@ -377,15 +418,17 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.deactivateApiKey({
    *   key_id: "12345678-1234-1234-1234-123456789012"
    * });
-   * 
+   *
    * console.log(result.message);
    * ```
    */
-  async deactivateApiKey(options: DeactivateApiKeyData['path']): Promise<DeactivateApiKeyResponse> {
+  async deactivateApiKey(
+    options: DeactivateApiKeyData["path"],
+  ): Promise<DeactivateApiKeyResponse> {
     return deactivateApiKeyImpl.call(this, options);
   }
 
@@ -394,12 +437,12 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * // List all content for a bot
    * const result = await client.listContent({
    *   bot_id: "12345678-1234-1234-1234-123456789012"
    * });
-   * 
+   *
    * // List with search and filtering
    * const filteredResult = await client.listContent({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
@@ -407,11 +450,13 @@ export class PrioriChat {
    *   media_type: "image",
    *   limit: 10
    * });
-   * 
+   *
    * console.log(`Found ${result.content.length} items`);
    * ```
    */
-  async listContent(options: ListContentData['query']): Promise<ListContentResponse> {
+  async listContent(
+    options: ListContentData["query"],
+  ): Promise<ListContentResponse> {
     return listContentImpl.call(this, options);
   }
 
@@ -420,17 +465,19 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.uploadContent({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
    *   image_url: "https://example.com/image.jpg"
    * });
-   * 
+   *
    * console.log(`Uploaded content: ${result.content.content_id}`);
    * console.log(`Content URL: ${result.content.url}`);
    * ```
    */
-  async uploadContent(options: UploadContentData['body']): Promise<UploadContentResponse> {
+  async uploadContent(
+    options: UploadContentData["body"],
+  ): Promise<UploadContentResponse> {
     return uploadContentImpl.call(this, options);
   }
 
@@ -439,16 +486,17 @@ export class PrioriChat {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.deleteContent({
    *   content_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
    * });
-   * 
+   *
    * console.log(result.message); // "Content deleted successfully"
    * ```
    */
-  async deleteContent(options: DeleteContentData['path']): Promise<DeleteContentResponse> {
+  async deleteContent(
+    options: DeleteContentData["path"],
+  ): Promise<DeleteContentResponse> {
     return deleteContentImpl.call(this, options);
   }
 }
-

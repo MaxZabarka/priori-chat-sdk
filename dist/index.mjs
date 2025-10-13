@@ -809,7 +809,9 @@ var Conversation = class _Conversation {
                 text: apiMessage.text,
                 from_bot: apiMessage.from_bot,
                 attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : void 0,
-                sent_at: Math.floor(Date.now() / 1e3)
+                sent_at: Math.floor(Date.now() / 1e3),
+                moderation: apiMessage.moderation || void 0,
+                message_tone: apiMessage.message_tone || void 0
               };
               this.callbacks.onNewMessage(message);
             });
@@ -1034,13 +1036,13 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.createConversation({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
    *   user_id: "user-123",
    *   create_user_if_not_exists: true
    * });
-   * 
+   *
    * console.log(`Created conversation: ${result.conversation.id}`);
    * ```
    */
@@ -1054,10 +1056,10 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * // List all conversations
    * const allConversations = await client.listConversations();
-   * 
+   *
    * // List conversations for a specific user and bot
    * const userConversations = await client.listConversations({
    *   user_id: "user-123",
@@ -1076,11 +1078,11 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const conversation = await client.getConversation({
    *   id: "87654321-4321-4321-4321-210987654321"
    * });
-   * 
+   *
    * console.log(`Found ${conversation.messages.length} messages`);
    * ```
    */
@@ -1095,7 +1097,7 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const { conversation, initialData } = await client.conversation(
    *   { user_id: "user-123", bot_id: "12345678-1234-1234-1234-123456789012" },
    *   {
@@ -1109,17 +1111,17 @@ var PrioriChat = class {
    *     }
    *   }
    * );
-   * 
+   *
    * // Print initial message history
    * console.log(`Loaded ${initialData.messages.length} previous messages`);
    * initialData.messages.forEach(msg => {
    *   const sender = msg.from_bot ? "Bot" : "User";
    *   console.log(`${sender}: ${msg.text}`);
    * });
-   * 
+   *
    * // Send a message to start/continue the conversation
    * await conversation.sendMessage("Hello!");
-   * 
+   *
    * // Continue the conversation by sending more messages
    * // The onNewMessage callback will handle incoming bot responses
    * ```
@@ -1132,11 +1134,11 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.createBot({
    *   name: "My Assistant Bot"
    * });
-   * 
+   *
    * console.log(`Created bot: ${result.bot.id}`);
    * ```
    */
@@ -1148,7 +1150,7 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.listBots();
    * console.log(`Found ${result.bots.length} bots`);
    * ```
@@ -1161,11 +1163,11 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.getBot({
    *   bot_id: "12345678-1234-1234-1234-123456789012"
    * });
-   * 
+   *
    * console.log(`Bot name: ${result.bot.name}`);
    * ```
    */
@@ -1177,12 +1179,12 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.updateBot({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
    *   name: "Updated Bot Name"
    * });
-   * 
+   *
    * console.log(`Updated bot: ${result.bot.name}`);
    * ```
    */
@@ -1194,11 +1196,11 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * await client.deleteBot({
    *   bot_id: "12345678-1234-1234-1234-123456789012"
    * });
-   * 
+   *
    * console.log("Bot deleted successfully");
    * ```
    */
@@ -1210,7 +1212,7 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.listApiKeys();
    * console.log(`Found ${result.api_keys.length} API keys`);
    * ```
@@ -1223,11 +1225,11 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.createApiKey({
    *   name: "My API Key"
    * });
-   * 
+   *
    * console.log(`Created API key: ${result.key_info.id}`);
    * console.log(`API key: ${result.api_key}`);
    * ```
@@ -1240,11 +1242,11 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.deactivateApiKey({
    *   key_id: "12345678-1234-1234-1234-123456789012"
    * });
-   * 
+   *
    * console.log(result.message);
    * ```
    */
@@ -1256,12 +1258,12 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * // List all content for a bot
    * const result = await client.listContent({
    *   bot_id: "12345678-1234-1234-1234-123456789012"
    * });
-   * 
+   *
    * // List with search and filtering
    * const filteredResult = await client.listContent({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
@@ -1269,7 +1271,7 @@ var PrioriChat = class {
    *   media_type: "image",
    *   limit: 10
    * });
-   * 
+   *
    * console.log(`Found ${result.content.length} items`);
    * ```
    */
@@ -1281,12 +1283,12 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.uploadContent({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
    *   image_url: "https://example.com/image.jpg"
    * });
-   * 
+   *
    * console.log(`Uploaded content: ${result.content.content_id}`);
    * console.log(`Content URL: ${result.content.url}`);
    * ```
@@ -1299,11 +1301,11 @@ var PrioriChat = class {
    * @example
    * ```ts
    * const client = new PrioriChat("your-api-key");
-   * 
+   *
    * const result = await client.deleteContent({
    *   content_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
    * });
-   * 
+   *
    * console.log(result.message); // "Content deleted successfully"
    * ```
    */
