@@ -1006,6 +1006,7 @@ var PrioriChat = class {
   constructor(api_token, baseURL) {
     __publicField(this, "client", client);
     __publicField(this, "authHeader");
+    __publicField(this, "customHeaders", {});
     this.authHeader = api_token;
     this.client.setConfig({
       baseURL: baseURL || "https://api.prioros.com/v3/",
@@ -1018,9 +1019,16 @@ var PrioriChat = class {
     this.authHeader = authHeader;
     this.setupAuthInterceptor();
   }
+  setHeaders(headers) {
+    this.customHeaders = { ...headers };
+    this.setupAuthInterceptor();
+  }
   setupAuthInterceptor() {
     this.client.instance.interceptors.request.use((config) => {
       config.headers.set("Authorization", `Bearer ${this.authHeader}`);
+      for (const [key, value] of Object.entries(this.customHeaders)) {
+        config.headers.set(key, value);
+      }
       return config;
     });
   }

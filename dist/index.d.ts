@@ -709,8 +709,10 @@ interface CreateConversationOptions {
 declare class PrioriChat {
     private client;
     private authHeader;
+    private customHeaders;
     constructor(api_token: string, baseURL?: string);
     setAuthHeader(authHeader: string): void;
+    setHeaders(headers: Record<string, string>): void;
     private setupAuthInterceptor;
     private setupErrorInterceptor;
     /**
