@@ -103,6 +103,7 @@ export interface CreateConversationOptions {
 export class PrioriChat {
   private client = client;
   private authHeader: string;
+  private customHeaders: Record<string, string> = {};
 
   constructor(api_token: string, baseURL?: string) {
     this.authHeader = api_token;
@@ -121,9 +122,20 @@ export class PrioriChat {
     this.setupAuthInterceptor();
   }
 
+  setHeaders(headers: Record<string, string>) {
+    this.customHeaders = { ...headers };
+    this.setupAuthInterceptor();
+  }
+
   private setupAuthInterceptor() {
     this.client.instance.interceptors.request.use((config) => {
       config.headers.set("Authorization", `Bearer ${this.authHeader}`);
+
+      // Set custom headers
+      for (const [key, value] of Object.entries(this.customHeaders)) {
+        config.headers.set(key, value);
+      }
+
       return config;
     });
   }
