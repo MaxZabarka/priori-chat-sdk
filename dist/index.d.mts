@@ -148,6 +148,10 @@ type GetConversationResponse = {
      */
     bot_id: string;
     /**
+     * Optional freeform text to add to the prompt
+     */
+    freeform?: string | null;
+    /**
      * Messages in the conversation
      */
     messages: Array<Message$1>;
