@@ -1,0 +1,13 @@
+[2025-10-19T19:43:46.721Z] Error: Missing $ref pointer "#/components/schemas/Summary". Token "Summary" does not exist.
+Stack:
+MissingPointerError: Missing $ref pointer "#/components/schemas/Summary". Token "Summary" does not exist.
+    at Pointer.resolve (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/pointer.js:113:23)
+    at $Ref.resolve (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/ref.js:79:24)
+    at $Refs._resolve (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/refs.js:168:21)
+    at inventory$Ref (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:66:27)
+    at crawl (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:157:21)
+    at crawl (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:169:21)
+    at crawl (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:169:21)
+    at crawl (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:169:21)
+    at inventory$Ref (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:103:9)
+    at crawl (/home/max/Documents/priori-chat-sdk/node_modules/.pnpm/@hey-api+json-schema-ref-parser@1.0.6/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:157:21)

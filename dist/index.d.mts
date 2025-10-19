@@ -8,6 +8,10 @@ type ApiAttribute = {
      */
     value: string;
 };
+/**
+ * Language enum for client configuration
+ */
+type ApiLanguage = "en" | "es" | "fr" | "de" | "pt" | "it" | "ja" | "ko" | "zh" | "ru";
 type ApiModerationCategory = "underage_site_use" | "sexual_minors" | "beastiality" | "sexual_violence" | "prompt_injection";
 type ApiModerationInfo = {
     category: ApiModerationCategory;
@@ -45,6 +49,20 @@ type Bot = {
      * Name of the bot
      */
     name: string;
+};
+/**
+ * Client configuration response
+ */
+type ClientConfig = {
+    chat_images_enabled?: boolean | null;
+    language?: ApiLanguage | null;
+    max_delay?: number | null;
+    min_delay?: number | null;
+    platform?: string | null;
+    segment?: boolean | null;
+    timezone?: string | null;
+    typing_speed?: number | null;
+    webhook?: string | null;
 };
 type Content = {
     /**
@@ -142,6 +160,9 @@ type DeleteContentResponse = {
 type GetBotResponse = {
     bot: Bot;
 };
+type GetClientConfigResponse = {
+    config: ClientConfig;
+};
 type GetConversationResponse = {
     /**
      * ID of the bot associated with this conversation
@@ -151,10 +172,15 @@ type GetConversationResponse = {
      * Optional freeform text to add to the prompt
      */
     freeform?: string | null;
+    latest_summary?: Summary | null;
     /**
      * Messages in the conversation
      */
     messages: Array<Message$1>;
+    /**
+     * Optional platform name describing which site the user and bot are chatting on
+     */
+    platform?: string | null;
     /**
      * Whether to have the bot capable of responding in multiple messages (more realistic)
      */
@@ -271,6 +297,20 @@ type SearchedMessage = {
      */
     sent_at: number;
 };
+type Summary = {
+    /**
+     * Unix timestamp when the summary was created
+     */
+    created_at: number;
+    /**
+     * Number of messages that were summarized
+     */
+    message_count: number;
+    /**
+     * The text summary of the conversation
+     */
+    summary_text: string;
+};
 type UpdateBotRequest = {
     /**
      * List of bot attributes
@@ -287,6 +327,23 @@ type UpdateBotRequest = {
 };
 type UpdateBotResponse = {
     bot: Bot;
+};
+/**
+ * Request to update client configuration (all fields optional for PATCH semantics)
+ */
+type UpdateClientConfigRequest = {
+    chat_images_enabled?: boolean | null;
+    language?: ApiLanguage | null;
+    max_delay?: number | null;
+    min_delay?: number | null;
+    platform?: string | null;
+    segment?: boolean | null;
+    timezone?: string | null;
+    typing_speed?: number | null;
+    webhook?: string | null;
+};
+type UpdateClientConfigResponse = {
+    config: ClientConfig;
 };
 type UploadContentRequest = {
     /**
@@ -350,6 +407,12 @@ type UpdateBotData = {
     };
     query?: never;
     url: "/api/bots/{bot_id}";
+};
+type UpdateClientConfigData = {
+    body: UpdateClientConfigRequest;
+    path?: never;
+    query?: never;
+    url: "/api/config";
 };
 type ListContentData = {
     body?: never;
@@ -975,6 +1038,34 @@ declare class PrioriChat {
      * ```
      */
     deleteContent(options: DeleteContentData["path"]): Promise<DeleteContentResponse>;
+    /**
+     * Retrieves the client configuration
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.getClientConfig();
+     * console.log(`Webhook: ${result.config.webhook}`);
+     * console.log(`Language: ${result.config.language}`);
+     * ```
+     */
+    getClientConfig(): Promise<GetClientConfigResponse>;
+    /**
+     * Updates the client configuration
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.updateClientConfig({
+     *   webhook: "https://example.com/webhook",
+     *   language: "es",
+     *   typing_speed: 2.0
+     * });
+     *
+     * console.log("Configuration updated successfully");
+     * ```
+     */
+    updateClientConfig(options: UpdateClientConfigData["body"]): Promise<UpdateClientConfigResponse>;
 }
 
-export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GetBotResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type UpdateBotRequest, type UpdateBotResponse, type UploadContentRequest, type UploadContentResponse };
+export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiLanguage, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GetBotResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UploadContentRequest, type UploadContentResponse };

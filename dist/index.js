@@ -574,6 +574,24 @@ var updateBot = (options) => {
     }
   });
 };
+var getClientConfig = (options) => {
+  return (options?.client ?? client).get({
+    responseType: "json",
+    url: "/api/config",
+    ...options
+  });
+};
+var updateClientConfig = (options) => {
+  return (options.client ?? client).patch({
+    responseType: "json",
+    url: "/api/config",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
 var listContent = (options) => {
   return (options.client ?? client).get({
     responseType: "json",
@@ -737,6 +755,19 @@ async function uploadContentImpl(options) {
 async function deleteContentImpl(options) {
   const result = await deleteContent({
     path: options
+  });
+  return result.data;
+}
+
+// src/methods/config.ts
+async function getClientConfigImpl() {
+  const result = await getClientConfig({ client: this["client"] });
+  return result.data;
+}
+async function updateClientConfigImpl(options) {
+  const result = await updateClientConfig({
+    client: this["client"],
+    body: options
   });
   return result.data;
 }
@@ -1355,6 +1386,38 @@ var PrioriChat = class {
    */
   async deleteContent(options) {
     return deleteContentImpl.call(this, options);
+  }
+  /**
+   * Retrieves the client configuration
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.getClientConfig();
+   * console.log(`Webhook: ${result.config.webhook}`);
+   * console.log(`Language: ${result.config.language}`);
+   * ```
+   */
+  async getClientConfig() {
+    return getClientConfigImpl.call(this);
+  }
+  /**
+   * Updates the client configuration
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.updateClientConfig({
+   *   webhook: "https://example.com/webhook",
+   *   language: "es",
+   *   typing_speed: 2.0
+   * });
+   *
+   * console.log("Configuration updated successfully");
+   * ```
+   */
+  async updateClientConfig(options) {
+    return updateClientConfigImpl.call(this, options);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

@@ -11,6 +11,21 @@ export type ApiAttribute = {
   value: string;
 };
 
+/**
+ * Language enum for client configuration
+ */
+export type ApiLanguage =
+  | "en"
+  | "es"
+  | "fr"
+  | "de"
+  | "pt"
+  | "it"
+  | "ja"
+  | "ko"
+  | "zh"
+  | "ru";
+
 export type ApiModerationCategory =
   | "underage_site_use"
   | "sexual_minors"
@@ -105,6 +120,21 @@ export type Bot = {
    * Name of the bot
    */
   name: string;
+};
+
+/**
+ * Client configuration response
+ */
+export type ClientConfig = {
+  chat_images_enabled?: boolean | null;
+  language?: ApiLanguage | null;
+  max_delay?: number | null;
+  min_delay?: number | null;
+  platform?: string | null;
+  segment?: boolean | null;
+  timezone?: string | null;
+  typing_speed?: number | null;
+  webhook?: string | null;
 };
 
 export type Content = {
@@ -206,6 +236,10 @@ export type CreateConversationRequest = {
    */
   freeform?: string | null;
   /**
+   * Optional platform name describing which site the user and bot are chatting on
+   */
+  platform?: string | null;
+  /**
    * Whether to have the bot capable of responding in multiple messages (more realistic)
    */
   segment?: boolean | null;
@@ -268,6 +302,10 @@ export type GetBotResponse = {
   bot: Bot;
 };
 
+export type GetClientConfigResponse = {
+  config: ClientConfig;
+};
+
 export type GetConversationResponse = {
   /**
    * ID of the bot associated with this conversation
@@ -277,10 +315,15 @@ export type GetConversationResponse = {
    * Optional freeform text to add to the prompt
    */
   freeform?: string | null;
+  latest_summary?: Summary | null;
   /**
    * Messages in the conversation
    */
   messages: Array<Message>;
+  /**
+   * Optional platform name describing which site the user and bot are chatting on
+   */
+  platform?: string | null;
   /**
    * Whether to have the bot capable of responding in multiple messages (more realistic)
    */
@@ -439,6 +482,21 @@ export type SendMessageRequest = {
   message: Message;
 };
 
+export type Summary = {
+  /**
+   * Unix timestamp when the summary was created
+   */
+  created_at: number;
+  /**
+   * Number of messages that were summarized
+   */
+  message_count: number;
+  /**
+   * The text summary of the conversation
+   */
+  summary_text: string;
+};
+
 export type UpdateBotRequest = {
   /**
    * List of bot attributes
@@ -458,11 +516,34 @@ export type UpdateBotResponse = {
   bot: Bot;
 };
 
+/**
+ * Request to update client configuration (all fields optional for PATCH semantics)
+ */
+export type UpdateClientConfigRequest = {
+  chat_images_enabled?: boolean | null;
+  language?: ApiLanguage | null;
+  max_delay?: number | null;
+  min_delay?: number | null;
+  platform?: string | null;
+  segment?: boolean | null;
+  timezone?: string | null;
+  typing_speed?: number | null;
+  webhook?: string | null;
+};
+
+export type UpdateClientConfigResponse = {
+  config: ClientConfig;
+};
+
 export type UpdateConversationRequestBody = {
   /**
    * Optional freeform text to add to the prompt
    */
   freeform?: string | null;
+  /**
+   * Optional platform name describing which site the user and bot are chatting on
+   */
+  platform?: string | null;
   /**
    * Whether to have the bot capable of responding in multiple messages (more realistic)
    */
@@ -772,6 +853,58 @@ export type UpdateBotResponses = {
 };
 
 export type UpdateBotResponse2 = UpdateBotResponses[keyof UpdateBotResponses];
+
+export type GetClientConfigData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/config";
+};
+
+export type GetClientConfigErrors = {
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type GetClientConfigResponses = {
+  /**
+   * Client configuration retrieved successfully
+   */
+  200: GetClientConfigResponse;
+};
+
+export type GetClientConfigResponse2 =
+  GetClientConfigResponses[keyof GetClientConfigResponses];
+
+export type UpdateClientConfigData = {
+  body: UpdateClientConfigRequest;
+  path?: never;
+  query?: never;
+  url: "/api/config";
+};
+
+export type UpdateClientConfigErrors = {
+  /**
+   * Invalid configuration
+   */
+  400: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type UpdateClientConfigResponses = {
+  /**
+   * Client configuration updated successfully
+   */
+  200: UpdateClientConfigResponse;
+};
+
+export type UpdateClientConfigResponse2 =
+  UpdateClientConfigResponses[keyof UpdateClientConfigResponses];
 
 export type ListContentData = {
   body?: never;

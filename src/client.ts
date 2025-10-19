@@ -21,6 +21,10 @@ import {
   uploadContentImpl,
   deleteContentImpl,
 } from "./methods/content";
+import {
+  getClientConfigImpl,
+  updateClientConfigImpl,
+} from "./methods/config";
 import type {
   CreateConversationResponse,
   ListConversationsResponse,
@@ -45,6 +49,9 @@ import type {
   UploadContentResponse,
   DeleteContentData,
   DeleteContentResponse,
+  GetClientConfigResponse,
+  UpdateClientConfigData,
+  UpdateClientConfigResponse,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -510,5 +517,41 @@ export class PrioriChat {
     options: DeleteContentData["path"],
   ): Promise<DeleteContentResponse> {
     return deleteContentImpl.call(this, options);
+  }
+
+  /**
+   * Retrieves the client configuration
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.getClientConfig();
+   * console.log(`Webhook: ${result.config.webhook}`);
+   * console.log(`Language: ${result.config.language}`);
+   * ```
+   */
+  async getClientConfig(): Promise<GetClientConfigResponse> {
+    return getClientConfigImpl.call(this);
+  }
+
+  /**
+   * Updates the client configuration
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.updateClientConfig({
+   *   webhook: "https://example.com/webhook",
+   *   language: "es",
+   *   typing_speed: 2.0
+   * });
+   *
+   * console.log("Configuration updated successfully");
+   * ```
+   */
+  async updateClientConfig(
+    options: UpdateClientConfigData["body"],
+  ): Promise<UpdateClientConfigResponse> {
+    return updateClientConfigImpl.call(this, options);
   }
 }

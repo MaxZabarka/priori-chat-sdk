@@ -26,6 +26,12 @@ import type {
   UpdateBotData,
   UpdateBotResponses,
   UpdateBotErrors,
+  GetClientConfigData,
+  GetClientConfigResponses,
+  GetClientConfigErrors,
+  UpdateClientConfigData,
+  UpdateClientConfigResponses,
+  UpdateClientConfigErrors,
   ListContentData,
   ListContentResponses,
   ListContentErrors,
@@ -206,6 +212,38 @@ export const updateBot = <ThrowOnError extends boolean = true>(
   >({
     responseType: "json",
     url: "/api/bots/{bot_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const getClientConfig = <ThrowOnError extends boolean = true>(
+  options?: Options<GetClientConfigData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    GetClientConfigResponses,
+    GetClientConfigErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/config",
+    ...options,
+  });
+};
+
+export const updateClientConfig = <ThrowOnError extends boolean = true>(
+  options: Options<UpdateClientConfigData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    UpdateClientConfigResponses,
+    UpdateClientConfigErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/config",
     ...options,
     headers: {
       "Content-Type": "application/json",

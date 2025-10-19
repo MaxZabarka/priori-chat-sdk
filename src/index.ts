@@ -45,4 +45,10 @@ export type {
   ApiModerationCategory,
   ApiModerationSeverity,
   ApiAttribute,
+  ClientConfig,
+  GetClientConfigResponse,
+  UpdateClientConfigRequest,
+  UpdateClientConfigResponse,
+  ApiLanguage,
+  Summary,
 } from "./client/types.gen";

@@ -7,6 +7,22 @@ export const zApiAttribute = z.object({
   value: z.string(),
 });
 
+/**
+ * Language enum for client configuration
+ */
+export const zApiLanguage = z.enum([
+  "en",
+  "es",
+  "fr",
+  "de",
+  "pt",
+  "it",
+  "ja",
+  "ko",
+  "zh",
+  "ru",
+]);
+
 export const zApiModerationCategory = z.enum([
   "underage_site_use",
   "sexual_minors",
@@ -57,6 +73,7 @@ export const zCreateConversationRequest = z.object({
   bot_id: z.string().uuid(),
   create_user_if_not_exists: z.union([z.boolean(), z.null()]).optional(),
   freeform: z.union([z.string(), z.null()]).optional(),
+  platform: z.union([z.string(), z.null()]).optional(),
   segment: z.union([z.boolean(), z.null()]).optional(),
   user_id: z.string(),
   webhook: z.union([z.string().url(), z.null()]).optional(),
@@ -97,6 +114,21 @@ export const zBot = z.object({
   freeform: z.string(),
   id: z.string().uuid(),
   name: z.string(),
+});
+
+/**
+ * Client configuration response
+ */
+export const zClientConfig = z.object({
+  chat_images_enabled: z.union([z.boolean(), z.null()]).optional(),
+  language: z.union([zApiLanguage, z.null()]).optional(),
+  max_delay: z.union([z.number().int(), z.null()]).optional(),
+  min_delay: z.union([z.number().int(), z.null()]).optional(),
+  platform: z.union([z.string(), z.null()]).optional(),
+  segment: z.union([z.boolean(), z.null()]).optional(),
+  timezone: z.union([z.string(), z.null()]).optional(),
+  typing_speed: z.union([z.number(), z.null()]).optional(),
+  webhook: z.union([z.string().url(), z.null()]).optional(),
 });
 
 export const zSearchedMessage = z.object({
@@ -169,10 +201,22 @@ export const zGetBotResponse = z.object({
   bot: zBot,
 });
 
+export const zGetClientConfigResponse = z.object({
+  config: zClientConfig,
+});
+
+export const zSummary = z.object({
+  created_at: z.coerce.bigint(),
+  message_count: z.number().int().gte(0),
+  summary_text: z.string(),
+});
+
 export const zGetConversationResponse = z.object({
   bot_id: z.string().uuid(),
   freeform: z.union([z.string(), z.null()]).optional(),
+  latest_summary: z.union([zSummary, z.null()]).optional(),
   messages: z.array(zMessage),
+  platform: z.union([z.string(), z.null()]).optional(),
   segment: z.union([z.boolean(), z.null()]).optional(),
   user_id: z.union([z.string(), z.null()]).optional(),
   webhook: z.union([z.string(), z.null()]).optional(),
@@ -238,8 +282,28 @@ export const zUpdateBotResponse = z.object({
   bot: zBot,
 });
 
+/**
+ * Request to update client configuration (all fields optional for PATCH semantics)
+ */
+export const zUpdateClientConfigRequest = z.object({
+  chat_images_enabled: z.union([z.boolean(), z.null()]).optional(),
+  language: z.union([zApiLanguage, z.null()]).optional(),
+  max_delay: z.union([z.number().int(), z.null()]).optional(),
+  min_delay: z.union([z.number().int(), z.null()]).optional(),
+  platform: z.union([z.string(), z.null()]).optional(),
+  segment: z.union([z.boolean(), z.null()]).optional(),
+  timezone: z.union([z.string(), z.null()]).optional(),
+  typing_speed: z.union([z.number(), z.null()]).optional(),
+  webhook: z.union([z.string().url(), z.null()]).optional(),
+});
+
+export const zUpdateClientConfigResponse = z.object({
+  config: zClientConfig,
+});
+
 export const zUpdateConversationRequestBody = z.object({
   freeform: z.union([z.string(), z.null()]).optional(),
+  platform: z.union([z.string(), z.null()]).optional(),
   segment: z.union([z.boolean(), z.null()]).optional(),
   webhook: z.union([z.string().url(), z.null()]).optional(),
 });
@@ -362,6 +426,28 @@ export const zUpdateBotData = z.object({
  * Bot updated successfully
  */
 export const zUpdateBotResponse2 = zUpdateBotResponse;
+
+export const zGetClientConfigData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * Client configuration retrieved successfully
+ */
+export const zGetClientConfigResponse2 = zGetClientConfigResponse;
+
+export const zUpdateClientConfigData = z.object({
+  body: zUpdateClientConfigRequest,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * Client configuration updated successfully
+ */
+export const zUpdateClientConfigResponse2 = zUpdateClientConfigResponse;
 
 export const zListContentData = z.object({
   body: z.never().optional(),
