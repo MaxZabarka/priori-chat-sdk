@@ -283,6 +283,14 @@ export type DeleteContentResponse = {
     message: string;
 };
 
+export type GenerateResponseSyncRequest = {
+    batch_size?: number;
+};
+
+export type GenerateResponseSyncResponse = {
+    candidates: Array<ResponseCandidate>;
+};
+
 export type GetBotResponse = {
     bot: Bot;
 };
@@ -438,6 +446,10 @@ export type Message = {
      * The text content of the message
      */
     text: string;
+};
+
+export type ResponseCandidate = {
+    messages: Array<Message>;
 };
 
 export type SearchedMessage = {
@@ -1128,6 +1140,34 @@ export type GetConversationResponses = {
 };
 
 export type GetConversationResponse2 = GetConversationResponses[keyof GetConversationResponses];
+
+export type GenerateResponseSyncData = {
+    body: GenerateResponseSyncRequest;
+    path: {
+        /**
+         * Conversation ID
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/generate-response';
+};
+
+export type GenerateResponseSyncErrors = {
+    /**
+     * Conversation not found
+     */
+    404: unknown;
+};
+
+export type GenerateResponseSyncResponses = {
+    /**
+     * Response candidates generated
+     */
+    200: GenerateResponseSyncResponse;
+};
+
+export type GenerateResponseSyncResponse2 = GenerateResponseSyncResponses[keyof GenerateResponseSyncResponses];
 
 export type GetMemoriesData = {
     body?: never;

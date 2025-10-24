@@ -281,6 +281,18 @@ export const zDeleteContentResponse = z.object({
     message: z.string()
 });
 
+export const zGenerateResponseSyncRequest = z.object({
+    batch_size: z.number().int().gte(0).optional()
+});
+
+export const zResponseCandidate = z.object({
+    messages: z.array(zMessage)
+});
+
+export const zGenerateResponseSyncResponse = z.object({
+    candidates: z.array(zResponseCandidate)
+});
+
 export const zGetBotResponse = z.object({
     bot: zBot
 });
@@ -743,6 +755,19 @@ export const zGetConversationData = z.object({
  * Conversation retrieved successfully
  */
 export const zGetConversationResponse2 = zGetConversationResponse;
+
+export const zGenerateResponseSyncData = z.object({
+    body: zGenerateResponseSyncRequest,
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+/**
+ * Response candidates generated
+ */
+export const zGenerateResponseSyncResponse2 = zGenerateResponseSyncResponse;
 
 export const zGetMemoriesData = z.object({
     body: z.never().optional(),

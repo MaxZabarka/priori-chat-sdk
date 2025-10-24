@@ -1,10 +1,12 @@
-import { createConversation, listConversations, getConversation } from "../client/sdk.gen";
+import { createConversation, listConversations, getConversation, generateResponseSync } from "../client/sdk.gen";
 import type { CreateConversationOptions } from "../client";
 import type {
   CreateConversationResponse,
   ListConversationsResponse,
   GetConversationResponse,
-  ListConversationsData
+  ListConversationsData,
+  GenerateResponseSyncResponse,
+  GenerateResponseSyncRequest
 } from "../client/types.gen";
 import type { PrioriChat } from "../client";
 
@@ -57,6 +59,29 @@ export async function getConversationImpl(
   const result = await getConversation({
     path: {
       id: options.id,
+    },
+  });
+
+  return result.data!;
+}
+
+/**
+ * Options for generating a response
+ */
+export interface GenerateResponseOptions extends GenerateResponseSyncRequest {
+  id: string;
+}
+
+export async function generateResponseImpl(
+  this: PrioriChat,
+  options: GenerateResponseOptions
+): Promise<GenerateResponseSyncResponse> {
+  const result = await generateResponseSync({
+    path: {
+      id: options.id,
+    },
+    body: {
+      batch_size: options.batch_size,
     },
   });
 

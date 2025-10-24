@@ -604,6 +604,17 @@ var getConversation = (options) => {
     ...options
   });
 };
+var generateResponseSync = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/conversations/{id}/generate-response",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
 var getMemories = (options) => {
   return (options.client ?? client).get({
     responseType: "json",
@@ -647,6 +658,17 @@ async function getConversationImpl(options) {
   const result = await getConversation({
     path: {
       id: options.id
+    }
+  });
+  return result.data;
+}
+async function generateResponseImpl(options) {
+  const result = await generateResponseSync({
+    path: {
+      id: options.id
+    },
+    body: {
+      batch_size: options.batch_size
     }
   });
   return result.data;
@@ -961,6 +983,22 @@ var Conversation = class _Conversation {
     })).data;
   }
   /**
+   * Generates bot response candidates without sending them
+   */
+  async generateResponse(batchSize) {
+    if (!this.isInitialized) {
+      throw new Error("Conversation not initialized");
+    }
+    return (await generateResponseSync({
+      path: {
+        id: this.conversationId
+      },
+      body: {
+        batch_size: batchSize
+      }
+    })).data;
+  }
+  /**
    * Gets the current conversation ID.
    * @returns The conversation ID string
    * @example
@@ -1125,6 +1163,12 @@ var PrioriChat = class {
    */
   async getConversation(options) {
     return getConversationImpl.call(this, options);
+  }
+  /**
+   * Generates bot response candidates for a conversation without sending them
+   */
+  async generateResponse(options) {
+    return generateResponseImpl.call(this, options);
   }
   /**
    * Creates a new Conversation instance for real-time messaging

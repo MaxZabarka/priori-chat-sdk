@@ -157,6 +157,12 @@ type DeleteContentResponse = {
      */
     message: string;
 };
+type GenerateResponseSyncRequest = {
+    batch_size?: number;
+};
+type GenerateResponseSyncResponse = {
+    candidates: Array<ResponseCandidate>;
+};
 type GetBotResponse = {
     bot: Bot;
 };
@@ -274,6 +280,9 @@ type Message$1 = {
      * The text content of the message
      */
     text: string;
+};
+type ResponseCandidate = {
+    messages: Array<Message$1>;
 };
 type SearchedMessage = {
     /**
@@ -505,6 +514,12 @@ interface ListConversationsOptions extends NonNullable<ListConversationsData['qu
 interface GetConversationOptions {
     id: string;
 }
+/**
+ * Options for generating a response
+ */
+interface GenerateResponseOptions extends GenerateResponseSyncRequest {
+    id: string;
+}
 
 /**
  * Represents media content attached to a message
@@ -730,6 +745,10 @@ declare class Conversation {
      */
     getMemories(): Promise<GetMemoriesResponse>;
     /**
+     * Generates bot response candidates without sending them
+     */
+    generateResponse(batchSize?: number): Promise<GenerateResponseSyncResponse>;
+    /**
      * Gets the current conversation ID.
      * @returns The conversation ID string
      * @example
@@ -836,6 +855,10 @@ declare class PrioriChat {
      * ```
      */
     getConversation(options: GetConversationOptions): Promise<GetConversationResponse>;
+    /**
+     * Generates bot response candidates for a conversation without sending them
+     */
+    generateResponse(options: GenerateResponseOptions): Promise<GenerateResponseSyncResponse>;
     /**
      * Creates a new Conversation instance for real-time messaging
      * @param options - Conversation initialization options (conversation_id OR user_id + bot_id)
@@ -1068,4 +1091,4 @@ declare class PrioriChat {
     updateClientConfig(options: UpdateClientConfigData["body"]): Promise<UpdateClientConfigResponse>;
 }
 
-export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiLanguage, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GetBotResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UploadContentRequest, type UploadContentResponse };
+export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiLanguage, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UploadContentRequest, type UploadContentResponse };

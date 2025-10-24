@@ -1,6 +1,6 @@
-import { sendMessage, getMemories } from "./client/sdk.gen";
+import { sendMessage, getMemories, generateResponseSync } from "./client/sdk.gen";
 import type { PrioriChat } from "./client";
-import type { GetConversationResponse, GetMemoriesResponse, ApiModerationInfo } from "./client/types.gen";
+import type { GetConversationResponse, GetMemoriesResponse, ApiModerationInfo, GenerateResponseSyncResponse } from "./client/types.gen";
 
 /**
  * Represents media content attached to a message
@@ -405,6 +405,24 @@ export class Conversation {
     return (await getMemories({
       path: {
         id: this.conversationId,
+      },
+    })).data;
+  }
+
+  /**
+   * Generates bot response candidates without sending them
+   */
+  async generateResponse(batchSize?: number): Promise<GenerateResponseSyncResponse> {
+    if (!this.isInitialized) {
+      throw new Error("Conversation not initialized");
+    }
+
+    return (await generateResponseSync({
+      path: {
+        id: this.conversationId,
+      },
+      body: {
+        batch_size: batchSize,
       },
     })).data;
   }

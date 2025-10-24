@@ -11,6 +11,7 @@ export {
 export {
   type ListConversationsOptions,
   type GetConversationOptions,
+  type GenerateResponseOptions,
 } from "./methods/conversations";
 export type {
   CreateConversationResponse,
@@ -21,6 +22,9 @@ export type {
   MemoryResponse,
   Conversation as ConversationType,
   SearchedMessage,
+  GenerateResponseSyncRequest,
+  GenerateResponseSyncResponse,
+  ResponseCandidate,
   Bot,
   CreateBotRequestBody,
   CreateBotResponse,

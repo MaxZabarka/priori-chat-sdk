@@ -3,6 +3,7 @@ import {
   createConversationImpl,
   listConversationsImpl,
   getConversationImpl,
+  generateResponseImpl,
 } from "./methods/conversations";
 import {
   createBotImpl,
@@ -29,6 +30,7 @@ import type {
   CreateConversationResponse,
   ListConversationsResponse,
   GetConversationResponse,
+  GenerateResponseSyncResponse,
   CreateBotRequestBody,
   CreateBotResponse,
   ListBotsResponse,
@@ -56,6 +58,7 @@ import type {
 import type {
   ListConversationsOptions,
   GetConversationOptions,
+  GenerateResponseOptions,
 } from "./methods/conversations";
 import {
   Conversation,
@@ -264,6 +267,15 @@ export class PrioriChat {
     options: GetConversationOptions,
   ): Promise<GetConversationResponse> {
     return getConversationImpl.call(this, options);
+  }
+
+  /**
+   * Generates bot response candidates for a conversation without sending them
+   */
+  async generateResponse(
+    options: GenerateResponseOptions,
+  ): Promise<GenerateResponseSyncResponse> {
+    return generateResponseImpl.call(this, options);
   }
 
   /**

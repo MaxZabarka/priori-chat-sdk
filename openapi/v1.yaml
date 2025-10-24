@@ -448,6 +448,33 @@ paths:
                 $ref: '#/components/schemas/GetConversationResponse'
         '500':
           description: Internal server error
+  /api/conversations/{id}/generate-response:
+    post:
+      tags:
+      - messages
+      operationId: generate_response_sync
+      parameters:
+      - name: id
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateResponseSyncRequest'
+        required: true
+      responses:
+        '200':
+          description: Response candidates generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateResponseSyncResponse'
+        '404':
+          description: Conversation not found
   /api/conversations/{id}/memories:
     get:
       tags:
@@ -1214,6 +1241,21 @@ components:
           type: string
           description: Success message
           example: Content deleted successfully
+    GenerateResponseSyncRequest:
+      type: object
+      properties:
+        batch_size:
+          type: integer
+          minimum: 0
+    GenerateResponseSyncResponse:
+      type: object
+      required:
+      - candidates
+      properties:
+        candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseCandidate'
     GetBotResponse:
       type: object
       required:
@@ -1455,6 +1497,15 @@ components:
         from_bot: true
         sent_at: 1640995200
         text: Heyyy how are you??
+    ResponseCandidate:
+      type: object
+      required:
+      - messages
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
     SearchedMessage:
       type: object
       required:
