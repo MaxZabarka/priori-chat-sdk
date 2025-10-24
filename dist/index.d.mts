@@ -11,8 +11,8 @@ type ApiAttribute = {
 /**
  * Language enum for client configuration
  */
-type ApiLanguage = "en" | "es" | "fr" | "de" | "pt" | "it" | "ja" | "ko" | "zh" | "ru";
-type ApiModerationCategory = "underage_site_use" | "sexual_minors" | "beastiality" | "sexual_violence" | "prompt_injection";
+type ApiLanguage = 'en' | 'es' | 'fr' | 'de' | 'pt' | 'it' | 'ja' | 'ko' | 'zh' | 'ru';
+type ApiModerationCategory = 'underage_site_use' | 'sexual_minors' | 'beastiality' | 'sexual_violence' | 'prompt_injection';
 type ApiModerationInfo = {
     category: ApiModerationCategory;
     /**
@@ -21,7 +21,7 @@ type ApiModerationInfo = {
     reasoning: string;
     severity: ApiModerationSeverity;
 };
-type ApiModerationSeverity = "Low" | "Medium" | "High" | "Critical";
+type ApiModerationSeverity = 'Low' | 'Medium' | 'High' | 'Critical';
 /**
  * Represents an API key info (without the actual key)
  */
@@ -243,7 +243,7 @@ type ListConversationsResponse = {
      */
     conversations: Array<ConversationHeader>;
 };
-type MediaTypeFilter = "image" | "video";
+type MediaTypeFilter = 'image' | 'video';
 type MemoryResponse = {
     /**
      * Text content of the memory
@@ -362,7 +362,7 @@ type CreateApiKeyData = {
     body: CreateApiKeyRequest;
     path?: never;
     query?: never;
-    url: "/api/api-keys";
+    url: '/api/api-keys';
 };
 type DeactivateApiKeyData = {
     body?: never;
@@ -373,7 +373,7 @@ type DeactivateApiKeyData = {
         key_id: string;
     };
     query?: never;
-    url: "/api/api-keys/{key_id}";
+    url: '/api/api-keys/{key_id}';
 };
 type DeleteBotData = {
     body?: never;
@@ -384,7 +384,7 @@ type DeleteBotData = {
         bot_id: string;
     };
     query?: never;
-    url: "/api/bots/{bot_id}";
+    url: '/api/bots/{bot_id}';
 };
 type GetBotData = {
     body?: never;
@@ -395,7 +395,7 @@ type GetBotData = {
         bot_id: string;
     };
     query?: never;
-    url: "/api/bots/{bot_id}";
+    url: '/api/bots/{bot_id}';
 };
 type UpdateBotData = {
     body: UpdateBotRequest;
@@ -406,13 +406,13 @@ type UpdateBotData = {
         bot_id: string;
     };
     query?: never;
-    url: "/api/bots/{bot_id}";
+    url: '/api/bots/{bot_id}';
 };
 type UpdateClientConfigData = {
     body: UpdateClientConfigRequest;
     path?: never;
     query?: never;
-    url: "/api/config";
+    url: '/api/config';
 };
 type ListContentData = {
     body?: never;
@@ -435,13 +435,13 @@ type ListContentData = {
          */
         media_type?: MediaTypeFilter | null;
     };
-    url: "/api/content";
+    url: '/api/content';
 };
 type UploadContentData = {
     body: UploadContentRequest;
     path?: never;
     query?: never;
-    url: "/api/content";
+    url: '/api/content';
 };
 type DeleteContentData = {
     body?: never;
@@ -452,7 +452,7 @@ type DeleteContentData = {
         content_id: string;
     };
     query?: never;
-    url: "/api/content/{content_id}";
+    url: '/api/content/{content_id}';
 };
 type ListConversationsData = {
     body?: never;
@@ -491,7 +491,7 @@ type ListConversationsData = {
          */
         max_last_message_date?: number | null;
     };
-    url: "/api/conversations";
+    url: '/api/conversations';
 };
 
 /**

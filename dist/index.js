@@ -500,11 +500,9 @@ var createClient = (config = {}) => {
 };
 
 // src/client/client.gen.ts
-var client = createClient(
-  createConfig({
-    throwOnError: true
-  })
-);
+var client = createClient(createConfig({
+  throwOnError: true
+}));
 
 // src/client/sdk.gen.ts
 var listApiKeys = (options) => {
