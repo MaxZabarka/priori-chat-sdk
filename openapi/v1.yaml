@@ -1397,13 +1397,19 @@ components:
     ListContentResponse:
       type: object
       required:
-      - content
+      - public_content
+      - private_content
       properties:
-        content:
+        private_content:
           type: array
           items:
             $ref: '#/components/schemas/Content'
-          description: List of content items
+          description: List of private content items (vault for conversations)
+        public_content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Content'
+          description: List of public content items (displayed on profile)
     ListConversationsResponse:
       type: object
       required:
@@ -1754,6 +1760,10 @@ components:
           type: string
           description: URL of the image to upload (can be a remote URL like https://example.com/image.jpg or a data URL like data:image/jpeg;base64,...)
           example: https://example.com/image.jpg
+        public:
+          type: boolean
+          description: Whether this content is public (displayed on profile) or private (bot's vault for conversations). Only valid for bot content; user content is always public.
+          example: false
         user_id:
           type: string
           description: ID of the user this content belongs to (either bot_id or user_id must be provided)
@@ -1762,6 +1772,7 @@ components:
       example:
         bot_id: 550e8400-e29b-41d4-a716-446655440000
         image_url: https://example.com/image.jpg
+        public: false
     UploadContentResponse:
       type: object
       required:
