@@ -26,7 +26,7 @@ import {
   getClientConfigImpl,
   updateClientConfigImpl,
 } from "./methods/config";
-import { getUser } from "./client/sdk.gen";
+import { getUser, updateUser } from "./client/sdk.gen";
 import type {
   CreateConversationResponse,
   ListConversationsResponse,
@@ -57,6 +57,8 @@ import type {
   UpdateClientConfigResponse,
   GetUserData,
   GetUserResponse,
+  UpdateUserData,
+  UpdateUserResponse,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -589,5 +591,31 @@ export class PrioriChat {
       path: options,
     });
     return response.data as GetUserResponse;
+  }
+
+  /**
+   * Updates an existing user
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.updateUser({
+   *   user_id: "user-123",
+   *   username: "new_username",
+   *   freeform: "Updated description",
+   *   attributes: [{ name: "age", value: "25" }]
+   * });
+   *
+   * console.log(`Updated user: ${result.user.username}`);
+   * ```
+   */
+  async updateUser(options: UpdateUserData["path"] & UpdateUserData["body"]): Promise<UpdateUserResponse> {
+    const { user_id, ...body } = options;
+    const response = await updateUser({
+      client: this.client,
+      path: { user_id },
+      body,
+    });
+    return response.data as UpdateUserResponse;
   }
 }

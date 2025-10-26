@@ -557,7 +557,7 @@ var updateClientConfig = (options) => {
   });
 };
 var listContent = (options) => {
-  return (options.client ?? client).get({
+  return (options?.client ?? client).get({
     responseType: "json",
     url: "/api/content",
     ...options
@@ -639,6 +639,17 @@ var getUser = (options) => {
     responseType: "json",
     url: "/api/users/{user_id}",
     ...options
+  });
+};
+var updateUser = (options) => {
+  return (options.client ?? client).put({
+    responseType: "json",
+    url: "/api/users/{user_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
   });
 };
 
@@ -1451,6 +1462,31 @@ var PrioriChat = class {
     const response = await getUser({
       client: this.client,
       path: options
+    });
+    return response.data;
+  }
+  /**
+   * Updates an existing user
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.updateUser({
+   *   user_id: "user-123",
+   *   username: "new_username",
+   *   freeform: "Updated description",
+   *   attributes: [{ name: "age", value: "25" }]
+   * });
+   *
+   * console.log(`Updated user: ${result.user.username}`);
+   * ```
+   */
+  async updateUser(options) {
+    const { user_id, ...body } = options;
+    const response = await updateUser({
+      client: this.client,
+      path: { user_id },
+      body
     });
     return response.data;
   }

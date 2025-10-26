@@ -58,4 +58,7 @@ export type {
   User,
   GetUserResponse,
   GetUserData,
+  UpdateUserRequest,
+  UpdateUserResponse,
+  UpdateUserData,
 } from "./client/types.gen";

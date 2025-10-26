@@ -227,9 +227,9 @@ type ListBotsResponse = {
 };
 type ListContentQuery = {
     /**
-     * ID of the bot to list content for
+     * ID of the bot to list content for (either bot_id or user_id must be provided)
      */
-    bot_id: string;
+    bot_id?: string | null;
     /**
      * Maximum number of content items to return (default: 30, max: 30)
      */
@@ -239,12 +239,20 @@ type ListContentQuery = {
      * Search query for semantic content search
      */
     search?: string | null;
+    /**
+     * ID of the user to list content for (either bot_id or user_id must be provided)
+     */
+    user_id?: string | null;
 };
 type ListContentResponse = {
     /**
-     * List of content items
+     * List of private content items (vault for conversations)
      */
-    content: Array<Content>;
+    private_content: Array<Content>;
+    /**
+     * List of public content items (displayed on profile)
+     */
+    public_content: Array<Content>;
 };
 type ListConversationsResponse = {
     /**
@@ -357,15 +365,40 @@ type UpdateClientConfigRequest = {
 type UpdateClientConfigResponse = {
     config: ClientConfig;
 };
+type UpdateUserRequest = {
+    /**
+     * List of user attributes
+     */
+    attributes?: Array<ApiAttribute>;
+    /**
+     * Freeform text description
+     */
+    freeform?: string | null;
+    /**
+     * Username of the user
+     */
+    username?: string | null;
+};
+type UpdateUserResponse = {
+    user: User;
+};
 type UploadContentRequest = {
     /**
-     * ID of the bot this content belongs to
+     * ID of the bot this content belongs to (either bot_id or user_id must be provided)
      */
-    bot_id: string;
+    bot_id?: string | null;
     /**
      * URL of the image to upload (can be a remote URL like https://example.com/image.jpg or a data URL like data:image/jpeg;base64,...)
      */
     image_url: string;
+    /**
+     * Whether this content is public (displayed on profile) or private (bot's vault for conversations). Only valid for bot content; user content is always public.
+     */
+    public?: boolean;
+    /**
+     * ID of the user this content belongs to (either bot_id or user_id must be provided)
+     */
+    user_id?: string | null;
 };
 type UploadContentResponse = {
     content: Content;
@@ -447,11 +480,15 @@ type UpdateClientConfigData = {
 type ListContentData = {
     body?: never;
     path?: never;
-    query: {
+    query?: {
         /**
-         * Bot identifier
+         * Bot identifier (either bot_id or user_id must be provided)
          */
-        bot_id: string;
+        bot_id?: string | null;
+        /**
+         * User identifier (either bot_id or user_id must be provided)
+         */
+        user_id?: string | null;
         /**
          * Maximum number of items to return (default: 30, max: 30)
          */
@@ -525,6 +562,17 @@ type ListConversationsData = {
 };
 type GetUserData = {
     body?: never;
+    path: {
+        /**
+         * User identifier
+         */
+        user_id: string;
+    };
+    query?: never;
+    url: "/api/users/{user_id}";
+};
+type UpdateUserData = {
+    body: UpdateUserRequest;
     path: {
         /**
          * User identifier
@@ -1135,6 +1183,23 @@ declare class PrioriChat {
      * ```
      */
     getUser(options: GetUserData["path"]): Promise<GetUserResponse>;
+    /**
+     * Updates an existing user
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.updateUser({
+     *   user_id: "user-123",
+     *   username: "new_username",
+     *   freeform: "Updated description",
+     *   attributes: [{ name: "age", value: "25" }]
+     * });
+     *
+     * console.log(`Updated user: ${result.user.username}`);
+     * ```
+     */
+    updateUser(options: UpdateUserData["path"] & UpdateUserData["body"]): Promise<UpdateUserResponse>;
 }
 
-export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiLanguage, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetUserData, type GetUserResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiLanguage, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetUserData, type GetUserResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
