@@ -220,10 +220,18 @@ paths:
       parameters:
       - name: bot_id
         in: query
-        description: Bot identifier
-        required: true
+        description: Bot identifier (either bot_id or user_id must be provided)
+        required: false
         schema:
           type: string
+          nullable: true
+      - name: user_id
+        in: query
+        description: User identifier (either bot_id or user_id must be provided)
+        required: false
+        schema:
+          type: string
+          nullable: true
       - name: limit
         in: query
         description: 'Maximum number of items to return (default: 30, max: 30)'
@@ -256,9 +264,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListContentResponse'
         '400':
-          description: Invalid query parameters
+          description: Invalid query parameters - either bot_id or user_id must be provided, not both
         '404':
-          description: Bot not found
+          description: Bot or user not found
         '500':
           description: Internal server error
     post:
@@ -279,7 +287,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/UploadContentResponse'
         '400':
-          description: Invalid request - URL is not an image or bot not found
+          description: Invalid request - URL is not an image, bot/user not found, or both/neither bot_id and user_id provided
         '500':
           description: Internal server error
   /api/content/{content_id}:
@@ -1358,14 +1366,13 @@ components:
           description: List of all bots
     ListContentQuery:
       type: object
-      required:
-      - bot_id
       properties:
         bot_id:
           type: string
           format: uuid
-          description: ID of the bot to list content for
+          description: ID of the bot to list content for (either bot_id or user_id must be provided)
           example: 550e8400-e29b-41d4-a716-446655440000
+          nullable: true
         limit:
           type: integer
           format: int32
@@ -1381,6 +1388,11 @@ components:
           type: string
           description: Search query for semantic content search
           example: hawaii vacation
+          nullable: true
+        user_id:
+          type: string
+          description: ID of the user to list content for (either bot_id or user_id must be provided)
+          example: user123
           nullable: true
     ListContentResponse:
       type: object
@@ -1731,17 +1743,22 @@ components:
       type: object
       required:
       - image_url
-      - bot_id
       properties:
         bot_id:
           type: string
           format: uuid
-          description: ID of the bot this content belongs to
+          description: ID of the bot this content belongs to (either bot_id or user_id must be provided)
           example: 550e8400-e29b-41d4-a716-446655440000
+          nullable: true
         image_url:
           type: string
           description: URL of the image to upload (can be a remote URL like https://example.com/image.jpg or a data URL like data:image/jpeg;base64,...)
           example: https://example.com/image.jpg
+        user_id:
+          type: string
+          description: ID of the user this content belongs to (either bot_id or user_id must be provided)
+          example: user123
+          nullable: true
       example:
         bot_id: 550e8400-e29b-41d4-a716-446655440000
         image_url: https://example.com/image.jpg
