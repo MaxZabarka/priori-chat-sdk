@@ -55,4 +55,7 @@ export type {
   UpdateClientConfigResponse,
   ApiLanguage,
   Summary,
+  User,
+  GetUserResponse,
+  GetUserData,
 } from "./client/types.gen";

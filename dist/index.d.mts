@@ -11,8 +11,8 @@ type ApiAttribute = {
 /**
  * Language enum for client configuration
  */
-type ApiLanguage = 'en' | 'es' | 'fr' | 'de' | 'pt' | 'it' | 'ja' | 'ko' | 'zh' | 'ru';
-type ApiModerationCategory = 'underage_site_use' | 'sexual_minors' | 'beastiality' | 'sexual_violence' | 'prompt_injection';
+type ApiLanguage = "en" | "es" | "fr" | "de" | "pt" | "it" | "ja" | "ko" | "zh" | "ru";
+type ApiModerationCategory = "underage_site_use" | "sexual_minors" | "beastiality" | "sexual_violence" | "prompt_injection";
 type ApiModerationInfo = {
     category: ApiModerationCategory;
     /**
@@ -21,7 +21,7 @@ type ApiModerationInfo = {
     reasoning: string;
     severity: ApiModerationSeverity;
 };
-type ApiModerationSeverity = 'Low' | 'Medium' | 'High' | 'Critical';
+type ApiModerationSeverity = "Low" | "Medium" | "High" | "Critical";
 /**
  * Represents an API key info (without the actual key)
  */
@@ -210,6 +210,9 @@ type GetMemoriesResponse = {
      */
     user_memories: Array<MemoryResponse>;
 };
+type GetUserResponse = {
+    user: User;
+};
 type ListApiKeysResponse = {
     /**
      * List of API keys for the client
@@ -249,7 +252,7 @@ type ListConversationsResponse = {
      */
     conversations: Array<ConversationHeader>;
 };
-type MediaTypeFilter = 'image' | 'video';
+type MediaTypeFilter = "image" | "video";
 type MemoryResponse = {
     /**
      * Text content of the memory
@@ -367,11 +370,29 @@ type UploadContentRequest = {
 type UploadContentResponse = {
     content: Content;
 };
+type User = {
+    /**
+     * List of user attributes
+     */
+    attributes: Array<ApiAttribute>;
+    /**
+     * Freeform text description
+     */
+    freeform: string;
+    /**
+     * Unique identifier for the user
+     */
+    id: string;
+    /**
+     * Username of the user
+     */
+    username: string;
+};
 type CreateApiKeyData = {
     body: CreateApiKeyRequest;
     path?: never;
     query?: never;
-    url: '/api/api-keys';
+    url: "/api/api-keys";
 };
 type DeactivateApiKeyData = {
     body?: never;
@@ -382,7 +403,7 @@ type DeactivateApiKeyData = {
         key_id: string;
     };
     query?: never;
-    url: '/api/api-keys/{key_id}';
+    url: "/api/api-keys/{key_id}";
 };
 type DeleteBotData = {
     body?: never;
@@ -393,7 +414,7 @@ type DeleteBotData = {
         bot_id: string;
     };
     query?: never;
-    url: '/api/bots/{bot_id}';
+    url: "/api/bots/{bot_id}";
 };
 type GetBotData = {
     body?: never;
@@ -404,7 +425,7 @@ type GetBotData = {
         bot_id: string;
     };
     query?: never;
-    url: '/api/bots/{bot_id}';
+    url: "/api/bots/{bot_id}";
 };
 type UpdateBotData = {
     body: UpdateBotRequest;
@@ -415,13 +436,13 @@ type UpdateBotData = {
         bot_id: string;
     };
     query?: never;
-    url: '/api/bots/{bot_id}';
+    url: "/api/bots/{bot_id}";
 };
 type UpdateClientConfigData = {
     body: UpdateClientConfigRequest;
     path?: never;
     query?: never;
-    url: '/api/config';
+    url: "/api/config";
 };
 type ListContentData = {
     body?: never;
@@ -444,13 +465,13 @@ type ListContentData = {
          */
         media_type?: MediaTypeFilter | null;
     };
-    url: '/api/content';
+    url: "/api/content";
 };
 type UploadContentData = {
     body: UploadContentRequest;
     path?: never;
     query?: never;
-    url: '/api/content';
+    url: "/api/content";
 };
 type DeleteContentData = {
     body?: never;
@@ -461,7 +482,7 @@ type DeleteContentData = {
         content_id: string;
     };
     query?: never;
-    url: '/api/content/{content_id}';
+    url: "/api/content/{content_id}";
 };
 type ListConversationsData = {
     body?: never;
@@ -500,7 +521,18 @@ type ListConversationsData = {
          */
         max_last_message_date?: number | null;
     };
-    url: '/api/conversations';
+    url: "/api/conversations";
+};
+type GetUserData = {
+    body?: never;
+    path: {
+        /**
+         * User identifier
+         */
+        user_id: string;
+    };
+    query?: never;
+    url: "/api/users/{user_id}";
 };
 
 /**
@@ -1089,6 +1121,20 @@ declare class PrioriChat {
      * ```
      */
     updateClientConfig(options: UpdateClientConfigData["body"]): Promise<UpdateClientConfigResponse>;
+    /**
+     * Retrieves a specific user by ID
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.getUser({
+     *   user_id: "user-123"
+     * });
+     *
+     * console.log(`Username: ${result.user.username}`);
+     * ```
+     */
+    getUser(options: GetUserData["path"]): Promise<GetUserResponse>;
 }
 
-export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiLanguage, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UploadContentRequest, type UploadContentResponse };
+export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiLanguage, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetUserData, type GetUserResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UploadContentRequest, type UploadContentResponse, type User };

@@ -26,6 +26,7 @@ import {
   getClientConfigImpl,
   updateClientConfigImpl,
 } from "./methods/config";
+import { getUser } from "./client/sdk.gen";
 import type {
   CreateConversationResponse,
   ListConversationsResponse,
@@ -54,6 +55,8 @@ import type {
   GetClientConfigResponse,
   UpdateClientConfigData,
   UpdateClientConfigResponse,
+  GetUserData,
+  GetUserResponse,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -565,5 +568,26 @@ export class PrioriChat {
     options: UpdateClientConfigData["body"],
   ): Promise<UpdateClientConfigResponse> {
     return updateClientConfigImpl.call(this, options);
+  }
+
+  /**
+   * Retrieves a specific user by ID
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.getUser({
+   *   user_id: "user-123"
+   * });
+   *
+   * console.log(`Username: ${result.user.username}`);
+   * ```
+   */
+  async getUser(options: GetUserData["path"]): Promise<GetUserResponse> {
+    const response = await getUser({
+      client: this.client,
+      path: options,
+    });
+    return response.data as GetUserResponse;
   }
 }

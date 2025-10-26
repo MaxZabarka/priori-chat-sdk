@@ -464,9 +464,11 @@ var createClient = (config = {}) => {
 };
 
 // src/client/client.gen.ts
-var client = createClient(createConfig({
-  throwOnError: true
-}));
+var client = createClient(
+  createConfig({
+    throwOnError: true
+  })
+);
 
 // src/client/sdk.gen.ts
 var listApiKeys = (options) => {
@@ -630,6 +632,13 @@ var sendMessage = (options) => {
       "Content-Type": "application/json",
       ...options.headers
     }
+  });
+};
+var getUser = (options) => {
+  return (options.client ?? client).get({
+    responseType: "json",
+    url: "/api/users/{user_id}",
+    ...options
   });
 };
 
@@ -1424,6 +1433,26 @@ var PrioriChat = class {
    */
   async updateClientConfig(options) {
     return updateClientConfigImpl.call(this, options);
+  }
+  /**
+   * Retrieves a specific user by ID
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.getUser({
+   *   user_id: "user-123"
+   * });
+   *
+   * console.log(`Username: ${result.user.username}`);
+   * ```
+   */
+  async getUser(options) {
+    const response = await getUser({
+      client: this.client,
+      path: options
+    });
+    return response.data;
   }
 };
 export {
