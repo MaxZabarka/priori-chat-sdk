@@ -1,6 +1,6 @@
 import { createBot, listBots, getBot, updateBot, deleteBot } from "../client/sdk.gen";
 import type {
-  CreateBotRequest,
+  CreateBotRequestBody,
   CreateBotResponse,
   ListBotsResponse,
   GetBotData,
@@ -13,7 +13,7 @@ import type { PrioriChat } from "../client";
 
 export async function createBotImpl(
   this: PrioriChat,
-  options: CreateBotRequest
+  options: CreateBotRequestBody
 ): Promise<CreateBotResponse> {
   const result = await createBot({
     body: options,

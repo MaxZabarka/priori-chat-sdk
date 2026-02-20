@@ -538,6 +538,37 @@ var updateBot = (options) => {
     }
   });
 };
+var listChatters = (options) => {
+  return (options?.client ?? client).get({
+    responseType: "json",
+    url: "/api/chatters",
+    ...options
+  });
+};
+var createChatter = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/chatters",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var deactivateChatter = (options) => {
+  return (options.client ?? client).delete({
+    url: "/api/chatters/{chatter_id}",
+    ...options
+  });
+};
+var getChatter = (options) => {
+  return (options.client ?? client).get({
+    responseType: "json",
+    url: "/api/chatters/{chatter_id}",
+    ...options
+  });
+};
 var getClientConfig = (options) => {
   return (options?.client ?? client).get({
     responseType: "json",
@@ -774,6 +805,29 @@ async function updateClientConfigImpl(options) {
     body: options
   });
   return result.data;
+}
+
+// src/methods/chatters.ts
+async function listChattersImpl() {
+  const result = await listChatters();
+  return result.data;
+}
+async function createChatterImpl(options) {
+  const result = await createChatter({
+    body: options
+  });
+  return result.data;
+}
+async function getChatterImpl(options) {
+  const result = await getChatter({
+    path: options
+  });
+  return result.data;
+}
+async function deactivateChatterImpl(options) {
+  await deactivateChatter({
+    path: options
+  });
 }
 
 // src/conversation.ts
@@ -1489,6 +1543,76 @@ var PrioriChat = class {
       body
     });
     return response.data;
+  }
+  /**
+   * Lists all chatters
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.listChatters();
+   * console.log(`Found ${result.chatters.length} chatters`);
+   * ```
+   */
+  async listChatters() {
+    return listChattersImpl.call(this);
+  }
+  /**
+   * Creates a new chatter
+   * @param options - The chatter creation options
+   * @param options.username - Username for the chatter
+   * @returns Promise resolving to the created chatter and password (password is only shown once)
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.createChatter({
+   *   username: "my-chatter"
+   * });
+   *
+   * console.log(`Created chatter: ${result.chatter.id}`);
+   * console.log(`Password: ${result.password}`); // Save this - only shown once!
+   * ```
+   */
+  async createChatter(options) {
+    return createChatterImpl.call(this, options);
+  }
+  /**
+   * Retrieves a specific chatter by ID
+   * @param options - The chatter retrieval options
+   * @param options.chatter_id - The ID of the chatter to retrieve
+   * @returns Promise resolving to the chatter details
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.getChatter({
+   *   chatter_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   *
+   * console.log(`Chatter username: ${result.chatter.username}`);
+   * ```
+   */
+  async getChatter(options) {
+    return getChatterImpl.call(this, options);
+  }
+  /**
+   * Deactivates a chatter
+   * @param options - The chatter deactivation options
+   * @param options.chatter_id - The ID of the chatter to deactivate
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * await client.deactivateChatter({
+   *   chatter_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   *
+   * console.log("Chatter deactivated successfully");
+   * ```
+   */
+  async deactivateChatter(options) {
+    return deactivateChatterImpl.call(this, options);
   }
 };
 export {

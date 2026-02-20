@@ -6,7 +6,9 @@ import type {
   GetConversationResponse,
   ListConversationsData,
   GenerateResponseSyncResponse,
-  GenerateResponseSyncRequest
+  GenerateResponseSyncRequest,
+  ApiModerationSeverity,
+  ApiModerationCategory,
 } from "../client/types.gen";
 import type { PrioriChat } from "../client";
 
@@ -32,7 +34,12 @@ export async function createConversationImpl(
 /**
  * Options for listing conversations
  */
-export interface ListConversationsOptions extends NonNullable<ListConversationsData['query']> {}
+export interface ListConversationsOptions extends Omit<NonNullable<ListConversationsData['query']>, 'severities' | 'categories'> {
+  /** Filter by moderation severity */
+  severities?: Array<ApiModerationSeverity> | null;
+  /** Filter by moderation category */
+  categories?: Array<ApiModerationCategory> | null;
+}
 
 export async function listConversationsImpl(
   this: PrioriChat,

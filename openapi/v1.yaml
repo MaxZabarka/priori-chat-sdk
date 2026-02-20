@@ -72,6 +72,53 @@ paths:
           description: API key not found
         '500':
           description: Internal server error
+  /api/auth/chatter/login:
+    post:
+      tags:
+      - authentication
+      operationId: chatter_login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatterLoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatterLoginResponse'
+        '401':
+          description: Invalid credentials
+        '500':
+          description: Internal server error
+  /api/bot/clone_voice:
+    post:
+      tags:
+      - voice
+      operationId: clone_voice
+      parameters:
+      - name: bot_id
+        in: query
+        description: Bot identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Voice cloned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CloneVoiceResponse'
+        '400':
+          description: Invalid audio file
+        '404':
+          description: Bot not found
+        '500':
+          description: Internal server error
   /api/bots:
     get:
       tags:
@@ -175,6 +222,84 @@ paths:
           description: Bot deleted successfully
         '404':
           description: Bot not found
+        '500':
+          description: Internal server error
+  /api/chatters:
+    get:
+      tags:
+      - chatters
+      operationId: list_chatters
+      responses:
+        '200':
+          description: Chatters retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListChattersResponse'
+        '500':
+          description: Internal server error
+    post:
+      tags:
+      - chatters
+      operationId: create_chatter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChatterRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Chatter created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateChatterResponse'
+        '409':
+          description: Username already exists
+        '500':
+          description: Internal server error
+  /api/chatters/{chatter_id}:
+    get:
+      tags:
+      - chatters
+      operationId: get_chatter
+      parameters:
+      - name: chatter_id
+        in: path
+        description: Chatter ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Chatter retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetChatterResponse'
+        '404':
+          description: Chatter not found
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+      - chatters
+      operationId: deactivate_chatter
+      parameters:
+      - name: chatter_id
+        in: path
+        description: Chatter ID to deactivate
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Chatter deactivated successfully
+        '400':
+          description: Invalid chatter ID
+        '404':
+          description: Chatter not found
         '500':
           description: Internal server error
   /api/config:
@@ -379,6 +504,24 @@ paths:
           type: integer
           format: int32
           nullable: true
+      - name: severities
+        in: query
+        description: 'Filter by moderation severity (repeatable). Values: Low, Medium, High, Critical'
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          nullable: true
+      - name: categories
+        in: query
+        description: 'Filter by moderation category (repeatable). Values: underage_site_use, sexual_minors, beastiality, sexual_violence, prompt_injection'
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          nullable: true
       responses:
         '200':
           description: Conversations retrieved successfully
@@ -558,6 +701,26 @@ paths:
                 $ref: '#/components/schemas/AddMessageResponse'
         '500':
           description: Internal server error
+  /api/speak:
+    post:
+      tags:
+      - voice
+      operationId: speak
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpeechRequest'
+        required: true
+      responses:
+        '200':
+          description: Audio generated successfully
+        '400':
+          description: Bot has no voice configured or invalid request
+        '404':
+          description: Bot or voice not found
+        '500':
+          description: Internal server error
   /api/users:
     get:
       tags:
@@ -721,20 +884,6 @@ components:
       example:
         name: full_name
         value: Scarlett Jones
-    APILanguage:
-      type: string
-      description: Language enum for client configuration
-      enum:
-      - en
-      - es
-      - fr
-      - de
-      - pt
-      - it
-      - ja
-      - ko
-      - zh
-      - ru
     APIModerationCategory:
       type: string
       enum:
@@ -890,6 +1039,11 @@ components:
           type: string
         name:
           type: string
+    AudioFormat:
+      type: string
+      enum:
+      - ogg_opus
+      - mpeg
     Bot:
       type: object
       required:
@@ -897,6 +1051,7 @@ components:
       - name
       - freeform
       - attributes
+      - gay
       properties:
         attributes:
           type: array
@@ -907,6 +1062,10 @@ components:
           type: string
           description: Freeform text description
           example: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
+        gay:
+          type: boolean
+          description: Whether the bot is gay
+          example: false
         id:
           type: string
           format: uuid
@@ -941,6 +1100,53 @@ components:
         freeform: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
         id: 550e8400-e29b-41d4-a716-446655440000
         name: Scarlett
+    Chatter:
+      type: object
+      required:
+      - id
+      - username
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the chatter
+          example: 550e8400-e29b-41d4-a716-446655440000
+        username:
+          type: string
+          description: Username of the chatter
+          example: john_doe
+      example:
+        id: 550e8400-e29b-41d4-a716-446655440000
+        username: john_doe
+    ChatterLoginRequest:
+      type: object
+      required:
+      - username
+      - password
+      properties:
+        password:
+          type: string
+          description: Chatter's password
+          example: password123
+        username:
+          type: string
+          description: Chatter's username
+          example: john_doe
+    ChatterLoginResponse:
+      type: object
+      required:
+      - token
+      - chatter_id
+      properties:
+        chatter_id:
+          type: string
+          format: uuid
+          description: Chatter ID
+          example: 550e8400-e29b-41d4-a716-446655440000
+        token:
+          type: string
+          description: JWT token for authentication
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
     ClientConfig:
       type: object
       description: Client configuration response
@@ -950,7 +1156,7 @@ components:
           nullable: true
         language:
           allOf:
-          - $ref: '#/components/schemas/APILanguage'
+          - $ref: '#/components/schemas/Language'
           nullable: true
         max_delay:
           type: integer
@@ -987,11 +1193,22 @@ components:
         timezone: America/New_York
         typing_speed: 1.5
         webhook: https://example.com/webhook
+    CloneVoiceResponse:
+      type: object
+      required:
+      - bot
+      properties:
+        bot:
+          $ref: '#/components/schemas/Bot'
     Content:
       type: object
       required:
       - url
       properties:
+        content_hash:
+          type: string
+          description: SHA256 hash of the content
+          nullable: true
         content_id:
           type: string
           description: Unique identifier for the content
@@ -1102,6 +1319,11 @@ components:
           description: Freeform text description
           example: Scarlett loves to travel, she is fresh out of college.
           nullable: true
+        gay:
+          type: boolean
+          description: Whether the bot is gay
+          example: false
+          nullable: true
         name:
           type: string
           description: Name of the bot
@@ -1123,6 +1345,29 @@ components:
       properties:
         bot:
           $ref: '#/components/schemas/Bot'
+    CreateChatterRequestBody:
+      type: object
+      required:
+      - username
+      properties:
+        username:
+          type: string
+          description: Username for the chatter
+          example: john_doe
+      example:
+        username: john_doe
+    CreateChatterResponse:
+      type: object
+      required:
+      - chatter
+      - password
+      properties:
+        chatter:
+          $ref: '#/components/schemas/Chatter'
+        password:
+          type: string
+          description: The generated password - only shown once at creation time
+          example: xK9mP2nQ4rS6tU8v
     CreateConversationRequest:
       type: object
       required:
@@ -1144,6 +1389,10 @@ components:
           description: Optional freeform text to add to the prompt
           example: put any information here that you want added to the prompt
           nullable: true
+        language:
+          allOf:
+          - $ref: '#/components/schemas/Language'
+          nullable: true
         platform:
           type: string
           description: Optional platform name describing which site the user and bot are chatting on
@@ -1153,6 +1402,11 @@ components:
           type: boolean
           description: Whether to have the bot capable of responding in multiple messages (more realistic)
           example: true
+          nullable: true
+        timezone:
+          type: string
+          description: Optional timezone (e.g., "America/New_York", "Europe/London")
+          example: America/New_York
           nullable: true
         user_id:
           type: string
@@ -1255,6 +1509,12 @@ components:
         batch_size:
           type: integer
           minimum: 0
+        override_messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          description: Optional list of messages to use instead of the conversation's stored message history.
+          nullable: true
     GenerateResponseSyncResponse:
       type: object
       required:
@@ -1271,6 +1531,13 @@ components:
       properties:
         bot:
           $ref: '#/components/schemas/Bot'
+    GetChatterResponse:
+      type: object
+      required:
+      - chatter
+      properties:
+        chatter:
+          $ref: '#/components/schemas/Chatter'
     GetClientConfigResponse:
       type: object
       required:
@@ -1344,6 +1611,41 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+    ImageItem:
+      type: object
+      required:
+      - url
+      - public
+      properties:
+        new_id:
+          type: string
+          description: Optional custom content ID for the image
+          nullable: true
+        public:
+          type: boolean
+          description: Whether this image is public (displayed on profile) or private (vault)
+          example: true
+        url:
+          type: string
+          description: URL of the image (S3 URL for existing content, or external URL for new upload)
+          example: https://example.com/image.jpg
+      example:
+        public: true
+        url: https://example.com/image.jpg
+    Language:
+      type: string
+      description: Language enum for client configuration
+      enum:
+      - en
+      - es
+      - fr
+      - de
+      - pt
+      - it
+      - ja
+      - ko
+      - zh
+      - ru
     ListApiKeysResponse:
       type: object
       required:
@@ -1364,6 +1666,16 @@ components:
           items:
             $ref: '#/components/schemas/Bot'
           description: List of all bots
+    ListChattersResponse:
+      type: object
+      required:
+      - chatters
+      properties:
+        chatters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chatter'
+          description: List of chatters
     ListContentQuery:
       type: object
       properties:
@@ -1399,7 +1711,16 @@ components:
       required:
       - public_content
       - private_content
+      - content
       properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Content'
+          description: |-
+            List of all content items (public + private combined)
+            @deprecated Use public_content and private_content instead. This field is only here for backwards compatiblity
+          deprecated: true
         private_content:
           type: array
           items:
@@ -1551,6 +1872,10 @@ components:
           type: string
           description: The text content of the matched message
           example: Hello, how are you?
+        moderation:
+          allOf:
+          - $ref: '#/components/schemas/APIModerationInfo'
+          nullable: true
         sent_at:
           type: integer
           format: int64
@@ -1568,6 +1893,23 @@ components:
           attached_media: null
           from_bot: false
           text: Hey what's your name?
+    SpeechRequest:
+      type: object
+      required:
+      - message
+      - bot_id
+      properties:
+        bot_id:
+          type: string
+        format:
+          allOf:
+          - $ref: '#/components/schemas/AudioFormat'
+          nullable: true
+        message:
+          type: string
+        url:
+          type: boolean
+          nullable: true
     Summary:
       type: object
       required:
@@ -1606,6 +1948,19 @@ components:
           description: Freeform text description
           example: Scarlett loves to travel, she is fresh out of college.
           nullable: true
+        gay:
+          type: boolean
+          description: Whether the bot is gay
+          example: false
+          nullable: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageItem'
+          description: |-
+            Optional list of images to set for this bot.
+            When provided, all existing bot images are replaced with these.
+          nullable: true
         name:
           type: string
           description: Name of the bot
@@ -1620,6 +1975,11 @@ components:
         - name: residence
           value: New York
         freeform: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
+        images:
+        - public: true
+          url: https://example.com/image1.jpg
+        - public: false
+          url: https://example.com/image2.jpg
         name: Scarlett
     UpdateBotResponse:
       type: object
@@ -1637,7 +1997,7 @@ components:
           nullable: true
         language:
           allOf:
-          - $ref: '#/components/schemas/APILanguage'
+          - $ref: '#/components/schemas/Language'
           nullable: true
         max_delay:
           type: integer
@@ -1682,6 +2042,10 @@ components:
           description: Optional freeform text to add to the prompt
           example: put any information here that you want added to the prompt
           nullable: true
+        language:
+          allOf:
+          - $ref: '#/components/schemas/Language'
+          nullable: true
         platform:
           type: string
           description: Optional platform name describing which site the user and bot are chatting on
@@ -1691,6 +2055,11 @@ components:
           type: boolean
           description: Whether to have the bot capable of responding in multiple messages (more realistic)
           example: true
+          nullable: true
+        timezone:
+          type: string
+          description: Optional timezone (e.g., "America/New_York", "Europe/London")
+          example: America/New_York
           nullable: true
         webhook:
           type: string
@@ -1777,9 +2146,13 @@ components:
       type: object
       required:
       - content
+      - created
       properties:
         content:
           $ref: '#/components/schemas/Content'
+        created:
+          type: boolean
+          description: Whether the content was newly created (true) or already existed (false)
     User:
       type: object
       required:
@@ -1831,9 +2204,15 @@ tags:
   description: Bot management endpoints
 - name: users
   description: User management endpoints
+- name: chatters
+  description: Chatter account management endpoints
+- name: authentication
+  description: Authentication endpoints
 - name: api-keys
   description: API key management endpoints
 - name: content
   description: Content management endpoints
 - name: config
   description: Client configuration endpoints
+- name: voice
+  description: Voice cloning and generation endpoints

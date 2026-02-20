@@ -11,21 +11,6 @@ export type ApiAttribute = {
   value: string;
 };
 
-/**
- * Language enum for client configuration
- */
-export type ApiLanguage =
-  | "en"
-  | "es"
-  | "fr"
-  | "de"
-  | "pt"
-  | "it"
-  | "ja"
-  | "ko"
-  | "zh"
-  | "ru";
-
 export type ApiModerationCategory =
   | "underage_site_use"
   | "sexual_minors"
@@ -103,6 +88,8 @@ export type ApiKeyInfo = {
   name: string;
 };
 
+export type AudioFormat = "ogg_opus" | "mpeg";
+
 export type Bot = {
   /**
    * List of bot attributes
@@ -113,6 +100,10 @@ export type Bot = {
    */
   freeform: string;
   /**
+   * Whether the bot is gay
+   */
+  gay: boolean;
+  /**
    * Unique identifier for the bot
    */
   id: string;
@@ -122,12 +113,45 @@ export type Bot = {
   name: string;
 };
 
+export type Chatter = {
+  /**
+   * Unique identifier for the chatter
+   */
+  id: string;
+  /**
+   * Username of the chatter
+   */
+  username: string;
+};
+
+export type ChatterLoginRequest = {
+  /**
+   * Chatter's password
+   */
+  password: string;
+  /**
+   * Chatter's username
+   */
+  username: string;
+};
+
+export type ChatterLoginResponse = {
+  /**
+   * Chatter ID
+   */
+  chatter_id: string;
+  /**
+   * JWT token for authentication
+   */
+  token: string;
+};
+
 /**
  * Client configuration response
  */
 export type ClientConfig = {
   chat_images_enabled?: boolean | null;
-  language?: ApiLanguage | null;
+  language?: Language | null;
   max_delay?: number | null;
   min_delay?: number | null;
   platform?: string | null;
@@ -137,7 +161,15 @@ export type ClientConfig = {
   webhook?: string | null;
 };
 
+export type CloneVoiceResponse = {
+  bot: Bot;
+};
+
 export type Content = {
+  /**
+   * SHA256 hash of the content
+   */
+  content_hash?: string | null;
   /**
    * Unique identifier for the content
    */
@@ -213,6 +245,10 @@ export type CreateBotRequestBody = {
    */
   freeform?: string | null;
   /**
+   * Whether the bot is gay
+   */
+  gay?: boolean | null;
+  /**
    * Name of the bot
    */
   name: string;
@@ -220,6 +256,21 @@ export type CreateBotRequestBody = {
 
 export type CreateBotResponse = {
   bot: Bot;
+};
+
+export type CreateChatterRequestBody = {
+  /**
+   * Username for the chatter
+   */
+  username: string;
+};
+
+export type CreateChatterResponse = {
+  chatter: Chatter;
+  /**
+   * The generated password - only shown once at creation time
+   */
+  password: string;
 };
 
 export type CreateConversationRequest = {
@@ -235,6 +286,7 @@ export type CreateConversationRequest = {
    * Optional freeform text to add to the prompt
    */
   freeform?: string | null;
+  language?: Language | null;
   /**
    * Optional platform name describing which site the user and bot are chatting on
    */
@@ -243,6 +295,10 @@ export type CreateConversationRequest = {
    * Whether to have the bot capable of responding in multiple messages (more realistic)
    */
   segment?: boolean | null;
+  /**
+   * Optional timezone (e.g., "America/New_York", "Europe/London")
+   */
+  timezone?: string | null;
   /**
    * ID of the user to associate with this conversation. Use whatever user ID format you use in your system
    */
@@ -300,6 +356,10 @@ export type DeleteContentResponse = {
 
 export type GenerateResponseSyncRequest = {
   batch_size?: number;
+  /**
+   * Optional list of messages to use instead of the conversation's stored message history.
+   */
+  override_messages?: Array<Message> | null;
 };
 
 export type GenerateResponseSyncResponse = {
@@ -308,6 +368,10 @@ export type GenerateResponseSyncResponse = {
 
 export type GetBotResponse = {
   bot: Bot;
+};
+
+export type GetChatterResponse = {
+  chatter: Chatter;
 };
 
 export type GetClientConfigResponse = {
@@ -361,6 +425,36 @@ export type GetUserResponse = {
   user: User;
 };
 
+export type ImageItem = {
+  /**
+   * Optional custom content ID for the image
+   */
+  new_id?: string | null;
+  /**
+   * Whether this image is public (displayed on profile) or private (vault)
+   */
+  public: boolean;
+  /**
+   * URL of the image (S3 URL for existing content, or external URL for new upload)
+   */
+  url: string;
+};
+
+/**
+ * Language enum for client configuration
+ */
+export type Language =
+  | "en"
+  | "es"
+  | "fr"
+  | "de"
+  | "pt"
+  | "it"
+  | "ja"
+  | "ko"
+  | "zh"
+  | "ru";
+
 export type ListApiKeysResponse = {
   /**
    * List of API keys for the client
@@ -373,6 +467,13 @@ export type ListBotsResponse = {
    * List of all bots
    */
   bots: Array<Bot>;
+};
+
+export type ListChattersResponse = {
+  /**
+   * List of chatters
+   */
+  chatters: Array<Chatter>;
 };
 
 export type ListContentQuery = {
@@ -396,6 +497,12 @@ export type ListContentQuery = {
 };
 
 export type ListContentResponse = {
+  /**
+   * List of all content items (public + private combined)
+   * @deprecated Use public_content and private_content instead. This field is only here for backwards compatiblity
+   * @deprecated
+   */
+  content: Array<Content>;
   /**
    * List of private content items (vault for conversations)
    */
@@ -492,6 +599,7 @@ export type SearchedMessage = {
    * The text content of the matched message
    */
   message_text: string;
+  moderation?: ApiModerationInfo | null;
   /**
    * Unix timestamp when the message was sent
    */
@@ -500,6 +608,13 @@ export type SearchedMessage = {
 
 export type SendMessageRequest = {
   message: Message;
+};
+
+export type SpeechRequest = {
+  bot_id: string;
+  format?: AudioFormat | null;
+  message: string;
+  url?: boolean | null;
 };
 
 export type Summary = {
@@ -527,6 +642,15 @@ export type UpdateBotRequest = {
    */
   freeform?: string | null;
   /**
+   * Whether the bot is gay
+   */
+  gay?: boolean | null;
+  /**
+   * Optional list of images to set for this bot.
+   * When provided, all existing bot images are replaced with these.
+   */
+  images?: Array<ImageItem> | null;
+  /**
    * Name of the bot
    */
   name?: string | null;
@@ -541,7 +665,7 @@ export type UpdateBotResponse = {
  */
 export type UpdateClientConfigRequest = {
   chat_images_enabled?: boolean | null;
-  language?: ApiLanguage | null;
+  language?: Language | null;
   max_delay?: number | null;
   min_delay?: number | null;
   platform?: string | null;
@@ -560,6 +684,7 @@ export type UpdateConversationRequestBody = {
    * Optional freeform text to add to the prompt
    */
   freeform?: string | null;
+  language?: Language | null;
   /**
    * Optional platform name describing which site the user and bot are chatting on
    */
@@ -568,6 +693,10 @@ export type UpdateConversationRequestBody = {
    * Whether to have the bot capable of responding in multiple messages (more realistic)
    */
   segment?: boolean | null;
+  /**
+   * Optional timezone (e.g., "America/New_York", "Europe/London")
+   */
+  timezone?: string | null;
   /**
    * Optional webhook URL to call when messages are received in this conversation
    */
@@ -618,6 +747,10 @@ export type UploadContentRequest = {
 
 export type UploadContentResponse = {
   content: Content;
+  /**
+   * Whether the content was newly created (true) or already existed (false)
+   */
+  created: boolean;
 };
 
 export type User = {
@@ -739,6 +872,71 @@ export type DeactivateApiKeyResponses = {
 
 export type DeactivateApiKeyResponse2 =
   DeactivateApiKeyResponses[keyof DeactivateApiKeyResponses];
+
+export type ChatterLoginData = {
+  body: ChatterLoginRequest;
+  path?: never;
+  query?: never;
+  url: "/api/auth/chatter/login";
+};
+
+export type ChatterLoginErrors = {
+  /**
+   * Invalid credentials
+   */
+  401: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type ChatterLoginResponses = {
+  /**
+   * Login successful
+   */
+  200: ChatterLoginResponse;
+};
+
+export type ChatterLoginResponse2 =
+  ChatterLoginResponses[keyof ChatterLoginResponses];
+
+export type CloneVoiceData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Bot identifier
+     */
+    bot_id: string;
+  };
+  url: "/api/bot/clone_voice";
+};
+
+export type CloneVoiceErrors = {
+  /**
+   * Invalid audio file
+   */
+  400: unknown;
+  /**
+   * Bot not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type CloneVoiceResponses = {
+  /**
+   * Voice cloned successfully
+   */
+  200: CloneVoiceResponse;
+};
+
+export type CloneVoiceResponse2 =
+  CloneVoiceResponses[keyof CloneVoiceResponses];
 
 export type ListBotsData = {
   body?: never;
@@ -881,6 +1079,128 @@ export type UpdateBotResponses = {
 };
 
 export type UpdateBotResponse2 = UpdateBotResponses[keyof UpdateBotResponses];
+
+export type ListChattersData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/chatters";
+};
+
+export type ListChattersErrors = {
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type ListChattersResponses = {
+  /**
+   * Chatters retrieved successfully
+   */
+  200: ListChattersResponse;
+};
+
+export type ListChattersResponse2 =
+  ListChattersResponses[keyof ListChattersResponses];
+
+export type CreateChatterData = {
+  body: CreateChatterRequestBody;
+  path?: never;
+  query?: never;
+  url: "/api/chatters";
+};
+
+export type CreateChatterErrors = {
+  /**
+   * Username already exists
+   */
+  409: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type CreateChatterResponses = {
+  /**
+   * Chatter created successfully
+   */
+  200: CreateChatterResponse;
+};
+
+export type CreateChatterResponse2 =
+  CreateChatterResponses[keyof CreateChatterResponses];
+
+export type DeactivateChatterData = {
+  body?: never;
+  path: {
+    /**
+     * Chatter ID to deactivate
+     */
+    chatter_id: string;
+  };
+  query?: never;
+  url: "/api/chatters/{chatter_id}";
+};
+
+export type DeactivateChatterErrors = {
+  /**
+   * Invalid chatter ID
+   */
+  400: unknown;
+  /**
+   * Chatter not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type DeactivateChatterResponses = {
+  /**
+   * Chatter deactivated successfully
+   */
+  204: void;
+};
+
+export type DeactivateChatterResponse =
+  DeactivateChatterResponses[keyof DeactivateChatterResponses];
+
+export type GetChatterData = {
+  body?: never;
+  path: {
+    /**
+     * Chatter ID
+     */
+    chatter_id: string;
+  };
+  query?: never;
+  url: "/api/chatters/{chatter_id}";
+};
+
+export type GetChatterErrors = {
+  /**
+   * Chatter not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type GetChatterResponses = {
+  /**
+   * Chatter retrieved successfully
+   */
+  200: GetChatterResponse;
+};
+
+export type GetChatterResponse2 =
+  GetChatterResponses[keyof GetChatterResponses];
 
 export type GetClientConfigData = {
   body?: never;
@@ -1084,6 +1404,14 @@ export type ListConversationsData = {
      * Filter conversations with last message before this timestamp (Unix epoch)
      */
     max_last_message_date?: number | null;
+    /**
+     * Filter by moderation severity (repeatable). Values: Low, Medium, High, Critical
+     */
+    severities?: Array<string> | null;
+    /**
+     * Filter by moderation category (repeatable). Values: underage_site_use, sexual_minors, beastiality, sexual_violence, prompt_injection
+     */
+    categories?: Array<string> | null;
   };
   url: "/api/conversations";
 };
@@ -1299,6 +1627,35 @@ export type SendMessageOrCreateConversationResponses = {
 
 export type SendMessageOrCreateConversationResponse =
   SendMessageOrCreateConversationResponses[keyof SendMessageOrCreateConversationResponses];
+
+export type SpeakData = {
+  body: SpeechRequest;
+  path?: never;
+  query?: never;
+  url: "/api/speak";
+};
+
+export type SpeakErrors = {
+  /**
+   * Bot has no voice configured or invalid request
+   */
+  400: unknown;
+  /**
+   * Bot or voice not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type SpeakResponses = {
+  /**
+   * Audio generated successfully
+   */
+  200: unknown;
+};
 
 export type ListUsersData = {
   body?: never;

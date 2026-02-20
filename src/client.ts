@@ -26,6 +26,12 @@ import {
   getClientConfigImpl,
   updateClientConfigImpl,
 } from "./methods/config";
+import {
+  listChattersImpl,
+  createChatterImpl,
+  getChatterImpl,
+  deactivateChatterImpl,
+} from "./methods/chatters";
 import { getUser, updateUser } from "./client/sdk.gen";
 import type {
   CreateConversationResponse,
@@ -59,6 +65,12 @@ import type {
   GetUserResponse,
   UpdateUserData,
   UpdateUserResponse,
+  CreateChatterRequestBody,
+  CreateChatterResponse,
+  ListChattersResponse,
+  GetChatterData,
+  GetChatterResponse,
+  DeactivateChatterData,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -617,5 +629,79 @@ export class PrioriChat {
       body,
     });
     return response.data as UpdateUserResponse;
+  }
+
+  /**
+   * Lists all chatters
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.listChatters();
+   * console.log(`Found ${result.chatters.length} chatters`);
+   * ```
+   */
+  async listChatters(): Promise<ListChattersResponse> {
+    return listChattersImpl.call(this);
+  }
+
+  /**
+   * Creates a new chatter
+   * @param options - The chatter creation options
+   * @param options.username - Username for the chatter
+   * @returns Promise resolving to the created chatter and password (password is only shown once)
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.createChatter({
+   *   username: "my-chatter"
+   * });
+   *
+   * console.log(`Created chatter: ${result.chatter.id}`);
+   * console.log(`Password: ${result.password}`); // Save this - only shown once!
+   * ```
+   */
+  async createChatter(options: CreateChatterRequestBody): Promise<CreateChatterResponse> {
+    return createChatterImpl.call(this, options);
+  }
+
+  /**
+   * Retrieves a specific chatter by ID
+   * @param options - The chatter retrieval options
+   * @param options.chatter_id - The ID of the chatter to retrieve
+   * @returns Promise resolving to the chatter details
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.getChatter({
+   *   chatter_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   *
+   * console.log(`Chatter username: ${result.chatter.username}`);
+   * ```
+   */
+  async getChatter(options: GetChatterData["path"]): Promise<GetChatterResponse> {
+    return getChatterImpl.call(this, options);
+  }
+
+  /**
+   * Deactivates a chatter
+   * @param options - The chatter deactivation options
+   * @param options.chatter_id - The ID of the chatter to deactivate
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * await client.deactivateChatter({
+   *   chatter_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   *
+   * console.log("Chatter deactivated successfully");
+   * ```
+   */
+  async deactivateChatter(options: DeactivateChatterData["path"]): Promise<void> {
+    return deactivateChatterImpl.call(this, options);
   }
 }

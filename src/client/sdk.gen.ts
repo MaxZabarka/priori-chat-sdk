@@ -11,6 +11,12 @@ import type {
   DeactivateApiKeyData,
   DeactivateApiKeyResponses,
   DeactivateApiKeyErrors,
+  ChatterLoginData,
+  ChatterLoginResponses,
+  ChatterLoginErrors,
+  CloneVoiceData,
+  CloneVoiceResponses,
+  CloneVoiceErrors,
   ListBotsData,
   ListBotsResponses,
   ListBotsErrors,
@@ -26,6 +32,18 @@ import type {
   UpdateBotData,
   UpdateBotResponses,
   UpdateBotErrors,
+  ListChattersData,
+  ListChattersResponses,
+  ListChattersErrors,
+  CreateChatterData,
+  CreateChatterResponses,
+  CreateChatterErrors,
+  DeactivateChatterData,
+  DeactivateChatterResponses,
+  DeactivateChatterErrors,
+  GetChatterData,
+  GetChatterResponses,
+  GetChatterErrors,
   GetClientConfigData,
   GetClientConfigResponses,
   GetClientConfigErrors,
@@ -65,6 +83,9 @@ import type {
   SendMessageOrCreateConversationData,
   SendMessageOrCreateConversationResponses,
   SendMessageOrCreateConversationErrors,
+  SpeakData,
+  SpeakResponses,
+  SpeakErrors,
   ListUsersData,
   ListUsersResponses,
   ListUsersErrors,
@@ -146,6 +167,38 @@ export const deactivateApiKey = <ThrowOnError extends boolean = true>(
   });
 };
 
+export const chatterLogin = <ThrowOnError extends boolean = true>(
+  options: Options<ChatterLoginData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    ChatterLoginResponses,
+    ChatterLoginErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/auth/chatter/login",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const cloneVoice = <ThrowOnError extends boolean = true>(
+  options: Options<CloneVoiceData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    CloneVoiceResponses,
+    CloneVoiceErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/bot/clone_voice",
+    ...options,
+  });
+};
+
 export const listBots = <ThrowOnError extends boolean = true>(
   options?: Options<ListBotsData, ThrowOnError>,
 ) => {
@@ -220,6 +273,65 @@ export const updateBot = <ThrowOnError extends boolean = true>(
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+};
+
+export const listChatters = <ThrowOnError extends boolean = true>(
+  options?: Options<ListChattersData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ListChattersResponses,
+    ListChattersErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/chatters",
+    ...options,
+  });
+};
+
+export const createChatter = <ThrowOnError extends boolean = true>(
+  options: Options<CreateChatterData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    CreateChatterResponses,
+    CreateChatterErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/chatters",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const deactivateChatter = <ThrowOnError extends boolean = true>(
+  options: Options<DeactivateChatterData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    DeactivateChatterResponses,
+    DeactivateChatterErrors,
+    ThrowOnError
+  >({
+    url: "/api/chatters/{chatter_id}",
+    ...options,
+  });
+};
+
+export const getChatter = <ThrowOnError extends boolean = true>(
+  options: Options<GetChatterData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetChatterResponses,
+    GetChatterErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/chatters/{chatter_id}",
+    ...options,
   });
 };
 
@@ -436,6 +548,23 @@ export const sendMessageOrCreateConversation = <
   >({
     responseType: "json",
     url: "/api/messages",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const speak = <ThrowOnError extends boolean = true>(
+  options: Options<SpeakData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    SpeakResponses,
+    SpeakErrors,
+    ThrowOnError
+  >({
+    url: "/api/speak",
     ...options,
     headers: {
       "Content-Type": "application/json",

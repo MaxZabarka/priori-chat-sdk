@@ -8,10 +8,6 @@ type ApiAttribute = {
      */
     value: string;
 };
-/**
- * Language enum for client configuration
- */
-type ApiLanguage = "en" | "es" | "fr" | "de" | "pt" | "it" | "ja" | "ko" | "zh" | "ru";
 type ApiModerationCategory = "underage_site_use" | "sexual_minors" | "beastiality" | "sexual_violence" | "prompt_injection";
 type ApiModerationInfo = {
     category: ApiModerationCategory;
@@ -42,6 +38,10 @@ type Bot = {
      */
     freeform: string;
     /**
+     * Whether the bot is gay
+     */
+    gay: boolean;
+    /**
      * Unique identifier for the bot
      */
     id: string;
@@ -50,12 +50,22 @@ type Bot = {
      */
     name: string;
 };
+type Chatter = {
+    /**
+     * Unique identifier for the chatter
+     */
+    id: string;
+    /**
+     * Username of the chatter
+     */
+    username: string;
+};
 /**
  * Client configuration response
  */
 type ClientConfig = {
     chat_images_enabled?: boolean | null;
-    language?: ApiLanguage | null;
+    language?: Language | null;
     max_delay?: number | null;
     min_delay?: number | null;
     platform?: string | null;
@@ -65,6 +75,10 @@ type ClientConfig = {
     webhook?: string | null;
 };
 type Content = {
+    /**
+     * SHA256 hash of the content
+     */
+    content_hash?: string | null;
     /**
      * Unique identifier for the content
      */
@@ -135,12 +149,29 @@ type CreateBotRequestBody = {
      */
     freeform?: string | null;
     /**
+     * Whether the bot is gay
+     */
+    gay?: boolean | null;
+    /**
      * Name of the bot
      */
     name: string;
 };
 type CreateBotResponse = {
     bot: Bot;
+};
+type CreateChatterRequestBody = {
+    /**
+     * Username for the chatter
+     */
+    username: string;
+};
+type CreateChatterResponse = {
+    chatter: Chatter;
+    /**
+     * The generated password - only shown once at creation time
+     */
+    password: string;
 };
 type CreateConversationResponse = {
     conversation: Conversation$1;
@@ -159,12 +190,19 @@ type DeleteContentResponse = {
 };
 type GenerateResponseSyncRequest = {
     batch_size?: number;
+    /**
+     * Optional list of messages to use instead of the conversation's stored message history.
+     */
+    override_messages?: Array<Message$1> | null;
 };
 type GenerateResponseSyncResponse = {
     candidates: Array<ResponseCandidate>;
 };
 type GetBotResponse = {
     bot: Bot;
+};
+type GetChatterResponse = {
+    chatter: Chatter;
 };
 type GetClientConfigResponse = {
     config: ClientConfig;
@@ -213,6 +251,24 @@ type GetMemoriesResponse = {
 type GetUserResponse = {
     user: User;
 };
+type ImageItem = {
+    /**
+     * Optional custom content ID for the image
+     */
+    new_id?: string | null;
+    /**
+     * Whether this image is public (displayed on profile) or private (vault)
+     */
+    public: boolean;
+    /**
+     * URL of the image (S3 URL for existing content, or external URL for new upload)
+     */
+    url: string;
+};
+/**
+ * Language enum for client configuration
+ */
+type Language = "en" | "es" | "fr" | "de" | "pt" | "it" | "ja" | "ko" | "zh" | "ru";
 type ListApiKeysResponse = {
     /**
      * List of API keys for the client
@@ -224,6 +280,12 @@ type ListBotsResponse = {
      * List of all bots
      */
     bots: Array<Bot>;
+};
+type ListChattersResponse = {
+    /**
+     * List of chatters
+     */
+    chatters: Array<Chatter>;
 };
 type ListContentQuery = {
     /**
@@ -245,6 +307,12 @@ type ListContentQuery = {
     user_id?: string | null;
 };
 type ListContentResponse = {
+    /**
+     * List of all content items (public + private combined)
+     * @deprecated Use public_content and private_content instead. This field is only here for backwards compatiblity
+     * @deprecated
+     */
+    content: Array<Content>;
     /**
      * List of private content items (vault for conversations)
      */
@@ -312,6 +380,7 @@ type SearchedMessage = {
      * The text content of the matched message
      */
     message_text: string;
+    moderation?: ApiModerationInfo | null;
     /**
      * Unix timestamp when the message was sent
      */
@@ -341,6 +410,15 @@ type UpdateBotRequest = {
      */
     freeform?: string | null;
     /**
+     * Whether the bot is gay
+     */
+    gay?: boolean | null;
+    /**
+     * Optional list of images to set for this bot.
+     * When provided, all existing bot images are replaced with these.
+     */
+    images?: Array<ImageItem> | null;
+    /**
      * Name of the bot
      */
     name?: string | null;
@@ -353,7 +431,7 @@ type UpdateBotResponse = {
  */
 type UpdateClientConfigRequest = {
     chat_images_enabled?: boolean | null;
-    language?: ApiLanguage | null;
+    language?: Language | null;
     max_delay?: number | null;
     min_delay?: number | null;
     platform?: string | null;
@@ -402,6 +480,10 @@ type UploadContentRequest = {
 };
 type UploadContentResponse = {
     content: Content;
+    /**
+     * Whether the content was newly created (true) or already existed (false)
+     */
+    created: boolean;
 };
 type User = {
     /**
@@ -470,6 +552,28 @@ type UpdateBotData = {
     };
     query?: never;
     url: "/api/bots/{bot_id}";
+};
+type DeactivateChatterData = {
+    body?: never;
+    path: {
+        /**
+         * Chatter ID to deactivate
+         */
+        chatter_id: string;
+    };
+    query?: never;
+    url: "/api/chatters/{chatter_id}";
+};
+type GetChatterData = {
+    body?: never;
+    path: {
+        /**
+         * Chatter ID
+         */
+        chatter_id: string;
+    };
+    query?: never;
+    url: "/api/chatters/{chatter_id}";
 };
 type UpdateClientConfigData = {
     body: UpdateClientConfigRequest;
@@ -557,6 +661,14 @@ type ListConversationsData = {
          * Filter conversations with last message before this timestamp (Unix epoch)
          */
         max_last_message_date?: number | null;
+        /**
+         * Filter by moderation severity (repeatable). Values: Low, Medium, High, Critical
+         */
+        severities?: Array<string> | null;
+        /**
+         * Filter by moderation category (repeatable). Values: underage_site_use, sexual_minors, beastiality, sexual_violence, prompt_injection
+         */
+        categories?: Array<string> | null;
     };
     url: "/api/conversations";
 };
@@ -586,7 +698,11 @@ type UpdateUserData = {
 /**
  * Options for listing conversations
  */
-interface ListConversationsOptions extends NonNullable<ListConversationsData['query']> {
+interface ListConversationsOptions extends Omit<NonNullable<ListConversationsData['query']>, 'severities' | 'categories'> {
+    /** Filter by moderation severity */
+    severities?: Array<ApiModerationSeverity> | null;
+    /** Filter by moderation category */
+    categories?: Array<ApiModerationCategory> | null;
 }
 /**
  * Options for getting a conversation by ID
@@ -1200,6 +1316,68 @@ declare class PrioriChat {
      * ```
      */
     updateUser(options: UpdateUserData["path"] & UpdateUserData["body"]): Promise<UpdateUserResponse>;
+    /**
+     * Lists all chatters
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.listChatters();
+     * console.log(`Found ${result.chatters.length} chatters`);
+     * ```
+     */
+    listChatters(): Promise<ListChattersResponse>;
+    /**
+     * Creates a new chatter
+     * @param options - The chatter creation options
+     * @param options.username - Username for the chatter
+     * @returns Promise resolving to the created chatter and password (password is only shown once)
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.createChatter({
+     *   username: "my-chatter"
+     * });
+     *
+     * console.log(`Created chatter: ${result.chatter.id}`);
+     * console.log(`Password: ${result.password}`); // Save this - only shown once!
+     * ```
+     */
+    createChatter(options: CreateChatterRequestBody): Promise<CreateChatterResponse>;
+    /**
+     * Retrieves a specific chatter by ID
+     * @param options - The chatter retrieval options
+     * @param options.chatter_id - The ID of the chatter to retrieve
+     * @returns Promise resolving to the chatter details
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.getChatter({
+     *   chatter_id: "12345678-1234-1234-1234-123456789012"
+     * });
+     *
+     * console.log(`Chatter username: ${result.chatter.username}`);
+     * ```
+     */
+    getChatter(options: GetChatterData["path"]): Promise<GetChatterResponse>;
+    /**
+     * Deactivates a chatter
+     * @param options - The chatter deactivation options
+     * @param options.chatter_id - The ID of the chatter to deactivate
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * await client.deactivateChatter({
+     *   chatter_id: "12345678-1234-1234-1234-123456789012"
+     * });
+     *
+     * console.log("Chatter deactivated successfully");
+     * ```
+     */
+    deactivateChatter(options: DeactivateChatterData["path"]): Promise<void>;
 }
 
-export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiLanguage, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetUserData, type GetUserResponse, type ListApiKeysResponse, type ListBotsResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
