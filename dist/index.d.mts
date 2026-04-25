@@ -735,6 +735,10 @@ type ListConversationsData = {
          */
         categories?: Array<string> | null;
         /**
+         * Filter by platform IDs (repeatable: ?platform_ids=uuid1&platform_ids=uuid2)
+         */
+        platform_ids?: Array<string> | null;
+        /**
          * Maximum number of conversations to return (default: 1000)
          */
         limit?: number | null;

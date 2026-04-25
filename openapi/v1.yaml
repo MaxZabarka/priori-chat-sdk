@@ -522,6 +522,15 @@ paths:
           items:
             type: string
           nullable: true
+      - name: platform_ids
+        in: query
+        description: 'Filter by platform IDs (repeatable: ?platform_ids=uuid1&platform_ids=uuid2)'
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          nullable: true
       - name: limit
         in: query
         description: 'Maximum number of conversations to return (default: 1000)'

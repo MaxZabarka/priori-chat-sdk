@@ -738,6 +738,7 @@ export const zListConversationsData = z.object({
       max_last_message_date: z.union([z.number().int(), z.null()]).optional(),
       severities: z.union([z.array(z.string()), z.null()]).optional(),
       categories: z.union([z.array(z.string()), z.null()]).optional(),
+      platform_ids: z.union([z.array(z.string()), z.null()]).optional(),
       limit: z.union([z.coerce.bigint(), z.null()]).optional(),
       offset: z.union([z.coerce.bigint(), z.null()]).optional(),
     })
