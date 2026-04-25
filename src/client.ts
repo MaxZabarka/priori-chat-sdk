@@ -32,6 +32,14 @@ import {
   getChatterImpl,
   deactivateChatterImpl,
 } from "./methods/chatters";
+import {
+  listPlatformsImpl,
+  getPlatformImpl,
+  updatePlatformImpl,
+  type GetPlatformOptions,
+  type UpdatePlatformOptions,
+} from "./methods/platforms";
+import { createConversionImpl } from "./methods/conversions";
 import { getUser, updateUser } from "./client/sdk.gen";
 import type {
   CreateConversationResponse,
@@ -71,6 +79,11 @@ import type {
   GetChatterData,
   GetChatterResponse,
   DeactivateChatterData,
+  ListPlatformsResponse,
+  GetPlatformResponse,
+  UpdatePlatformResponse,
+  UpdatePlatformRequestBody,
+  CreateConversionRequestBody,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -703,5 +716,74 @@ export class PrioriChat {
    */
   async deactivateChatter(options: DeactivateChatterData["path"]): Promise<void> {
     return deactivateChatterImpl.call(this, options);
+  }
+
+  /**
+   * Lists all platforms accessible to the current client
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.listPlatforms();
+   * console.log(`Found ${result.platforms.length} platforms`);
+   * ```
+   */
+  async listPlatforms(): Promise<ListPlatformsResponse> {
+    return listPlatformsImpl.call(this);
+  }
+
+  /**
+   * Retrieves a specific platform by ID
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.getPlatform({
+   *   platform_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   *
+   * console.log(`Platform name: ${result.platform.name}`);
+   * ```
+   */
+  async getPlatform(options: GetPlatformOptions): Promise<GetPlatformResponse> {
+    return getPlatformImpl.call(this, options);
+  }
+
+  /**
+   * Updates an existing platform
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.updatePlatform({
+   *   platform_id: "12345678-1234-1234-1234-123456789012",
+   *   custom_instruction: "Be warm and helpful"
+   * });
+   *
+   * console.log(`Updated platform successfully`);
+   * ```
+   */
+  async updatePlatform(options: UpdatePlatformOptions): Promise<UpdatePlatformResponse> {
+    return updatePlatformImpl.call(this, options);
+  }
+
+  /**
+   * Creates a conversion record for tracking revenue or events
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * await client.createConversion({
+   *   user_id: "user-123",
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   amount: 4999, // Value in cents
+   *   timestamp: Math.floor(Date.now() / 1000)
+   * });
+   *
+   * console.log("Conversion recorded");
+   * ```
+   */
+  async createConversion(options: CreateConversionRequestBody): Promise<void> {
+    return createConversionImpl.call(this, options);
   }
 }

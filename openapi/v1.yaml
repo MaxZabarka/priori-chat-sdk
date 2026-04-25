@@ -522,6 +522,22 @@ paths:
           items:
             type: string
           nullable: true
+      - name: limit
+        in: query
+        description: 'Maximum number of conversations to return (default: 1000)'
+        required: false
+        schema:
+          type: integer
+          format: int64
+          nullable: true
+      - name: offset
+        in: query
+        description: 'Number of conversations to skip before returning results (default: 0)'
+        required: false
+        schema:
+          type: integer
+          format: int64
+          nullable: true
       responses:
         '200':
           description: Conversations retrieved successfully
@@ -672,6 +688,26 @@ paths:
           description: Message sent successfully
         '500':
           description: Internal server error
+  /api/conversion:
+    post:
+      tags:
+      - conversions
+      operationId: create_conversion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConversionRequestBody'
+        required: true
+      responses:
+        '201':
+          description: Conversion created successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: User, bot, or conversation not found
+        '500':
+          description: Internal server error
   /api/messages:
     post:
       tags:
@@ -699,6 +735,73 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddMessageResponse'
+        '500':
+          description: Internal server error
+  /api/platforms:
+    get:
+      tags:
+      - platforms
+      operationId: list_platforms
+      responses:
+        '200':
+          description: Platforms retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPlatformsResponse'
+        '500':
+          description: Internal server error
+  /api/platforms/{platform_id}:
+    get:
+      tags:
+      - platforms
+      operationId: get_platform
+      parameters:
+      - name: platform_id
+        in: path
+        description: Platform identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Platform retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPlatformResponse'
+        '404':
+          description: Platform not found
+        '500':
+          description: Internal server error
+    patch:
+      tags:
+      - platforms
+      operationId: update_platform
+      parameters:
+      - name: platform_id
+        in: path
+        description: Platform identifier
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePlatformRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Platform updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatePlatformResponse'
+        '404':
+          description: Platform not found
         '500':
           description: Internal server error
   /api/speak:
@@ -884,6 +987,15 @@ components:
       example:
         name: full_name
         value: Scarlett Jones
+    APIImageSendingBehaviour:
+      type: string
+      description: Image sending behaviour enum for client configuration
+      enum:
+      - disabled
+      - low
+      - moderate
+      - high
+      - aggressive
     APIModerationCategory:
       type: string
       enum:
@@ -918,6 +1030,17 @@ components:
       - Medium
       - High
       - Critical
+    APIOrientation:
+      type: string
+      description: Bot orientation — controls gender identity, pronouns, and attraction in the system prompt.
+      enum:
+      - straight_female
+      - lesbian_female
+      - gay_man
+      - straight_man
+      - trans_mtf
+      - trans_ftm
+      - bisexual
     APIUserWithStats:
       type: object
       required:
@@ -1051,7 +1174,7 @@ components:
       - name
       - freeform
       - attributes
-      - gay
+      - orientation
       properties:
         attributes:
           type: array
@@ -1062,10 +1185,6 @@ components:
           type: string
           description: Freeform text description
           example: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
-        gay:
-          type: boolean
-          description: Whether the bot is gay
-          example: false
         id:
           type: string
           format: uuid
@@ -1075,6 +1194,8 @@ components:
           type: string
           description: Name of the bot
           example: Scarlett
+        orientation:
+          $ref: '#/components/schemas/APIOrientation'
       example:
         attributes:
         - name: full_name
@@ -1153,6 +1274,10 @@ components:
       properties:
         chat_images_enabled:
           type: boolean
+          nullable: true
+        image_sending_behaviour:
+          allOf:
+          - $ref: '#/components/schemas/APIImageSendingBehaviour'
           nullable: true
         language:
           allOf:
@@ -1319,15 +1444,14 @@ components:
           description: Freeform text description
           example: Scarlett loves to travel, she is fresh out of college.
           nullable: true
-        gay:
-          type: boolean
-          description: Whether the bot is gay
-          example: false
-          nullable: true
         name:
           type: string
           description: Name of the bot
           example: Scarlett
+        orientation:
+          allOf:
+          - $ref: '#/components/schemas/APIOrientation'
+          nullable: true
       example:
         attributes:
         - name: full_name
@@ -1389,6 +1513,10 @@ components:
           description: Optional freeform text to add to the prompt
           example: put any information here that you want added to the prompt
           nullable: true
+        image_sending_behaviour:
+          allOf:
+          - $ref: '#/components/schemas/ImageSendingBehaviour'
+          nullable: true
         language:
           allOf:
           - $ref: '#/components/schemas/Language'
@@ -1444,6 +1572,45 @@ components:
         bot_id: 550e8400-e29b-41d4-a716-446655440000
         id: conv_abc123def456
         messages: []
+    CreateConversionRequestBody:
+      type: object
+      required:
+      - user_id
+      properties:
+        amount:
+          type: integer
+          format: int32
+          description: Amount of the conversion, can be negative for refunds. Value in cents.
+          example: 4999
+          nullable: true
+        bot_id:
+          type: string
+          description: Optional bot ID to attribute the conversion to a specific bot
+          nullable: true
+        conversation_id:
+          type: string
+          description: Optional conversation ID to attribute the conversion to a specific conversation
+          example: abc
+          nullable: true
+        metadata:
+          description: Optional metadata to attach to the conversion, can be any JSON object
+          nullable: true
+        timestamp:
+          type: integer
+          format: int64
+          description: Optional unix timestamp (seconds) of when the conversion happened. Defaults to current time.
+          example: 1615760000
+          nullable: true
+        user_id:
+          type: string
+          description: User ID of the user who made the conversion. Should be the same as 'user_id' used in /messages
+      example:
+        amount: 4999
+        bot_id: null
+        conversation_id: abc
+        metadata: null
+        timestamp: null
+        user_id: user123
     CreateUserRequestBody:
       type: object
       required:
@@ -1509,11 +1676,20 @@ components:
         batch_size:
           type: integer
           minimum: 0
+        degrade_grammar_factor:
+          type: number
+          format: float
+          description: Grammar degradation multiplier (0.0 = no degradation, 1.0 = full). Omit to disable.
+          nullable: true
         override_messages:
           type: array
           items:
             $ref: '#/components/schemas/Message'
           description: Optional list of messages to use instead of the conversation's stored message history.
+          nullable: true
+        vault_image_behaviour:
+          allOf:
+          - $ref: '#/components/schemas/VaultImageBehaviour'
           nullable: true
     GenerateResponseSyncResponse:
       type: object
@@ -1604,6 +1780,13 @@ components:
           items:
             $ref: '#/components/schemas/MemoryResponse'
           description: User memories for this conversation
+    GetPlatformResponse:
+      type: object
+      required:
+      - platform
+      properties:
+        platform:
+          $ref: '#/components/schemas/Platform'
     GetUserResponse:
       type: object
       required:
@@ -1632,20 +1815,29 @@ components:
       example:
         public: true
         url: https://example.com/image.jpg
+    ImageSendingBehaviour:
+      type: string
+      description: |-
+        Controls how frequently the AI sends images in conversation. Stored per-conversation and
+        affects whether image tools are exposed to the LLM and how strongly it is prompted to use them.
+      enum:
+      - disabled
+      - low
+      - moderate
+      - high
+      - aggressive
     Language:
       type: string
-      description: Language enum for client configuration
       enum:
       - en
-      - es
-      - fr
       - de
-      - pt
-      - it
-      - ja
-      - ko
-      - zh
       - ru
+      - ar
+      - es
+      - nl
+      - uk
+      - fr
+      - it
     ListApiKeysResponse:
       type: object
       required:
@@ -1749,6 +1941,16 @@ components:
           - attached_media: null
             from_bot: true
             text: Hello!
+    ListPlatformsResponse:
+      type: object
+      required:
+      - platforms
+      properties:
+        platforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Platform'
+          description: List of all platforms accessible to the current client
     ListUsersResponse:
       type: object
       required:
@@ -1836,6 +2038,29 @@ components:
         from_bot: true
         sent_at: 1640995200
         text: Heyyy how are you??
+    Platform:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        custom_instruction:
+          type: string
+          description: Platform-specific instructions injected into the system prompt before bot-specific instructions. Used to customize AI behavior for platform-specific norms and guidelines.
+          example: This is for people 55+. Be respectful, take time to chat, and ask about their hobbies and life experience. Avoid slang and keep language clear.
+          nullable: true
+        id:
+          type: string
+          description: Unique identifier for the platform
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          description: Name of the platform (immutable, case-sensitive, must be unique per client)
+          example: SilverMatch
+      example:
+        custom_instruction: This is for people 55+. Be respectful, take time to chat, and ask about their hobbies and life experience. Avoid slang and keep language clear.
+        id: 550e8400-e29b-41d4-a716-446655440000
+        name: SilverMatch
     ResponseCandidate:
       type: object
       required:
@@ -1948,11 +2173,6 @@ components:
           description: Freeform text description
           example: Scarlett loves to travel, she is fresh out of college.
           nullable: true
-        gay:
-          type: boolean
-          description: Whether the bot is gay
-          example: false
-          nullable: true
         images:
           type: array
           items:
@@ -1965,6 +2185,10 @@ components:
           type: string
           description: Name of the bot
           example: Scarlett
+          nullable: true
+        orientation:
+          allOf:
+          - $ref: '#/components/schemas/APIOrientation'
           nullable: true
       example:
         attributes:
@@ -1994,6 +2218,10 @@ components:
       properties:
         chat_images_enabled:
           type: boolean
+          nullable: true
+        image_sending_behaviour:
+          allOf:
+          - $ref: '#/components/schemas/APIImageSendingBehaviour'
           nullable: true
         language:
           allOf:
@@ -2042,6 +2270,10 @@ components:
           description: Optional freeform text to add to the prompt
           example: put any information here that you want added to the prompt
           nullable: true
+        image_sending_behaviour:
+          allOf:
+          - $ref: '#/components/schemas/ImageSendingBehaviour'
+          nullable: true
         language:
           allOf:
           - $ref: '#/components/schemas/Language'
@@ -2077,6 +2309,26 @@ components:
       properties:
         success:
           type: boolean
+      example:
+        success: true
+    UpdatePlatformRequestBody:
+      type: object
+      properties:
+        custom_instruction:
+          type: string
+          description: Platform-specific instructions to inject into the system prompt before bot-specific instructions
+          example: Be extra warm and patient with this platform's users. They prefer longer, more thoughtful responses.
+          nullable: true
+      example:
+        custom_instruction: Be extra warm and patient with this platform's users. They prefer longer, more thoughtful responses.
+    UpdatePlatformResponse:
+      type: object
+      required:
+      - success
+      properties:
+        success:
+          type: boolean
+          description: Whether the update was successful
       example:
         success: true
     UpdateUserRequest:
@@ -2195,11 +2447,18 @@ components:
         freeform: John is a 28-year-old software engineer who loves hiking and photography. He enjoys traveling and trying new cuisines.
         id: user123
         username: AdventurousJohn28
+    VaultImageBehaviour:
+      type: string
+      enum:
+      - force
+      - never
 tags:
 - name: conversations
   description: Conversation management endpoints
 - name: messages
   description: Message management endpoints
+- name: platforms
+  description: Platform management endpoints
 - name: bots
   description: Bot management endpoints
 - name: users
@@ -2216,3 +2475,5 @@ tags:
   description: Client configuration endpoints
 - name: voice
   description: Voice cloning and generation endpoints
+- name: conversions
+  description: Conversion tracking endpoints

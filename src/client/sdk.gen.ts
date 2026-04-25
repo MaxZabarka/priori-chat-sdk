@@ -80,9 +80,21 @@ import type {
   SendMessageData,
   SendMessageResponses,
   SendMessageErrors,
+  CreateConversionData,
+  CreateConversionResponses,
+  CreateConversionErrors,
   SendMessageOrCreateConversationData,
   SendMessageOrCreateConversationResponses,
   SendMessageOrCreateConversationErrors,
+  ListPlatformsData,
+  ListPlatformsResponses,
+  ListPlatformsErrors,
+  GetPlatformData,
+  GetPlatformResponses,
+  GetPlatformErrors,
+  UpdatePlatformData,
+  UpdatePlatformResponses,
+  UpdatePlatformErrors,
   SpeakData,
   SpeakResponses,
   SpeakErrors,
@@ -526,6 +538,23 @@ export const sendMessage = <ThrowOnError extends boolean = true>(
   });
 };
 
+export const createConversion = <ThrowOnError extends boolean = true>(
+  options: Options<CreateConversionData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    CreateConversionResponses,
+    CreateConversionErrors,
+    ThrowOnError
+  >({
+    url: "/api/conversion",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
 /**
  * Send a message by finding an existing conversation or creating a new one
  * This endpoint searches for an existing conversation between the specified user and bot.
@@ -548,6 +577,52 @@ export const sendMessageOrCreateConversation = <
   >({
     responseType: "json",
     url: "/api/messages",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const listPlatforms = <ThrowOnError extends boolean = true>(
+  options?: Options<ListPlatformsData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ListPlatformsResponses,
+    ListPlatformsErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/platforms",
+    ...options,
+  });
+};
+
+export const getPlatform = <ThrowOnError extends boolean = true>(
+  options: Options<GetPlatformData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetPlatformResponses,
+    GetPlatformErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/platforms/{platform_id}",
+    ...options,
+  });
+};
+
+export const updatePlatform = <ThrowOnError extends boolean = true>(
+  options: Options<UpdatePlatformData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).patch<
+    UpdatePlatformResponses,
+    UpdatePlatformErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/platforms/{platform_id}",
     ...options,
     headers: {
       "Content-Type": "application/json",

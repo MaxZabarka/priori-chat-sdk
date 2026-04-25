@@ -8,6 +8,10 @@ type ApiAttribute = {
      */
     value: string;
 };
+/**
+ * Image sending behaviour enum for client configuration
+ */
+type ApiImageSendingBehaviour = "disabled" | "low" | "moderate" | "high" | "aggressive";
 type ApiModerationCategory = "underage_site_use" | "sexual_minors" | "beastiality" | "sexual_violence" | "prompt_injection";
 type ApiModerationInfo = {
     category: ApiModerationCategory;
@@ -18,6 +22,10 @@ type ApiModerationInfo = {
     severity: ApiModerationSeverity;
 };
 type ApiModerationSeverity = "Low" | "Medium" | "High" | "Critical";
+/**
+ * Bot orientation — controls gender identity, pronouns, and attraction in the system prompt.
+ */
+type ApiOrientation = "straight_female" | "lesbian_female" | "gay_man" | "straight_man" | "trans_mtf" | "trans_ftm" | "bisexual";
 /**
  * Represents an API key info (without the actual key)
  */
@@ -38,10 +46,6 @@ type Bot = {
      */
     freeform: string;
     /**
-     * Whether the bot is gay
-     */
-    gay: boolean;
-    /**
      * Unique identifier for the bot
      */
     id: string;
@@ -49,6 +53,7 @@ type Bot = {
      * Name of the bot
      */
     name: string;
+    orientation: ApiOrientation;
 };
 type Chatter = {
     /**
@@ -65,6 +70,7 @@ type Chatter = {
  */
 type ClientConfig = {
     chat_images_enabled?: boolean | null;
+    image_sending_behaviour?: ApiImageSendingBehaviour | null;
     language?: Language | null;
     max_delay?: number | null;
     min_delay?: number | null;
@@ -149,13 +155,10 @@ type CreateBotRequestBody = {
      */
     freeform?: string | null;
     /**
-     * Whether the bot is gay
-     */
-    gay?: boolean | null;
-    /**
      * Name of the bot
      */
     name: string;
+    orientation?: ApiOrientation | null;
 };
 type CreateBotResponse = {
     bot: Bot;
@@ -176,6 +179,32 @@ type CreateChatterResponse = {
 type CreateConversationResponse = {
     conversation: Conversation$1;
 };
+type CreateConversionRequestBody = {
+    /**
+     * Amount of the conversion, can be negative for refunds. Value in cents.
+     */
+    amount?: number | null;
+    /**
+     * Optional bot ID to attribute the conversion to a specific bot
+     */
+    bot_id?: string | null;
+    /**
+     * Optional conversation ID to attribute the conversion to a specific conversation
+     */
+    conversation_id?: string | null;
+    /**
+     * Optional metadata to attach to the conversion, can be any JSON object
+     */
+    metadata?: unknown;
+    /**
+     * Optional unix timestamp (seconds) of when the conversion happened. Defaults to current time.
+     */
+    timestamp?: number | null;
+    /**
+     * User ID of the user who made the conversion. Should be the same as 'user_id' used in /messages
+     */
+    user_id: string;
+};
 type DeactivateApiKeyResponse = {
     /**
      * Success message
@@ -191,9 +220,14 @@ type DeleteContentResponse = {
 type GenerateResponseSyncRequest = {
     batch_size?: number;
     /**
+     * Grammar degradation multiplier (0.0 = no degradation, 1.0 = full). Omit to disable.
+     */
+    degrade_grammar_factor?: number | null;
+    /**
      * Optional list of messages to use instead of the conversation's stored message history.
      */
     override_messages?: Array<Message$1> | null;
+    vault_image_behaviour?: VaultImageBehaviour | null;
 };
 type GenerateResponseSyncResponse = {
     candidates: Array<ResponseCandidate>;
@@ -248,6 +282,9 @@ type GetMemoriesResponse = {
      */
     user_memories: Array<MemoryResponse>;
 };
+type GetPlatformResponse = {
+    platform: Platform;
+};
 type GetUserResponse = {
     user: User;
 };
@@ -265,10 +302,7 @@ type ImageItem = {
      */
     url: string;
 };
-/**
- * Language enum for client configuration
- */
-type Language = "en" | "es" | "fr" | "de" | "pt" | "it" | "ja" | "ko" | "zh" | "ru";
+type Language = "en" | "de" | "ru" | "ar" | "es" | "nl" | "uk" | "fr" | "it";
 type ListApiKeysResponse = {
     /**
      * List of API keys for the client
@@ -328,6 +362,12 @@ type ListConversationsResponse = {
      */
     conversations: Array<ConversationHeader>;
 };
+type ListPlatformsResponse = {
+    /**
+     * List of all platforms accessible to the current client
+     */
+    platforms: Array<Platform>;
+};
 type MediaTypeFilter = "image" | "video";
 type MemoryResponse = {
     /**
@@ -359,6 +399,20 @@ type Message$1 = {
      * The text content of the message
      */
     text: string;
+};
+type Platform = {
+    /**
+     * Platform-specific instructions injected into the system prompt before bot-specific instructions. Used to customize AI behavior for platform-specific norms and guidelines.
+     */
+    custom_instruction?: string | null;
+    /**
+     * Unique identifier for the platform
+     */
+    id: string;
+    /**
+     * Name of the platform (immutable, case-sensitive, must be unique per client)
+     */
+    name: string;
 };
 type ResponseCandidate = {
     messages: Array<Message$1>;
@@ -410,10 +464,6 @@ type UpdateBotRequest = {
      */
     freeform?: string | null;
     /**
-     * Whether the bot is gay
-     */
-    gay?: boolean | null;
-    /**
      * Optional list of images to set for this bot.
      * When provided, all existing bot images are replaced with these.
      */
@@ -422,6 +472,7 @@ type UpdateBotRequest = {
      * Name of the bot
      */
     name?: string | null;
+    orientation?: ApiOrientation | null;
 };
 type UpdateBotResponse = {
     bot: Bot;
@@ -431,6 +482,7 @@ type UpdateBotResponse = {
  */
 type UpdateClientConfigRequest = {
     chat_images_enabled?: boolean | null;
+    image_sending_behaviour?: ApiImageSendingBehaviour | null;
     language?: Language | null;
     max_delay?: number | null;
     min_delay?: number | null;
@@ -442,6 +494,18 @@ type UpdateClientConfigRequest = {
 };
 type UpdateClientConfigResponse = {
     config: ClientConfig;
+};
+type UpdatePlatformRequestBody = {
+    /**
+     * Platform-specific instructions to inject into the system prompt before bot-specific instructions
+     */
+    custom_instruction?: string | null;
+};
+type UpdatePlatformResponse = {
+    /**
+     * Whether the update was successful
+     */
+    success: boolean;
 };
 type UpdateUserRequest = {
     /**
@@ -503,6 +567,7 @@ type User = {
      */
     username: string;
 };
+type VaultImageBehaviour = "force" | "never";
 type CreateApiKeyData = {
     body: CreateApiKeyRequest;
     path?: never;
@@ -669,6 +734,14 @@ type ListConversationsData = {
          * Filter by moderation category (repeatable). Values: underage_site_use, sexual_minors, beastiality, sexual_violence, prompt_injection
          */
         categories?: Array<string> | null;
+        /**
+         * Maximum number of conversations to return (default: 1000)
+         */
+        limit?: number | null;
+        /**
+         * Number of conversations to skip before returning results (default: 0)
+         */
+        offset?: number | null;
     };
     url: "/api/conversations";
 };
@@ -694,6 +767,13 @@ type UpdateUserData = {
     query?: never;
     url: "/api/users/{user_id}";
 };
+
+interface GetPlatformOptions {
+    platform_id: string;
+}
+interface UpdatePlatformOptions extends UpdatePlatformRequestBody {
+    platform_id: string;
+}
 
 /**
  * Options for listing conversations
@@ -1378,6 +1458,63 @@ declare class PrioriChat {
      * ```
      */
     deactivateChatter(options: DeactivateChatterData["path"]): Promise<void>;
+    /**
+     * Lists all platforms accessible to the current client
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.listPlatforms();
+     * console.log(`Found ${result.platforms.length} platforms`);
+     * ```
+     */
+    listPlatforms(): Promise<ListPlatformsResponse>;
+    /**
+     * Retrieves a specific platform by ID
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.getPlatform({
+     *   platform_id: "12345678-1234-1234-1234-123456789012"
+     * });
+     *
+     * console.log(`Platform name: ${result.platform.name}`);
+     * ```
+     */
+    getPlatform(options: GetPlatformOptions): Promise<GetPlatformResponse>;
+    /**
+     * Updates an existing platform
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const result = await client.updatePlatform({
+     *   platform_id: "12345678-1234-1234-1234-123456789012",
+     *   custom_instruction: "Be warm and helpful"
+     * });
+     *
+     * console.log(`Updated platform successfully`);
+     * ```
+     */
+    updatePlatform(options: UpdatePlatformOptions): Promise<UpdatePlatformResponse>;
+    /**
+     * Creates a conversion record for tracking revenue or events
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * await client.createConversion({
+     *   user_id: "user-123",
+     *   bot_id: "12345678-1234-1234-1234-123456789012",
+     *   amount: 4999, // Value in cents
+     *   timestamp: Math.floor(Date.now() / 1000)
+     * });
+     *
+     * console.log("Conversion recorded");
+     * ```
+     */
+    createConversion(options: CreateConversionRequestBody): Promise<void>;
 }
 
-export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type MediaTypeFilter, type MemoryResponse, type Message, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };

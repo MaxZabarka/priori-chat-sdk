@@ -701,6 +701,41 @@ var sendMessage = (options) => {
     }
   });
 };
+var createConversion = (options) => {
+  return (options.client ?? client).post({
+    url: "/api/conversion",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var listPlatforms = (options) => {
+  return (options?.client ?? client).get({
+    responseType: "json",
+    url: "/api/platforms",
+    ...options
+  });
+};
+var getPlatform = (options) => {
+  return (options.client ?? client).get({
+    responseType: "json",
+    url: "/api/platforms/{platform_id}",
+    ...options
+  });
+};
+var updatePlatform = (options) => {
+  return (options.client ?? client).patch({
+    responseType: "json",
+    url: "/api/platforms/{platform_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
 var getUser = (options) => {
   return (options.client ?? client).get({
     responseType: "json",
@@ -864,6 +899,29 @@ async function deactivateChatterImpl(options) {
   await deactivateChatter({
     path: options
   });
+}
+
+// src/methods/platforms.ts
+async function listPlatformsImpl() {
+  const result = await listPlatforms({});
+  return result.data;
+}
+async function getPlatformImpl(options) {
+  const result = await getPlatform({ path: options });
+  return result.data;
+}
+async function updatePlatformImpl(options) {
+  const { platform_id, ...body } = options;
+  const result = await updatePlatform({
+    path: { platform_id },
+    body
+  });
+  return result.data;
+}
+
+// src/methods/conversions.ts
+async function createConversionImpl(options) {
+  await createConversion({ body: options });
 }
 
 // src/conversation.ts
@@ -1649,6 +1707,71 @@ var PrioriChat = class {
    */
   async deactivateChatter(options) {
     return deactivateChatterImpl.call(this, options);
+  }
+  /**
+   * Lists all platforms accessible to the current client
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.listPlatforms();
+   * console.log(`Found ${result.platforms.length} platforms`);
+   * ```
+   */
+  async listPlatforms() {
+    return listPlatformsImpl.call(this);
+  }
+  /**
+   * Retrieves a specific platform by ID
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.getPlatform({
+   *   platform_id: "12345678-1234-1234-1234-123456789012"
+   * });
+   *
+   * console.log(`Platform name: ${result.platform.name}`);
+   * ```
+   */
+  async getPlatform(options) {
+    return getPlatformImpl.call(this, options);
+  }
+  /**
+   * Updates an existing platform
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const result = await client.updatePlatform({
+   *   platform_id: "12345678-1234-1234-1234-123456789012",
+   *   custom_instruction: "Be warm and helpful"
+   * });
+   *
+   * console.log(`Updated platform successfully`);
+   * ```
+   */
+  async updatePlatform(options) {
+    return updatePlatformImpl.call(this, options);
+  }
+  /**
+   * Creates a conversion record for tracking revenue or events
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * await client.createConversion({
+   *   user_id: "user-123",
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   amount: 4999, // Value in cents
+   *   timestamp: Math.floor(Date.now() / 1000)
+   * });
+   *
+   * console.log("Conversion recorded");
+   * ```
+   */
+  async createConversion(options) {
+    return createConversionImpl.call(this, options);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

@@ -7,6 +7,17 @@ export const zApiAttribute = z.object({
   value: z.string(),
 });
 
+/**
+ * Image sending behaviour enum for client configuration
+ */
+export const zApiImageSendingBehaviour = z.enum([
+  "disabled",
+  "low",
+  "moderate",
+  "high",
+  "aggressive",
+]);
+
 export const zApiModerationCategory = z.enum([
   "underage_site_use",
   "sexual_minors",
@@ -28,6 +39,19 @@ export const zApiModerationInfo = z.object({
   severity: zApiModerationSeverity,
 });
 
+/**
+ * Bot orientation — controls gender identity, pronouns, and attraction in the system prompt.
+ */
+export const zApiOrientation = z.enum([
+  "straight_female",
+  "lesbian_female",
+  "gay_man",
+  "straight_man",
+  "trans_mtf",
+  "trans_ftm",
+  "bisexual",
+]);
+
 export const zApiUserWithStats = z.object({
   attributes: z.array(zApiAttribute),
   created_date: z.string().datetime(),
@@ -39,19 +63,27 @@ export const zApiUserWithStats = z.object({
 });
 
 /**
- * Language enum for client configuration
+ * Controls how frequently the AI sends images in conversation. Stored per-conversation and
+ * affects whether image tools are exposed to the LLM and how strongly it is prompted to use them.
  */
+export const zImageSendingBehaviour = z.enum([
+  "disabled",
+  "low",
+  "moderate",
+  "high",
+  "aggressive",
+]);
+
 export const zLanguage = z.enum([
   "en",
-  "es",
-  "fr",
   "de",
-  "pt",
-  "it",
-  "ja",
-  "ko",
-  "zh",
   "ru",
+  "ar",
+  "es",
+  "nl",
+  "uk",
+  "fr",
+  "it",
 ]);
 
 export const zContent = z.object({
@@ -74,6 +106,9 @@ export const zCreateConversationRequest = z.object({
   bot_id: z.string().uuid(),
   create_user_if_not_exists: z.union([z.boolean(), z.null()]).optional(),
   freeform: z.union([z.string(), z.null()]).optional(),
+  image_sending_behaviour: z
+    .union([zImageSendingBehaviour, z.null()])
+    .optional(),
   language: z.union([zLanguage, z.null()]).optional(),
   platform: z.union([z.string(), z.null()]).optional(),
   segment: z.union([z.boolean(), z.null()]).optional(),
@@ -117,9 +152,9 @@ export const zAudioFormat = z.enum(["ogg_opus", "mpeg"]);
 export const zBot = z.object({
   attributes: z.array(zApiAttribute),
   freeform: z.string(),
-  gay: z.boolean(),
   id: z.string().uuid(),
   name: z.string(),
+  orientation: zApiOrientation,
 });
 
 export const zChatter = z.object({
@@ -142,6 +177,9 @@ export const zChatterLoginResponse = z.object({
  */
 export const zClientConfig = z.object({
   chat_images_enabled: z.union([z.boolean(), z.null()]).optional(),
+  image_sending_behaviour: z
+    .union([zApiImageSendingBehaviour, z.null()])
+    .optional(),
   language: z.union([zLanguage, z.null()]).optional(),
   max_delay: z.union([z.number().int(), z.null()]).optional(),
   min_delay: z.union([z.number().int(), z.null()]).optional(),
@@ -186,8 +224,8 @@ export const zCreateApiKeyResponse = z.object({
 export const zCreateBotRequestBody = z.object({
   attributes: z.array(zApiAttribute).optional(),
   freeform: z.union([z.string(), z.null()]).optional(),
-  gay: z.union([z.boolean(), z.null()]).optional(),
   name: z.string(),
+  orientation: z.union([zApiOrientation, z.null()]).optional(),
 });
 
 export const zCreateBotResponse = z.object({
@@ -205,6 +243,15 @@ export const zCreateChatterResponse = z.object({
 
 export const zCreateConversationResponse = z.object({
   conversation: zConversation,
+});
+
+export const zCreateConversionRequestBody = z.object({
+  amount: z.union([z.number().int(), z.null()]).optional(),
+  bot_id: z.union([z.string(), z.null()]).optional(),
+  conversation_id: z.union([z.string(), z.null()]).optional(),
+  metadata: z.unknown().optional(),
+  timestamp: z.union([z.coerce.bigint(), z.null()]).optional(),
+  user_id: z.string(),
 });
 
 export const zCreateUserRequestBody = z.object({
@@ -233,9 +280,13 @@ export const zDeleteContentResponse = z.object({
   message: z.string(),
 });
 
+export const zVaultImageBehaviour = z.enum(["force", "never"]);
+
 export const zGenerateResponseSyncRequest = z.object({
   batch_size: z.number().int().gte(0).optional(),
+  degrade_grammar_factor: z.union([z.number(), z.null()]).optional(),
   override_messages: z.union([z.array(zMessage), z.null()]).optional(),
+  vault_image_behaviour: z.union([zVaultImageBehaviour, z.null()]).optional(),
 });
 
 export const zResponseCandidate = z.object({
@@ -284,6 +335,16 @@ export const zGetMemoriesResponse = z.object({
   user_memories: z.array(zMemoryResponse),
 });
 
+export const zPlatform = z.object({
+  custom_instruction: z.union([z.string(), z.null()]).optional(),
+  id: z.string(),
+  name: z.string(),
+});
+
+export const zGetPlatformResponse = z.object({
+  platform: zPlatform,
+});
+
 export const zGetUserResponse = z.object({
   user: zUser,
 });
@@ -326,6 +387,10 @@ export const zListConversationsResponse = z.object({
   conversations: z.array(zConversationHeader),
 });
 
+export const zListPlatformsResponse = z.object({
+  platforms: z.array(zPlatform),
+});
+
 export const zListUsersResponse = z.object({
   has_more: z.boolean(),
   limit: z.coerce.bigint(),
@@ -348,9 +413,9 @@ export const zSpeechRequest = z.object({
 export const zUpdateBotRequest = z.object({
   attributes: z.array(zApiAttribute).optional(),
   freeform: z.union([z.string(), z.null()]).optional(),
-  gay: z.union([z.boolean(), z.null()]).optional(),
   images: z.union([z.array(zImageItem), z.null()]).optional(),
   name: z.union([z.string(), z.null()]).optional(),
+  orientation: z.union([zApiOrientation, z.null()]).optional(),
 });
 
 export const zUpdateBotResponse = z.object({
@@ -362,6 +427,9 @@ export const zUpdateBotResponse = z.object({
  */
 export const zUpdateClientConfigRequest = z.object({
   chat_images_enabled: z.union([z.boolean(), z.null()]).optional(),
+  image_sending_behaviour: z
+    .union([zApiImageSendingBehaviour, z.null()])
+    .optional(),
   language: z.union([zLanguage, z.null()]).optional(),
   max_delay: z.union([z.number().int(), z.null()]).optional(),
   min_delay: z.union([z.number().int(), z.null()]).optional(),
@@ -378,6 +446,9 @@ export const zUpdateClientConfigResponse = z.object({
 
 export const zUpdateConversationRequestBody = z.object({
   freeform: z.union([z.string(), z.null()]).optional(),
+  image_sending_behaviour: z
+    .union([zImageSendingBehaviour, z.null()])
+    .optional(),
   language: z.union([zLanguage, z.null()]).optional(),
   platform: z.union([z.string(), z.null()]).optional(),
   segment: z.union([z.boolean(), z.null()]).optional(),
@@ -386,6 +457,14 @@ export const zUpdateConversationRequestBody = z.object({
 });
 
 export const zUpdateConversationResponse = z.object({
+  success: z.boolean(),
+});
+
+export const zUpdatePlatformRequestBody = z.object({
+  custom_instruction: z.union([z.string(), z.null()]).optional(),
+});
+
+export const zUpdatePlatformResponse = z.object({
   success: z.boolean(),
 });
 
@@ -659,6 +738,8 @@ export const zListConversationsData = z.object({
       max_last_message_date: z.union([z.number().int(), z.null()]).optional(),
       severities: z.union([z.array(z.string()), z.null()]).optional(),
       categories: z.union([z.array(z.string()), z.null()]).optional(),
+      limit: z.union([z.coerce.bigint(), z.null()]).optional(),
+      offset: z.union([z.coerce.bigint(), z.null()]).optional(),
     })
     .optional(),
 });
@@ -739,6 +820,12 @@ export const zSendMessageData = z.object({
   query: z.never().optional(),
 });
 
+export const zCreateConversionData = z.object({
+  body: zCreateConversionRequestBody,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
 export const zSendMessageOrCreateConversationData = z.object({
   body: zAddMessageRequest,
   path: z.never().optional(),
@@ -749,6 +836,43 @@ export const zSendMessageOrCreateConversationData = z.object({
  * Message added successfully, conversation found or created
  */
 export const zSendMessageOrCreateConversationResponse = zAddMessageResponse;
+
+export const zListPlatformsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * Platforms retrieved successfully
+ */
+export const zListPlatformsResponse2 = zListPlatformsResponse;
+
+export const zGetPlatformData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    platform_id: z.string().uuid(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Platform retrieved successfully
+ */
+export const zGetPlatformResponse2 = zGetPlatformResponse;
+
+export const zUpdatePlatformData = z.object({
+  body: zUpdatePlatformRequestBody,
+  path: z.object({
+    platform_id: z.string().uuid(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Platform updated successfully
+ */
+export const zUpdatePlatformResponse2 = zUpdatePlatformResponse;
 
 export const zSpeakData = z.object({
   body: zSpeechRequest,

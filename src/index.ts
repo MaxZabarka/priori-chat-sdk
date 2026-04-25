@@ -68,4 +68,10 @@ export type {
   GetChatterData,
   ListChattersResponse,
   DeactivateChatterData,
+  Platform,
+  ListPlatformsResponse,
+  GetPlatformResponse,
+  UpdatePlatformRequestBody,
+  UpdatePlatformResponse,
+  CreateConversionRequestBody,
 } from "./client/types.gen";

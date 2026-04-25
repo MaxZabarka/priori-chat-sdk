@@ -11,6 +11,16 @@ export type ApiAttribute = {
   value: string;
 };
 
+/**
+ * Image sending behaviour enum for client configuration
+ */
+export type ApiImageSendingBehaviour =
+  | "disabled"
+  | "low"
+  | "moderate"
+  | "high"
+  | "aggressive";
+
 export type ApiModerationCategory =
   | "underage_site_use"
   | "sexual_minors"
@@ -28,6 +38,18 @@ export type ApiModerationInfo = {
 };
 
 export type ApiModerationSeverity = "Low" | "Medium" | "High" | "Critical";
+
+/**
+ * Bot orientation — controls gender identity, pronouns, and attraction in the system prompt.
+ */
+export type ApiOrientation =
+  | "straight_female"
+  | "lesbian_female"
+  | "gay_man"
+  | "straight_man"
+  | "trans_mtf"
+  | "trans_ftm"
+  | "bisexual";
 
 export type ApiUserWithStats = {
   /**
@@ -100,10 +122,6 @@ export type Bot = {
    */
   freeform: string;
   /**
-   * Whether the bot is gay
-   */
-  gay: boolean;
-  /**
    * Unique identifier for the bot
    */
   id: string;
@@ -111,6 +129,7 @@ export type Bot = {
    * Name of the bot
    */
   name: string;
+  orientation: ApiOrientation;
 };
 
 export type Chatter = {
@@ -151,6 +170,7 @@ export type ChatterLoginResponse = {
  */
 export type ClientConfig = {
   chat_images_enabled?: boolean | null;
+  image_sending_behaviour?: ApiImageSendingBehaviour | null;
   language?: Language | null;
   max_delay?: number | null;
   min_delay?: number | null;
@@ -245,13 +265,10 @@ export type CreateBotRequestBody = {
    */
   freeform?: string | null;
   /**
-   * Whether the bot is gay
-   */
-  gay?: boolean | null;
-  /**
    * Name of the bot
    */
   name: string;
+  orientation?: ApiOrientation | null;
 };
 
 export type CreateBotResponse = {
@@ -286,6 +303,7 @@ export type CreateConversationRequest = {
    * Optional freeform text to add to the prompt
    */
   freeform?: string | null;
+  image_sending_behaviour?: ImageSendingBehaviour | null;
   language?: Language | null;
   /**
    * Optional platform name describing which site the user and bot are chatting on
@@ -315,6 +333,33 @@ export type CreateConversationRequest = {
 
 export type CreateConversationResponse = {
   conversation: Conversation;
+};
+
+export type CreateConversionRequestBody = {
+  /**
+   * Amount of the conversion, can be negative for refunds. Value in cents.
+   */
+  amount?: number | null;
+  /**
+   * Optional bot ID to attribute the conversion to a specific bot
+   */
+  bot_id?: string | null;
+  /**
+   * Optional conversation ID to attribute the conversion to a specific conversation
+   */
+  conversation_id?: string | null;
+  /**
+   * Optional metadata to attach to the conversion, can be any JSON object
+   */
+  metadata?: unknown;
+  /**
+   * Optional unix timestamp (seconds) of when the conversion happened. Defaults to current time.
+   */
+  timestamp?: number | null;
+  /**
+   * User ID of the user who made the conversion. Should be the same as 'user_id' used in /messages
+   */
+  user_id: string;
 };
 
 export type CreateUserRequestBody = {
@@ -357,9 +402,14 @@ export type DeleteContentResponse = {
 export type GenerateResponseSyncRequest = {
   batch_size?: number;
   /**
+   * Grammar degradation multiplier (0.0 = no degradation, 1.0 = full). Omit to disable.
+   */
+  degrade_grammar_factor?: number | null;
+  /**
    * Optional list of messages to use instead of the conversation's stored message history.
    */
   override_messages?: Array<Message> | null;
+  vault_image_behaviour?: VaultImageBehaviour | null;
 };
 
 export type GenerateResponseSyncResponse = {
@@ -421,6 +471,10 @@ export type GetMemoriesResponse = {
   user_memories: Array<MemoryResponse>;
 };
 
+export type GetPlatformResponse = {
+  platform: Platform;
+};
+
 export type GetUserResponse = {
   user: User;
 };
@@ -441,19 +495,26 @@ export type ImageItem = {
 };
 
 /**
- * Language enum for client configuration
+ * Controls how frequently the AI sends images in conversation. Stored per-conversation and
+ * affects whether image tools are exposed to the LLM and how strongly it is prompted to use them.
  */
+export type ImageSendingBehaviour =
+  | "disabled"
+  | "low"
+  | "moderate"
+  | "high"
+  | "aggressive";
+
 export type Language =
   | "en"
-  | "es"
-  | "fr"
   | "de"
-  | "pt"
-  | "it"
-  | "ja"
-  | "ko"
-  | "zh"
-  | "ru";
+  | "ru"
+  | "ar"
+  | "es"
+  | "nl"
+  | "uk"
+  | "fr"
+  | "it";
 
 export type ListApiKeysResponse = {
   /**
@@ -520,6 +581,13 @@ export type ListConversationsResponse = {
   conversations: Array<ConversationHeader>;
 };
 
+export type ListPlatformsResponse = {
+  /**
+   * List of all platforms accessible to the current client
+   */
+  platforms: Array<Platform>;
+};
+
 export type ListUsersResponse = {
   /**
    * Whether there are more users available
@@ -576,6 +644,21 @@ export type Message = {
    * The text content of the message
    */
   text: string;
+};
+
+export type Platform = {
+  /**
+   * Platform-specific instructions injected into the system prompt before bot-specific instructions. Used to customize AI behavior for platform-specific norms and guidelines.
+   */
+  custom_instruction?: string | null;
+  /**
+   * Unique identifier for the platform
+   */
+  id: string;
+  /**
+   * Name of the platform (immutable, case-sensitive, must be unique per client)
+   */
+  name: string;
 };
 
 export type ResponseCandidate = {
@@ -642,10 +725,6 @@ export type UpdateBotRequest = {
    */
   freeform?: string | null;
   /**
-   * Whether the bot is gay
-   */
-  gay?: boolean | null;
-  /**
    * Optional list of images to set for this bot.
    * When provided, all existing bot images are replaced with these.
    */
@@ -654,6 +733,7 @@ export type UpdateBotRequest = {
    * Name of the bot
    */
   name?: string | null;
+  orientation?: ApiOrientation | null;
 };
 
 export type UpdateBotResponse = {
@@ -665,6 +745,7 @@ export type UpdateBotResponse = {
  */
 export type UpdateClientConfigRequest = {
   chat_images_enabled?: boolean | null;
+  image_sending_behaviour?: ApiImageSendingBehaviour | null;
   language?: Language | null;
   max_delay?: number | null;
   min_delay?: number | null;
@@ -684,6 +765,7 @@ export type UpdateConversationRequestBody = {
    * Optional freeform text to add to the prompt
    */
   freeform?: string | null;
+  image_sending_behaviour?: ImageSendingBehaviour | null;
   language?: Language | null;
   /**
    * Optional platform name describing which site the user and bot are chatting on
@@ -704,6 +786,20 @@ export type UpdateConversationRequestBody = {
 };
 
 export type UpdateConversationResponse = {
+  success: boolean;
+};
+
+export type UpdatePlatformRequestBody = {
+  /**
+   * Platform-specific instructions to inject into the system prompt before bot-specific instructions
+   */
+  custom_instruction?: string | null;
+};
+
+export type UpdatePlatformResponse = {
+  /**
+   * Whether the update was successful
+   */
   success: boolean;
 };
 
@@ -771,6 +867,8 @@ export type User = {
    */
   username: string;
 };
+
+export type VaultImageBehaviour = "force" | "never";
 
 export type ListApiKeysData = {
   body?: never;
@@ -1412,6 +1510,14 @@ export type ListConversationsData = {
      * Filter by moderation category (repeatable). Values: underage_site_use, sexual_minors, beastiality, sexual_violence, prompt_injection
      */
     categories?: Array<string> | null;
+    /**
+     * Maximum number of conversations to return (default: 1000)
+     */
+    limit?: number | null;
+    /**
+     * Number of conversations to skip before returning results (default: 0)
+     */
+    offset?: number | null;
   };
   url: "/api/conversations";
 };
@@ -1604,6 +1710,35 @@ export type SendMessageResponses = {
   202: unknown;
 };
 
+export type CreateConversionData = {
+  body: CreateConversionRequestBody;
+  path?: never;
+  query?: never;
+  url: "/api/conversion";
+};
+
+export type CreateConversionErrors = {
+  /**
+   * Unauthorized
+   */
+  401: unknown;
+  /**
+   * User, bot, or conversation not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type CreateConversionResponses = {
+  /**
+   * Conversion created successfully
+   */
+  201: unknown;
+};
+
 export type SendMessageOrCreateConversationData = {
   body: AddMessageRequest;
   path?: never;
@@ -1627,6 +1762,96 @@ export type SendMessageOrCreateConversationResponses = {
 
 export type SendMessageOrCreateConversationResponse =
   SendMessageOrCreateConversationResponses[keyof SendMessageOrCreateConversationResponses];
+
+export type ListPlatformsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/platforms";
+};
+
+export type ListPlatformsErrors = {
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type ListPlatformsResponses = {
+  /**
+   * Platforms retrieved successfully
+   */
+  200: ListPlatformsResponse;
+};
+
+export type ListPlatformsResponse2 =
+  ListPlatformsResponses[keyof ListPlatformsResponses];
+
+export type GetPlatformData = {
+  body?: never;
+  path: {
+    /**
+     * Platform identifier
+     */
+    platform_id: string;
+  };
+  query?: never;
+  url: "/api/platforms/{platform_id}";
+};
+
+export type GetPlatformErrors = {
+  /**
+   * Platform not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type GetPlatformResponses = {
+  /**
+   * Platform retrieved successfully
+   */
+  200: GetPlatformResponse;
+};
+
+export type GetPlatformResponse2 =
+  GetPlatformResponses[keyof GetPlatformResponses];
+
+export type UpdatePlatformData = {
+  body: UpdatePlatformRequestBody;
+  path: {
+    /**
+     * Platform identifier
+     */
+    platform_id: string;
+  };
+  query?: never;
+  url: "/api/platforms/{platform_id}";
+};
+
+export type UpdatePlatformErrors = {
+  /**
+   * Platform not found
+   */
+  404: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type UpdatePlatformResponses = {
+  /**
+   * Platform updated successfully
+   */
+  200: UpdatePlatformResponse;
+};
+
+export type UpdatePlatformResponse2 =
+  UpdatePlatformResponses[keyof UpdatePlatformResponses];
 
 export type SpeakData = {
   body: SpeechRequest;
