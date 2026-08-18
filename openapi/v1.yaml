@@ -1284,6 +1284,16 @@ components:
         chat_images_enabled:
           type: boolean
           nullable: true
+        first_contact_max_delay:
+          type: integer
+          format: int32
+          description: Upper bound of the delay before the bot's *first* reply in a conversation. Falls back to `max_delay` when unset.
+          nullable: true
+        first_contact_min_delay:
+          type: integer
+          format: int32
+          description: Lower bound of the delay before the bot's *first* reply in a conversation. Falls back to `min_delay` when unset.
+          nullable: true
         image_sending_behaviour:
           allOf:
           - $ref: '#/components/schemas/APIImageSendingBehaviour'
@@ -1319,6 +1329,8 @@ components:
           nullable: true
       example:
         chat_images_enabled: true
+        first_contact_max_delay: 10
+        first_contact_min_delay: 2
         language: en
         max_delay: 3
         min_delay: 1
@@ -1406,6 +1418,17 @@ components:
           description: Total number of messages in this conversation
           example: 42
           minimum: 0
+        platform:
+          type: string
+          description: Platform name associated with this conversation (legacy text field)
+          example: MyDatingApp
+          nullable: true
+        platform_id:
+          type: string
+          format: uuid
+          description: Platform ID associated with this conversation
+          example: 550e8400-e29b-41d4-a716-446655440000
+          nullable: true
         searched_message:
           allOf:
           - $ref: '#/components/schemas/SearchedMessage'
@@ -1735,6 +1758,7 @@ components:
       required:
       - messages
       - bot_id
+      - is_typing
       properties:
         bot_id:
           type: string
@@ -1745,6 +1769,10 @@ components:
           description: Optional freeform text to add to the prompt
           example: put any information here that you want added to the prompt
           nullable: true
+        is_typing:
+          type: boolean
+          description: Whether the bot is currently preparing a reply (typing indicator)
+          example: false
         latest_summary:
           allOf:
           - $ref: '#/components/schemas/Summary'
@@ -2227,6 +2255,14 @@ components:
       properties:
         chat_images_enabled:
           type: boolean
+          nullable: true
+        first_contact_max_delay:
+          type: integer
+          format: int32
+          nullable: true
+        first_contact_min_delay:
+          type: integer
+          format: int32
           nullable: true
         image_sending_behaviour:
           allOf:

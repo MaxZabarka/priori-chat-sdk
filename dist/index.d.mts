@@ -70,6 +70,14 @@ type Chatter = {
  */
 type ClientConfig = {
     chat_images_enabled?: boolean | null;
+    /**
+     * Upper bound of the delay before the bot's *first* reply in a conversation. Falls back to `max_delay` when unset.
+     */
+    first_contact_max_delay?: number | null;
+    /**
+     * Lower bound of the delay before the bot's *first* reply in a conversation. Falls back to `min_delay` when unset.
+     */
+    first_contact_min_delay?: number | null;
     image_sending_behaviour?: ApiImageSendingBehaviour | null;
     language?: Language | null;
     max_delay?: number | null;
@@ -126,6 +134,14 @@ type ConversationHeader = {
      * Total number of messages in this conversation
      */
     message_count: number;
+    /**
+     * Platform name associated with this conversation (legacy text field)
+     */
+    platform?: string | null;
+    /**
+     * Platform ID associated with this conversation
+     */
+    platform_id?: string | null;
     searched_message?: SearchedMessage | null;
     /**
      * ID of the user associated with this conversation
@@ -250,6 +266,10 @@ type GetConversationResponse = {
      * Optional freeform text to add to the prompt
      */
     freeform?: string | null;
+    /**
+     * Whether the bot is currently preparing a reply (typing indicator)
+     */
+    is_typing: boolean;
     latest_summary?: Summary | null;
     /**
      * Messages in the conversation
@@ -482,6 +502,8 @@ type UpdateBotResponse = {
  */
 type UpdateClientConfigRequest = {
     chat_images_enabled?: boolean | null;
+    first_contact_max_delay?: number | null;
+    first_contact_min_delay?: number | null;
     image_sending_behaviour?: ApiImageSendingBehaviour | null;
     language?: Language | null;
     max_delay?: number | null;

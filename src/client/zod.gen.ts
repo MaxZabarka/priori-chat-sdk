@@ -177,6 +177,8 @@ export const zChatterLoginResponse = z.object({
  */
 export const zClientConfig = z.object({
   chat_images_enabled: z.union([z.boolean(), z.null()]).optional(),
+  first_contact_max_delay: z.union([z.number().int(), z.null()]).optional(),
+  first_contact_min_delay: z.union([z.number().int(), z.null()]).optional(),
   image_sending_behaviour: z
     .union([zApiImageSendingBehaviour, z.null()])
     .optional(),
@@ -208,6 +210,8 @@ export const zConversationHeader = z.object({
   id: z.string(),
   last_message: z.union([zMessage, z.null()]).optional(),
   message_count: z.number().int().gte(0),
+  platform: z.union([z.string(), z.null()]).optional(),
+  platform_id: z.union([z.string().uuid(), z.null()]).optional(),
   searched_message: z.union([zSearchedMessage, z.null()]).optional(),
   user_id: z.union([z.string(), z.null()]).optional(),
 });
@@ -318,6 +322,7 @@ export const zSummary = z.object({
 export const zGetConversationResponse = z.object({
   bot_id: z.string().uuid(),
   freeform: z.union([z.string(), z.null()]).optional(),
+  is_typing: z.boolean(),
   latest_summary: z.union([zSummary, z.null()]).optional(),
   messages: z.array(zMessage),
   platform: z.union([z.string(), z.null()]).optional(),
@@ -427,6 +432,8 @@ export const zUpdateBotResponse = z.object({
  */
 export const zUpdateClientConfigRequest = z.object({
   chat_images_enabled: z.union([z.boolean(), z.null()]).optional(),
+  first_contact_max_delay: z.union([z.number().int(), z.null()]).optional(),
+  first_contact_min_delay: z.union([z.number().int(), z.null()]).optional(),
   image_sending_behaviour: z
     .union([zApiImageSendingBehaviour, z.null()])
     .optional(),
