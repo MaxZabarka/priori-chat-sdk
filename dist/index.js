@@ -932,6 +932,7 @@ var Conversation = class _Conversation {
     __publicField(this, "pollingInterval");
     __publicField(this, "pollingTimer");
     __publicField(this, "lastKnownMessageCount", 0);
+    __publicField(this, "lastKnownIsTyping", false);
     __publicField(this, "callbacks", {});
     __publicField(this, "isInitialized", false);
     this.client = client2;
@@ -996,6 +997,7 @@ var Conversation = class _Conversation {
         id: this.conversationId
       });
       this.lastKnownMessageCount = initialData.messages.length;
+      this.lastKnownIsTyping = initialData.is_typing ?? false;
       this.isInitialized = true;
       if (this.callbacks.onInitialData) {
         this.callbacks.onInitialData(initialData);
@@ -1018,6 +1020,11 @@ var Conversation = class _Conversation {
         const data = await this.client.getConversation({
           id: this.conversationId
         });
+        const isTyping = data.is_typing ?? false;
+        if (isTyping !== this.lastKnownIsTyping) {
+          this.lastKnownIsTyping = isTyping;
+          this.callbacks.onTypingChange?.(isTyping);
+        }
         if (data.messages.length > this.lastKnownMessageCount) {
           const newMessages = data.messages.slice(this.lastKnownMessageCount);
           this.lastKnownMessageCount = data.messages.length;

@@ -947,6 +947,9 @@ type ConversationOptions = ConversationWithId | ConversationWithUserBot;
 interface ConversationCallbacks {
     onInitialData?: (data: GetConversationResponse) => void;
     onNewMessage?: (message: Message) => void;
+    /** Fired when the bot starts or stops preparing a reply. Driven by the same
+     *  poll as onNewMessage, so it costs no extra requests. */
+    onTypingChange?: (isTyping: boolean) => void;
     onError?: (error: Error) => void;
 }
 /**
@@ -959,6 +962,7 @@ declare class Conversation {
     private pollingInterval;
     private pollingTimer?;
     private lastKnownMessageCount;
+    private lastKnownIsTyping;
     private callbacks;
     private isInitialized;
     private constructor();

@@ -131,6 +131,9 @@ export type ConversationOptions = ConversationWithId | ConversationWithUserBot;
 export interface ConversationCallbacks {
   onInitialData?: (data: GetConversationResponse) => void;
   onNewMessage?: (message: Message) => void;
+  /** Fired when the bot starts or stops preparing a reply. Driven by the same
+   *  poll as onNewMessage, so it costs no extra requests. */
+  onTypingChange?: (isTyping: boolean) => void;
   onError?: (error: Error) => void;
 }
 
@@ -144,6 +147,7 @@ export class Conversation {
   private pollingInterval: number;
   private pollingTimer?: ReturnType<typeof setInterval>;
   private lastKnownMessageCount = 0;
+  private lastKnownIsTyping = false;
   private callbacks: ConversationCallbacks = {};
   private isInitialized = false;
 
@@ -228,6 +232,7 @@ export class Conversation {
       });
 
       this.lastKnownMessageCount = initialData.messages.length;
+      this.lastKnownIsTyping = initialData.is_typing ?? false;
       this.isInitialized = true;
 
       // Fire initial data callback
@@ -258,6 +263,12 @@ export class Conversation {
         const data = await this.client.getConversation({
           id: this.conversationId,
         });
+
+        const isTyping = data.is_typing ?? false;
+        if (isTyping !== this.lastKnownIsTyping) {
+          this.lastKnownIsTyping = isTyping;
+          this.callbacks.onTypingChange?.(isTyping);
+        }
 
         // Check if there are new messages
         if (data.messages.length > this.lastKnownMessageCount) {
