@@ -15,11 +15,7 @@ export type ApiAttribute = {
  * Image sending behaviour enum for client configuration
  */
 export type ApiImageSendingBehaviour =
-  | "disabled"
-  | "low"
-  | "moderate"
-  | "high"
-  | "aggressive";
+  "disabled" | "low" | "moderate" | "high" | "aggressive";
 
 export type ApiModerationCategory =
   | "underage_site_use"
@@ -50,6 +46,33 @@ export type ApiOrientation =
   | "trans_mtf"
   | "trans_ftm"
   | "bisexual";
+
+export type ApiCheckout =
+  | {
+      type: "external";
+    }
+  | {
+      type: "hosted";
+      url: string;
+    };
+
+export type ApiPurchase = {
+  checkout: ApiCheckout;
+  /**
+   * The items, in the order sent. The first is the cover.
+   */
+  content_ids: Array<string>;
+  id: string;
+  /**
+   * Null while unpaid
+   */
+  paid_at?: string | null;
+  /**
+   * USD cents
+   */
+  price_cents: number;
+  requested_at: string;
+};
 
 export type ApiUserWithStats = {
   /**
@@ -463,6 +486,10 @@ export type GetConversationResponse = {
    */
   messages: Array<Message>;
   /**
+   * Purchases in this conversation, oldest first
+   */
+  purchases: Array<ApiPurchase>;
+  /**
    * Optional platform name describing which site the user and bot are chatting on
    */
   platform?: string | null;
@@ -519,22 +546,10 @@ export type ImageItem = {
  * affects whether image tools are exposed to the LLM and how strongly it is prompted to use them.
  */
 export type ImageSendingBehaviour =
-  | "disabled"
-  | "low"
-  | "moderate"
-  | "high"
-  | "aggressive";
+  "disabled" | "low" | "moderate" | "high" | "aggressive";
 
 export type Language =
-  | "en"
-  | "de"
-  | "ru"
-  | "ar"
-  | "es"
-  | "nl"
-  | "uk"
-  | "fr"
-  | "it";
+  "en" | "de" | "ru" | "ar" | "es" | "nl" | "uk" | "fr" | "it";
 
 export type ListApiKeysResponse = {
   /**
@@ -629,6 +644,10 @@ export type ListUsersResponse = {
    * List of users
    */
   users: Array<ApiUserWithStats>;
+};
+
+export type MarkPurchasePaidResponse = {
+  purchase: ApiPurchase;
 };
 
 export type MediaTypeFilter = "image" | "video";
@@ -1878,6 +1897,43 @@ export type UpdatePlatformResponses = {
 
 export type UpdatePlatformResponse2 =
   UpdatePlatformResponses[keyof UpdatePlatformResponses];
+
+export type MarkPurchasePaidData = {
+  body?: never;
+  path: {
+    /**
+     * Purchase ID
+     */
+    purchase_id: string;
+  };
+  query?: never;
+  url: "/api/purchases/{purchase_id}/paid";
+};
+
+export type MarkPurchasePaidErrors = {
+  /**
+   * Purchase not found
+   */
+  404: unknown;
+  /**
+   * Purchase is already paid
+   */
+  409: unknown;
+  /**
+   * Internal server error
+   */
+  500: unknown;
+};
+
+export type MarkPurchasePaidResponses = {
+  /**
+   * Purchase marked paid
+   */
+  200: MarkPurchasePaidResponse;
+};
+
+export type MarkPurchasePaidResponse2 =
+  MarkPurchasePaidResponses[keyof MarkPurchasePaidResponses];
 
 export type SpeakData = {
   body: SpeechRequest;

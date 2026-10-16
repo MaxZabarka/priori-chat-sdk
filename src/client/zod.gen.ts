@@ -52,6 +52,25 @@ export const zApiOrientation = z.enum([
   "bisexual",
 ]);
 
+export const zApiCheckout = z.union([
+  z.object({
+    type: z.enum(["external"]),
+  }),
+  z.object({
+    type: z.enum(["hosted"]),
+    url: z.string(),
+  }),
+]);
+
+export const zApiPurchase = z.object({
+  checkout: zApiCheckout,
+  content_ids: z.array(z.string()),
+  id: z.string().uuid(),
+  paid_at: z.union([z.string().datetime(), z.null()]).optional(),
+  price_cents: z.number().int().gte(0),
+  requested_at: z.string().datetime(),
+});
+
 export const zApiUserWithStats = z.object({
   attributes: z.array(zApiAttribute),
   created_date: z.string().datetime(),
@@ -325,6 +344,7 @@ export const zGetConversationResponse = z.object({
   is_typing: z.boolean(),
   latest_summary: z.union([zSummary, z.null()]).optional(),
   messages: z.array(zMessage),
+  purchases: z.array(zApiPurchase),
   platform: z.union([z.string(), z.null()]).optional(),
   segment: z.union([z.boolean(), z.null()]).optional(),
   user_id: z.union([z.string(), z.null()]).optional(),
@@ -402,6 +422,10 @@ export const zListUsersResponse = z.object({
   offset: z.coerce.bigint(),
   total_count: z.coerce.bigint(),
   users: z.array(zApiUserWithStats),
+});
+
+export const zMarkPurchasePaidResponse = z.object({
+  purchase: zApiPurchase,
 });
 
 export const zSendMessageRequest = z.object({
@@ -881,6 +905,19 @@ export const zUpdatePlatformData = z.object({
  * Platform updated successfully
  */
 export const zUpdatePlatformResponse2 = zUpdatePlatformResponse;
+
+export const zMarkPurchasePaidData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    purchase_id: z.string().uuid(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Purchase marked paid
+ */
+export const zMarkPurchasePaidResponse2 = zMarkPurchasePaidResponse;
 
 export const zSpeakData = z.object({
   body: zSpeechRequest,

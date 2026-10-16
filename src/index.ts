@@ -13,6 +13,7 @@ export {
   type GetConversationOptions,
   type GenerateResponseOptions,
 } from "./methods/conversations";
+export { type MarkPurchasePaidOptions } from "./methods/purchases";
 export type {
   CreateConversationResponse,
   GetConversationResponse,
@@ -74,4 +75,7 @@ export type {
   UpdatePlatformRequestBody,
   UpdatePlatformResponse,
   CreateConversionRequestBody,
+  ApiPurchase,
+  ApiCheckout,
+  MarkPurchasePaidResponse,
 } from "./client/types.gen";

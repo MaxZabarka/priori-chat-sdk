@@ -813,6 +813,34 @@ paths:
           description: Platform not found
         '500':
           description: Internal server error
+  /api/purchases/{purchase_id}/paid:
+    post:
+      description: Clients that take payment themselves call this once the fan has paid. The bot then reacts to the payment.
+      operationId: mark_purchase_paid
+      parameters:
+      - description: Purchase ID
+        in: path
+        name: purchase_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarkPurchasePaidResponse'
+          description: Purchase marked paid
+        '404':
+          description: Purchase not found
+        '409':
+          description: Purchase is already paid
+        '500':
+          description: Internal server error
+      summary: Mark a purchase paid
+      tags:
+      - purchases
   /api/speak:
     post:
       tags:
@@ -1050,6 +1078,65 @@ components:
       - trans_mtf
       - trans_ftm
       - bisexual
+    APICheckout:
+      discriminator:
+        propertyName: type
+      oneOf:
+      - properties:
+          type:
+            enum:
+            - external
+            type: string
+        required:
+        - type
+        type: object
+      - description: The fan pays on a hosted page at `url`.
+        properties:
+          type:
+            enum:
+            - hosted
+            type: string
+          url:
+            type: string
+        required:
+        - url
+        - type
+        type: object
+    APIPurchase:
+      properties:
+        checkout:
+          $ref: '#/components/schemas/APICheckout'
+        content_ids:
+          description: The items, in the order sent. The first is the cover.
+          example:
+          - towel-lamp-04
+          items:
+            type: string
+          type: array
+        id:
+          format: uuid
+          type: string
+        paid_at:
+          description: Null while unpaid
+          format: date-time
+          nullable: true
+          type: string
+        price_cents:
+          description: USD cents
+          example: 1400
+          format: int32
+          minimum: 0
+          type: integer
+        requested_at:
+          format: date-time
+          type: string
+      required:
+      - id
+      - content_ids
+      - price_cents
+      - checkout
+      - requested_at
+      type: object
     APIUserWithStats:
       type: object
       required:
@@ -1759,6 +1846,7 @@ components:
       - messages
       - bot_id
       - is_typing
+      - purchases
       properties:
         bot_id:
           type: string
@@ -1782,6 +1870,11 @@ components:
           items:
             $ref: '#/components/schemas/Message'
           description: Messages in the conversation
+        purchases:
+          description: Purchases in this conversation, oldest first
+          items:
+            $ref: '#/components/schemas/APIPurchase'
+          type: array
         platform:
           type: string
           description: Optional platform name describing which site the user and bot are chatting on
@@ -2017,6 +2110,13 @@ components:
           items:
             $ref: '#/components/schemas/APIUserWithStats'
           description: List of users
+    MarkPurchasePaidResponse:
+      properties:
+        purchase:
+          $ref: '#/components/schemas/APIPurchase'
+      required:
+      - purchase
+      type: object
     MediaTypeFilter:
       type: string
       enum:
@@ -2522,3 +2622,5 @@ tags:
   description: Voice cloning and generation endpoints
 - name: conversions
   description: Conversion tracking endpoints
+- name: purchases
+  description: Content purchases

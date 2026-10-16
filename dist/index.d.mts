@@ -26,6 +26,29 @@ type ApiModerationSeverity = "Low" | "Medium" | "High" | "Critical";
  * Bot orientation — controls gender identity, pronouns, and attraction in the system prompt.
  */
 type ApiOrientation = "straight_female" | "lesbian_female" | "gay_man" | "straight_man" | "trans_mtf" | "trans_ftm" | "bisexual";
+type ApiCheckout = {
+    type: "external";
+} | {
+    type: "hosted";
+    url: string;
+};
+type ApiPurchase = {
+    checkout: ApiCheckout;
+    /**
+     * The items, in the order sent. The first is the cover.
+     */
+    content_ids: Array<string>;
+    id: string;
+    /**
+     * Null while unpaid
+     */
+    paid_at?: string | null;
+    /**
+     * USD cents
+     */
+    price_cents: number;
+    requested_at: string;
+};
 /**
  * Represents an API key info (without the actual key)
  */
@@ -276,6 +299,10 @@ type GetConversationResponse = {
      */
     messages: Array<Message$1>;
     /**
+     * Purchases in this conversation, oldest first
+     */
+    purchases: Array<ApiPurchase>;
+    /**
      * Optional platform name describing which site the user and bot are chatting on
      */
     platform?: string | null;
@@ -387,6 +414,9 @@ type ListPlatformsResponse = {
      * List of all platforms accessible to the current client
      */
     platforms: Array<Platform>;
+};
+type MarkPurchasePaidResponse = {
+    purchase: ApiPurchase;
 };
 type MediaTypeFilter = "image" | "video";
 type MemoryResponse = {
@@ -799,6 +829,10 @@ interface GetPlatformOptions {
 }
 interface UpdatePlatformOptions extends UpdatePlatformRequestBody {
     platform_id: string;
+}
+
+interface MarkPurchasePaidOptions {
+    purchase_id: string;
 }
 
 /**
@@ -1545,6 +1579,21 @@ declare class PrioriChat {
      * ```
      */
     createConversion(options: CreateConversionRequestBody): Promise<void>;
+    /**
+     * Marks a purchase paid. Clients that take payment themselves call this once the fan has paid;
+     * the bot then reacts to the payment. Throws with status 409 if the purchase is already paid.
+     * @example
+     * ```ts
+     * const client = new PrioriChat("your-api-key");
+     *
+     * const { purchase } = await client.markPurchasePaid({
+     *   purchase_id: "12345678-1234-1234-1234-123456789012",
+     * });
+     *
+     * console.log(`Paid at ${purchase.paid_at}`);
+     * ```
+     */
+    markPurchasePaid(options: MarkPurchasePaidOptions): Promise<MarkPurchasePaidResponse>;
 }
 
-export { type ApiAttribute, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, type ApiCheckout, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPurchase, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };

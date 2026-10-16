@@ -95,6 +95,9 @@ import type {
   UpdatePlatformData,
   UpdatePlatformResponses,
   UpdatePlatformErrors,
+  MarkPurchasePaidData,
+  MarkPurchasePaidResponses,
+  MarkPurchasePaidErrors,
   SpeakData,
   SpeakResponses,
   SpeakErrors,
@@ -628,6 +631,24 @@ export const updatePlatform = <ThrowOnError extends boolean = true>(
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+};
+
+/**
+ * Mark a purchase paid
+ * Clients that take payment themselves call this once the fan has paid. The bot then reacts to the payment.
+ */
+export const markPurchasePaid = <ThrowOnError extends boolean = true>(
+  options: Options<MarkPurchasePaidData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    MarkPurchasePaidResponses,
+    MarkPurchasePaidErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/purchases/{purchase_id}/paid",
+    ...options,
   });
 };
 

@@ -40,6 +40,7 @@ import {
   type UpdatePlatformOptions,
 } from "./methods/platforms";
 import { createConversionImpl } from "./methods/conversions";
+import { markPurchasePaidImpl, type MarkPurchasePaidOptions } from "./methods/purchases";
 import { getUser, updateUser } from "./client/sdk.gen";
 import type {
   CreateConversationResponse,
@@ -84,6 +85,7 @@ import type {
   UpdatePlatformResponse,
   UpdatePlatformRequestBody,
   CreateConversionRequestBody,
+  MarkPurchasePaidResponse,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -785,5 +787,23 @@ export class PrioriChat {
    */
   async createConversion(options: CreateConversionRequestBody): Promise<void> {
     return createConversionImpl.call(this, options);
+  }
+
+  /**
+   * Marks a purchase paid. Clients that take payment themselves call this once the fan has paid;
+   * the bot then reacts to the payment. Throws with status 409 if the purchase is already paid.
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const { purchase } = await client.markPurchasePaid({
+   *   purchase_id: "12345678-1234-1234-1234-123456789012",
+   * });
+   *
+   * console.log(`Paid at ${purchase.paid_at}`);
+   * ```
+   */
+  async markPurchasePaid(options: MarkPurchasePaidOptions): Promise<MarkPurchasePaidResponse> {
+    return markPurchasePaidImpl.call(this, options);
   }
 }

@@ -700,6 +700,13 @@ var updatePlatform = (options) => {
     }
   });
 };
+var markPurchasePaid = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/purchases/{purchase_id}/paid",
+    ...options
+  });
+};
 var getUser = (options) => {
   return (options.client ?? client).get({
     responseType: "json",
@@ -886,6 +893,12 @@ async function updatePlatformImpl(options) {
 // src/methods/conversions.ts
 async function createConversionImpl(options) {
   await createConversion({ body: options });
+}
+
+// src/methods/purchases.ts
+async function markPurchasePaidImpl(options) {
+  const result = await markPurchasePaid({ path: options });
+  return result.data;
 }
 
 // src/conversation.ts
@@ -1743,6 +1756,23 @@ var PrioriChat = class {
    */
   async createConversion(options) {
     return createConversionImpl.call(this, options);
+  }
+  /**
+   * Marks a purchase paid. Clients that take payment themselves call this once the fan has paid;
+   * the bot then reacts to the payment. Throws with status 409 if the purchase is already paid.
+   * @example
+   * ```ts
+   * const client = new PrioriChat("your-api-key");
+   *
+   * const { purchase } = await client.markPurchasePaid({
+   *   purchase_id: "12345678-1234-1234-1234-123456789012",
+   * });
+   *
+   * console.log(`Paid at ${purchase.paid_at}`);
+   * ```
+   */
+  async markPurchasePaid(options) {
+    return markPurchasePaidImpl.call(this, options);
   }
 };
 export {
