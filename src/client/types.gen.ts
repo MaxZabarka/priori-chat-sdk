@@ -64,6 +64,10 @@ export type ApiPurchase = {
   content_ids: Array<string>;
   id: string;
   /**
+   * The message that offers this purchase
+   */
+  message_id: string;
+  /**
    * Null while unpaid
    */
   paid_at?: string | null;

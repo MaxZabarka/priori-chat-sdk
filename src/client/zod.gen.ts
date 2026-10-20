@@ -66,6 +66,7 @@ export const zApiPurchase = z.object({
   checkout: zApiCheckout,
   content_ids: z.array(z.string()),
   id: z.string().uuid(),
+  message_id: z.string().uuid(),
   paid_at: z.union([z.string().datetime(), z.null()]).optional(),
   price_cents: z.number().int().gte(0),
   requested_at: z.string().datetime(),

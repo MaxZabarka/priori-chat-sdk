@@ -1116,6 +1116,10 @@ components:
         id:
           format: uuid
           type: string
+        message_id:
+          description: The message that offers this purchase
+          format: uuid
+          type: string
         paid_at:
           description: Null while unpaid
           format: date-time
@@ -1132,6 +1136,7 @@ components:
           type: string
       required:
       - id
+      - message_id
       - content_ids
       - price_cents
       - checkout
