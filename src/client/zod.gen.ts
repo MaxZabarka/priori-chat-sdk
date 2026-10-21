@@ -2,6 +2,33 @@
 
 import { z } from "zod";
 
+export const zApiContentSet = z.object({
+  bot_id: z.string().uuid(),
+  description: z.string(),
+  id: z.string().uuid(),
+  items: z.array(z.string()),
+  name: z.string(),
+});
+
+export const zCreateSetRequest = z.object({
+  bot_id: z.string().uuid(),
+  description: z.string(),
+  name: z.string(),
+});
+
+export const zUpdateSetRequest = z.object({
+  description: z.string(),
+  name: z.string(),
+});
+
+export const zSetItemsRequest = z.object({
+  content_ids: z.array(z.string()),
+});
+
+export const zListSetsResponse = z.object({
+  sets: z.array(zApiContentSet),
+});
+
 export const zApiAttribute = z.object({
   name: z.string(),
   value: z.string(),
@@ -995,3 +1022,66 @@ export const zUpdateUserData = z.object({
  * User updated successfully
  */
 export const zUpdateUserResponse2 = zUpdateUserResponse;
+
+export const zListSetsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    bot_id: z.string().uuid(),
+  }),
+});
+
+/**
+ * The bot's sets
+ */
+export const zListSetsResponse2 = zListSetsResponse;
+
+export const zCreateSetData = z.object({
+  body: zCreateSetRequest,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+/**
+ * Set created
+ */
+export const zCreateSetResponse = zApiContentSet;
+
+export const zDeleteSetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    set_id: z.string().uuid(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Set deleted
+ */
+export const zDeleteSetResponse = z.void();
+
+export const zUpdateSetData = z.object({
+  body: zUpdateSetRequest,
+  path: z.object({
+    set_id: z.string().uuid(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Set updated
+ */
+export const zUpdateSetResponse = zApiContentSet;
+
+export const zSetSetItemsData = z.object({
+  body: zSetItemsRequest,
+  path: z.object({
+    set_id: z.string().uuid(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Set with its new items
+ */
+export const zSetSetItemsResponse = zApiContentSet;

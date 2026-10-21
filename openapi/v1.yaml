@@ -359,7 +359,7 @@ paths:
           nullable: true
       - name: limit
         in: query
-        description: 'Maximum number of items to return (default: 30, max: 30)'
+        description: 'Maximum number of items to return (default: 30, max: 200)'
         required: false
         schema:
           type: integer
@@ -1005,8 +1005,206 @@ paths:
           description: User not found
         '500':
           description: Internal server error
+  /api/sets:
+    get:
+      operationId: list_sets
+      parameters:
+      - in: query
+        name: bot_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSetsResponse'
+          description: The bot's sets
+        '404':
+          description: Bot not found
+      summary: List a bot's content sets
+      tags:
+      - content
+    post:
+      operationId: create_set
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSetRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIContentSet'
+          description: Set created
+        '400':
+          description: Empty name
+        '404':
+          description: Bot not found
+      summary: Create a content set
+      tags:
+      - content
+  /api/sets/{set_id}:
+    delete:
+      description: Its items stay in the vault as loose items.
+      operationId: delete_set
+      parameters:
+      - description: Set ID
+        in: path
+        name: set_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        '204':
+          description: Set deleted
+        '404':
+          description: Set not found
+      summary: Delete a content set
+      tags:
+      - content
+    put:
+      operationId: update_set
+      parameters:
+      - description: Set ID
+        in: path
+        name: set_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSetRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIContentSet'
+          description: Set updated
+        '400':
+          description: Empty name
+        '404':
+          description: Set not found
+      summary: Rename a content set or change its description
+      tags:
+      - content
+  /api/sets/{set_id}/items:
+    put:
+      operationId: set_set_items
+      parameters:
+      - description: Set ID
+        in: path
+        name: set_id
+        required: true
+        schema:
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetItemsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIContentSet'
+          description: Set with its new items
+        '404':
+          description: Set not found
+        '422':
+          description: An id is not active content of this set's bot, or is listed twice
+      summary: Replace a content set's items and their order
+      tags:
+      - content
 components:
   schemas:
+    APIContentSet:
+      properties:
+        bot_id:
+          format: uuid
+          type: string
+        description:
+          example: After a shower, golden light, wet hair, a towel.
+          type: string
+        id:
+          format: uuid
+          type: string
+        items:
+          description: Content ids in suggested order. The bot may follow it loosely.
+          example:
+          - 9b5c630f-dcdc-4071-b1ee-910edf09ca1b.webp
+          - 04939771-0571-4585-b0a9-f8d6e2b2c3d4.webp
+          items:
+            type: string
+          type: array
+        name:
+          example: Bathroom · golden · towel
+          type: string
+      required:
+      - id
+      - bot_id
+      - name
+      - description
+      - items
+      type: object
+    CreateSetRequest:
+      properties:
+        bot_id:
+          format: uuid
+          type: string
+        description:
+          type: string
+        name:
+          type: string
+      required:
+      - bot_id
+      - name
+      - description
+      type: object
+    UpdateSetRequest:
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+      required:
+      - name
+      - description
+      type: object
+    SetItemsRequest:
+      properties:
+        content_ids:
+          description: Content ids in suggested order. Items of the set left out become loose; listed items leave any other set.
+          items:
+            type: string
+          type: array
+      required:
+      - content_ids
+      type: object
+    ListSetsResponse:
+      properties:
+        sets:
+          description: Oldest first
+          items:
+            $ref: '#/components/schemas/APIContentSet'
+          type: array
+      required:
+      - sets
+      type: object
     APIAttribute:
       type: object
       required:

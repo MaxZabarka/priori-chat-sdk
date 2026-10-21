@@ -116,6 +116,21 @@ import type {
   UpdateUserData,
   UpdateUserResponses,
   UpdateUserErrors,
+  ListSetsData,
+  ListSetsResponses,
+  ListSetsErrors,
+  CreateSetData,
+  CreateSetResponses,
+  CreateSetErrors,
+  DeleteSetData,
+  DeleteSetResponses,
+  DeleteSetErrors,
+  UpdateSetData,
+  UpdateSetResponses,
+  UpdateSetErrors,
+  SetSetItemsData,
+  SetSetItemsResponses,
+  SetSetItemsErrors,
 } from "./types.gen";
 import { client as _heyApiClient } from "./client.gen";
 
@@ -738,6 +753,103 @@ export const updateUser = <ThrowOnError extends boolean = true>(
   >({
     responseType: "json",
     url: "/api/users/{user_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * List a bot's content sets
+ */
+export const listSets = <ThrowOnError extends boolean = true>(
+  options: Options<ListSetsData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    ListSetsResponses,
+    ListSetsErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/sets",
+    ...options,
+  });
+};
+
+/**
+ * Create a content set
+ */
+export const createSet = <ThrowOnError extends boolean = true>(
+  options: Options<CreateSetData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    CreateSetResponses,
+    CreateSetErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/sets",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Delete a content set
+ * Its items stay in the vault as loose items.
+ */
+export const deleteSet = <ThrowOnError extends boolean = true>(
+  options: Options<DeleteSetData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).delete<
+    DeleteSetResponses,
+    DeleteSetErrors,
+    ThrowOnError
+  >({
+    url: "/api/sets/{set_id}",
+    ...options,
+  });
+};
+
+/**
+ * Rename a content set or change its description
+ */
+export const updateSet = <ThrowOnError extends boolean = true>(
+  options: Options<UpdateSetData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    UpdateSetResponses,
+    UpdateSetErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/sets/{set_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Replace a content set's items and their order
+ */
+export const setSetItems = <ThrowOnError extends boolean = true>(
+  options: Options<SetSetItemsData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).put<
+    SetSetItemsResponses,
+    SetSetItemsErrors,
+    ThrowOnError
+  >({
+    responseType: "json",
+    url: "/api/sets/{set_id}/items",
     ...options,
     headers: {
       "Content-Type": "application/json",

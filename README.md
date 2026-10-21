@@ -252,3 +252,6 @@ For detailed API documentation, see the generated TypeDoc documentation.
 ## TypeScript Support
 
 This SDK is written in TypeScript and provides full type safety for all operations.
+## Developing with priori-chat-ui
+
+To try SDK changes in a local `priori-chat-ui` checkout without publishing, run `pnpm dev:ui`. It rebuilds on every change and copies the build into the UI's `node_modules/priori-chat-sdk`. The UI is expected in a sibling folder; set `PRIORI_CHAT_UI` to point elsewhere. Restart the UI dev server after the first copy. A `pnpm install` in the UI restores the published version.

@@ -1,3 +1,19 @@
+type ApiContentSet = {
+    bot_id: string;
+    description: string;
+    id: string;
+    /**
+     * Content ids in suggested order. The bot may follow it loosely.
+     */
+    items: Array<string>;
+    name: string;
+};
+type ListSetsResponse = {
+    /**
+     * Oldest first
+     */
+    sets: Array<ApiContentSet>;
+};
 type ApiAttribute = {
     /**
      * Name of the attribute
@@ -715,7 +731,7 @@ type ListContentData = {
          */
         user_id?: string | null;
         /**
-         * Maximum number of items to return (default: 30, max: 30)
+         * Maximum number of items to return (default: 30, max: 200)
          */
         limit?: number | null;
         /**
@@ -837,6 +853,28 @@ interface UpdatePlatformOptions extends UpdatePlatformRequestBody {
 
 interface MarkPurchasePaidOptions {
     purchase_id: string;
+}
+
+interface CreateSetOptions {
+    bot_id: string;
+    name: string;
+    description: string;
+}
+interface ListSetsOptions {
+    bot_id: string;
+}
+interface UpdateSetOptions {
+    set_id: string;
+    name: string;
+    description: string;
+}
+interface DeleteSetOptions {
+    set_id: string;
+}
+interface SetSetItemsOptions {
+    set_id: string;
+    /** Content ids in suggested order. Items of the set left out become loose; listed items leave any other set. */
+    content_ids: string[];
 }
 
 /**
@@ -1598,6 +1636,30 @@ declare class PrioriChat {
      * ```
      */
     markPurchasePaid(options: MarkPurchasePaidOptions): Promise<MarkPurchasePaidResponse>;
+    /**
+     * Creates an empty content set: a scene from the bot's vault with a name and a description, and no price.
+     *
+     * @example
+     * ```ts
+     * const set = await client.createSet({
+     *   bot_id: "12345678-1234-1234-1234-123456789012",
+     *   name: "Bathroom · golden · towel",
+     *   description: "After a shower in golden light.",
+     * });
+     * ```
+     */
+    createSet(options: CreateSetOptions): Promise<ApiContentSet>;
+    /** Lists a bot's content sets, oldest first, each with its items in suggested order. */
+    listSets(options: ListSetsOptions): Promise<ListSetsResponse>;
+    /** Renames a content set or changes its description. */
+    updateSet(options: UpdateSetOptions): Promise<ApiContentSet>;
+    /** Deletes a content set. Its items stay in the vault as loose items. */
+    deleteSet(options: DeleteSetOptions): Promise<void>;
+    /**
+     * Replaces a content set's items and their suggested order. Items of the set left out become loose;
+     * listed items leave any other set. Fails with 422 when an item is not this bot's content or is listed twice.
+     */
+    setSetItems(options: SetSetItemsOptions): Promise<ApiContentSet>;
 }
 
-export { type ApiAttribute, type ApiCheckout, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPurchase, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPurchase, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type SetSetItemsOptions, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };

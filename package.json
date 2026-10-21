@@ -1,6 +1,6 @@
 {
   "name": "priori-chat-sdk",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "TypeScript SDK for Priori Chat API",
   "main": "src/index.ts",
   "module": "dist/index.mjs",
@@ -12,6 +12,8 @@
     "codegen": "openapi-ts",
     "codegen:watch": "openapi-ts --watch",
     "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev:ui": "tsup src/index.ts --format esm,cjs --dts --watch --onSuccess \"node scripts/copy-to-ui.mjs\"",
+    "copy-to-ui": "node scripts/copy-to-ui.mjs",
     "test": "vitest run",
     "lint": "eslint . --ext .ts",
     "prepack": "pnpm codegen && pnpm build",

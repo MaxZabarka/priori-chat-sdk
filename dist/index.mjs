@@ -725,6 +725,52 @@ var updateUser = (options) => {
     }
   });
 };
+var listSets = (options) => {
+  return (options.client ?? client).get({
+    responseType: "json",
+    url: "/api/sets",
+    ...options
+  });
+};
+var createSet = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/sets",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var deleteSet = (options) => {
+  return (options.client ?? client).delete({
+    url: "/api/sets/{set_id}",
+    ...options
+  });
+};
+var updateSet = (options) => {
+  return (options.client ?? client).put({
+    responseType: "json",
+    url: "/api/sets/{set_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var setSetItems = (options) => {
+  return (options.client ?? client).put({
+    responseType: "json",
+    url: "/api/sets/{set_id}/items",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
 
 // src/methods/conversations.ts
 async function createConversationImpl(options) {
@@ -898,6 +944,29 @@ async function createConversionImpl(options) {
 // src/methods/purchases.ts
 async function markPurchasePaidImpl(options) {
   const result = await markPurchasePaid({ path: options });
+  return result.data;
+}
+
+// src/methods/sets.ts
+async function createSetImpl(options) {
+  const result = await createSet({ body: options });
+  return result.data;
+}
+async function listSetsImpl(options) {
+  const result = await listSets({ query: options });
+  return result.data;
+}
+async function updateSetImpl(options) {
+  const { set_id, ...body } = options;
+  const result = await updateSet({ path: { set_id }, body });
+  return result.data;
+}
+async function deleteSetImpl(options) {
+  await deleteSet({ path: options });
+}
+async function setSetItemsImpl(options) {
+  const { set_id, ...body } = options;
+  const result = await setSetItems({ path: { set_id }, body });
   return result.data;
 }
 
@@ -1773,6 +1842,40 @@ var PrioriChat = class {
    */
   async markPurchasePaid(options) {
     return markPurchasePaidImpl.call(this, options);
+  }
+  /**
+   * Creates an empty content set: a scene from the bot's vault with a name and a description, and no price.
+   *
+   * @example
+   * ```ts
+   * const set = await client.createSet({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   name: "Bathroom · golden · towel",
+   *   description: "After a shower in golden light.",
+   * });
+   * ```
+   */
+  async createSet(options) {
+    return createSetImpl.call(this, options);
+  }
+  /** Lists a bot's content sets, oldest first, each with its items in suggested order. */
+  async listSets(options) {
+    return listSetsImpl.call(this, options);
+  }
+  /** Renames a content set or changes its description. */
+  async updateSet(options) {
+    return updateSetImpl.call(this, options);
+  }
+  /** Deletes a content set. Its items stay in the vault as loose items. */
+  async deleteSet(options) {
+    return deleteSetImpl.call(this, options);
+  }
+  /**
+   * Replaces a content set's items and their suggested order. Items of the set left out become loose;
+   * listed items leave any other set. Fails with 422 when an item is not this bot's content or is listed twice.
+   */
+  async setSetItems(options) {
+    return setSetItemsImpl.call(this, options);
   }
 };
 export {

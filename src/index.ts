@@ -14,6 +14,13 @@ export {
   type GenerateResponseOptions,
 } from "./methods/conversations";
 export { type MarkPurchasePaidOptions } from "./methods/purchases";
+export {
+  type CreateSetOptions,
+  type ListSetsOptions,
+  type UpdateSetOptions,
+  type DeleteSetOptions,
+  type SetSetItemsOptions,
+} from "./methods/sets";
 export type {
   CreateConversationResponse,
   GetConversationResponse,
@@ -78,4 +85,6 @@ export type {
   ApiPurchase,
   ApiCheckout,
   MarkPurchasePaidResponse,
+  ApiContentSet,
+  ListSetsResponse,
 } from "./client/types.gen";

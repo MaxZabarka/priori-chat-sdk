@@ -41,6 +41,18 @@ import {
 } from "./methods/platforms";
 import { createConversionImpl } from "./methods/conversions";
 import { markPurchasePaidImpl, type MarkPurchasePaidOptions } from "./methods/purchases";
+import {
+  createSetImpl,
+  deleteSetImpl,
+  listSetsImpl,
+  setSetItemsImpl,
+  updateSetImpl,
+  type CreateSetOptions,
+  type DeleteSetOptions,
+  type ListSetsOptions,
+  type SetSetItemsOptions,
+  type UpdateSetOptions,
+} from "./methods/sets";
 import { getUser, updateUser } from "./client/sdk.gen";
 import type {
   CreateConversationResponse,
@@ -86,6 +98,8 @@ import type {
   UpdatePlatformRequestBody,
   CreateConversionRequestBody,
   MarkPurchasePaidResponse,
+  ApiContentSet,
+  ListSetsResponse,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -805,5 +819,44 @@ export class PrioriChat {
    */
   async markPurchasePaid(options: MarkPurchasePaidOptions): Promise<MarkPurchasePaidResponse> {
     return markPurchasePaidImpl.call(this, options);
+  }
+
+  /**
+   * Creates an empty content set: a scene from the bot's vault with a name and a description, and no price.
+   *
+   * @example
+   * ```ts
+   * const set = await client.createSet({
+   *   bot_id: "12345678-1234-1234-1234-123456789012",
+   *   name: "Bathroom · golden · towel",
+   *   description: "After a shower in golden light.",
+   * });
+   * ```
+   */
+  async createSet(options: CreateSetOptions): Promise<ApiContentSet> {
+    return createSetImpl.call(this, options);
+  }
+
+  /** Lists a bot's content sets, oldest first, each with its items in suggested order. */
+  async listSets(options: ListSetsOptions): Promise<ListSetsResponse> {
+    return listSetsImpl.call(this, options);
+  }
+
+  /** Renames a content set or changes its description. */
+  async updateSet(options: UpdateSetOptions): Promise<ApiContentSet> {
+    return updateSetImpl.call(this, options);
+  }
+
+  /** Deletes a content set. Its items stay in the vault as loose items. */
+  async deleteSet(options: DeleteSetOptions): Promise<void> {
+    return deleteSetImpl.call(this, options);
+  }
+
+  /**
+   * Replaces a content set's items and their suggested order. Items of the set left out become loose;
+   * listed items leave any other set. Fails with 422 when an item is not this bot's content or is listed twice.
+   */
+  async setSetItems(options: SetSetItemsOptions): Promise<ApiContentSet> {
+    return setSetItemsImpl.call(this, options);
   }
 }
