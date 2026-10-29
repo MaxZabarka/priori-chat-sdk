@@ -2343,6 +2343,12 @@ components:
           allOf:
           - $ref: '#/components/schemas/Content'
           nullable: true
+        attached_media_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Content'
+          description: Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.
+          nullable: true
         from_bot:
           type: boolean
           description: Whether this message is from a bot (true) or human (false)

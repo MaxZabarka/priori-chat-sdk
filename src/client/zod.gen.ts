@@ -141,6 +141,7 @@ export const zContent = z.object({
 
 export const zMessage = z.object({
   attached_media: z.union([zContent, z.null()]).optional(),
+  attached_media_items: z.union([z.array(zContent), z.null()]).optional(),
   from_bot: z.boolean(),
   id: z.union([z.string().uuid(), z.null()]).optional(),
   message_tone: z.union([z.string(), z.null()]).optional(),

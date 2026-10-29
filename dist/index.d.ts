@@ -448,6 +448,10 @@ type MemoryResponse = {
 type Message$1 = {
     attached_media?: Content | null;
     /**
+     * Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.
+     */
+    attached_media_items?: Array<Content> | null;
+    /**
      * Whether this message is from a bot (true) or human (false)
      */
     from_bot: boolean;
@@ -936,6 +940,8 @@ interface Message {
     text: string;
     from_bot: boolean;
     attached_media?: AttachedMedia;
+    /** Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. */
+    attached_media_items?: AttachedMedia[];
     sent_at?: number;
     moderation?: ApiModerationInfo;
     message_tone?: string;

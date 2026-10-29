@@ -40,6 +40,8 @@ export interface Message {
   text: string;
   from_bot: boolean;
   attached_media?: AttachedMedia;
+  /** Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. */
+  attached_media_items?: AttachedMedia[];
   sent_at?: number;
   moderation?: ApiModerationInfo;
   message_tone?: string;
@@ -283,6 +285,7 @@ export class Conversation {
                 text: apiMessage.text,
                 from_bot: apiMessage.from_bot,
                 attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : undefined,
+                attached_media_items: apiMessage.attached_media_items?.map((m) => ({ url: m.url })),
                 sent_at: Math.floor(Date.now() / 1000),
                 moderation: apiMessage.moderation || undefined,
                 message_tone: apiMessage.message_tone || undefined

@@ -702,6 +702,10 @@ export type MemoryResponse = {
 export type Message = {
   attached_media?: Content | null;
   /**
+   * Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.
+   */
+  attached_media_items?: Array<Content> | null;
+  /**
    * Whether this message is from a bot (true) or human (false)
    */
   from_bot: boolean;

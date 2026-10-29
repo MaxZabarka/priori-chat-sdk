@@ -1081,6 +1081,7 @@ var Conversation = class _Conversation {
                 text: apiMessage.text,
                 from_bot: apiMessage.from_bot,
                 attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : void 0,
+                attached_media_items: apiMessage.attached_media_items?.map((m) => ({ url: m.url })),
                 sent_at: Math.floor(Date.now() / 1e3),
                 moderation: apiMessage.moderation || void 0,
                 message_tone: apiMessage.message_tone || void 0
