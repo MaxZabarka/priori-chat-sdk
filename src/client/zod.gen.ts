@@ -216,13 +216,11 @@ export const zBotKnobs = z.object({
   discount: z.union([z.string(), z.null()]).optional(),
   emoji_amount: z.union([z.number().int(), z.null()]).optional(),
   first_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
-  free_rungs: z.union([z.number().int(), z.null()]).optional(),
   message_length: z.union([z.number().int(), z.null()]).optional(),
   pace: z.union([z.string(), z.null()]).optional(),
   personality_shy_bold: z.union([z.number(), z.null()]).optional(),
   personality_sweet_bratty: z.union([z.number(), z.null()]).optional(),
   price_step_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
-  usual_last_rung: z.union([z.number().int(), z.null()]).optional(),
   welcome_back_days: z.union([z.number().int(), z.null()]).optional(),
 });
 
@@ -507,7 +505,6 @@ export const zUpdateBotRequest = z.object({
   discount: z.union([z.string(), z.null()]).optional(),
   emoji_amount: z.union([z.number().int(), z.null()]).optional(),
   first_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
-  free_rungs: z.union([z.number().int(), z.null()]).optional(),
   freeform: z.union([z.string(), z.null()]).optional(),
   images: z.union([z.array(zImageItem), z.null()]).optional(),
   max_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
@@ -521,7 +518,6 @@ export const zUpdateBotRequest = z.object({
   personality_sweet_bratty: z.union([z.number(), z.null()]).optional(),
   price_step_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
   selling_style: z.union([z.string(), z.null()]).optional(),
-  usual_last_rung: z.union([z.number().int(), z.null()]).optional(),
   voice_enabled: z.union([z.boolean(), z.null()]).optional(),
   welcome_back_days: z.union([z.number().int(), z.null()]).optional(),
 });

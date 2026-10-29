@@ -1549,11 +1549,6 @@ components:
           format: int64
           nullable: true
           type: integer
-        free_rungs:
-          description: Rungs of a set she usually gives free, 0 to 10
-          format: int32
-          nullable: true
-          type: integer
         message_length:
           description: 1 short to 5 long
           format: int32
@@ -1578,11 +1573,6 @@ components:
           description: Usual step up per rung, in USD cents
           example: 500
           format: int64
-          nullable: true
-          type: integer
-        usual_last_rung:
-          description: Rung she rarely sells past, 0 to 10
-          format: int32
           nullable: true
           type: integer
         welcome_back_days:
@@ -2651,11 +2641,6 @@ components:
           format: int64
           nullable: true
           type: integer
-        free_rungs:
-          description: 0 to 10, less than `usual_last_rung`
-          format: int32
-          nullable: true
-          type: integer
         freeform:
           description: Freeform text description
           example: Scarlett loves to travel, she is fresh out of college.
@@ -2724,11 +2709,6 @@ components:
           example: Playful and warm. She starts with small prices and lets him ask for more.
           nullable: true
           type: string
-        usual_last_rung:
-          description: 0 to 10
-          format: int32
-          nullable: true
-          type: integer
         voice_enabled:
           description: She may send voice notes
           nullable: true

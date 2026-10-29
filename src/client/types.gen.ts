@@ -221,10 +221,6 @@ export type BotKnobs = {
    */
   first_price_cents?: number | null;
   /**
-   * Rungs of a set she usually gives free, 0 to 10
-   */
-  free_rungs?: number | null;
-  /**
    * 1 short to 5 long
    */
   message_length?: number | null;
@@ -244,10 +240,6 @@ export type BotKnobs = {
    * Usual step up per rung, in USD cents
    */
   price_step_cents?: number | null;
-  /**
-   * Rung she rarely sells past, 0 to 10
-   */
-  usual_last_rung?: number | null;
   /**
    * Days of silence before a welcome-back gift, 1 to 60
    */
@@ -903,10 +895,6 @@ export type UpdateBotRequest = {
   emoji_amount?: number | null;
   first_price_cents?: number | null;
   /**
-   * 0 to 10, less than `usual_last_rung`
-   */
-  free_rungs?: number | null;
-  /**
    * Freeform text description
    */
   freeform?: string | null;
@@ -953,10 +941,6 @@ export type UpdateBotRequest = {
    * How she sells, in your words. Null turns selling off and clears the selling fields this request does not send.
    */
   selling_style?: string | null;
-  /**
-   * 0 to 10
-   */
-  usual_last_rung?: number | null;
   /**
    * She may send voice notes
    */
