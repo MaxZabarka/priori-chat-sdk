@@ -175,24 +175,109 @@ export type ApiKeyInfo = {
 
 export type AudioFormat = "ogg_opus" | "mpeg";
 
-export type Bot = {
+export type Bot = BotSelling &
+  BotKnobs & {
+    /**
+     * List of bot attributes
+     */
+    attributes: Array<ApiAttribute>;
+    /**
+     * Freeform text description
+     */
+    freeform: string;
+    /**
+     * Unique identifier for the bot
+     */
+    id: string;
+    /**
+     * Name of the bot
+     */
+    name: string;
+    orientation: ApiOrientation;
+    /**
+     * She may send voice notes
+     */
+    voice_enabled: boolean;
+  };
+
+/**
+ * Soft selling preferences. Each set knob adds one line to her selling prompt; code enforces none. Null: not set.
+ */
+export type BotKnobs = {
   /**
-   * List of bot attributes
+   * She may offer rungs together for a bit less
    */
-  attributes: Array<ApiAttribute>;
+  bundles?: boolean | null;
   /**
-   * Freeform text description
+   * `hold` or `drop_once`
    */
-  freeform: string;
+  discount?: string | null;
   /**
-   * Unique identifier for the bot
+   * 1 none to 5 many
    */
-  id: string;
+  emoji_amount?: number | null;
   /**
-   * Name of the bot
+   * Usual first price with a new fan, in USD cents
    */
-  name: string;
-  orientation: ApiOrientation;
+  first_price_cents?: number | null;
+  /**
+   * Rungs of a set she usually gives free, 0 to 10
+   */
+  free_rungs?: number | null;
+  /**
+   * 1 short to 5 long
+   */
+  message_length?: number | null;
+  /**
+   * `patient`, `balanced` or `eager`
+   */
+  pace?: string | null;
+  /**
+   * -1 shy to 1 bold
+   */
+  personality_shy_bold?: number | null;
+  /**
+   * -1 sweet to 1 bratty
+   */
+  personality_sweet_bratty?: number | null;
+  /**
+   * Usual step up per rung, in USD cents
+   */
+  price_step_cents?: number | null;
+  /**
+   * Rung she rarely sells past, 0 to 10
+   */
+  usual_last_rung?: number | null;
+  /**
+   * Days of silence before a welcome-back gift, 1 to 60
+   */
+  welcome_back_days?: number | null;
+};
+
+/**
+ * How the bot sells. Every field is null when selling is off.
+ */
+export type BotSelling = {
+  /**
+   * She writes the checkout link in her own message. Needs rails that make links.
+   */
+  checkout_link_in_text: boolean;
+  /**
+   * Highest price she may ask, in USD cents, at most 70000.
+   */
+  max_price_cents?: number | null;
+  /**
+   * Lowest price she may ask, in USD cents. Set with `max_price_cents` or not at all.
+   */
+  min_price_cents?: number | null;
+  /**
+   * How fans pay: `external` (your app takes the money and reports it)
+   */
+  payment_rails?: string | null;
+  /**
+   * The operator's direction for selling, in their own words. Null: she never sells.
+   */
+  selling_style?: string | null;
 };
 
 export type Chatter = {
@@ -803,6 +888,24 @@ export type UpdateBotRequest = {
    * List of bot attributes
    */
   attributes?: Array<ApiAttribute>;
+  bundles?: boolean | null;
+  /**
+   * She writes the checkout link in her own message. Needs rails that make links.
+   */
+  checkout_link_in_text?: boolean | null;
+  /**
+   * `hold` or `drop_once`
+   */
+  discount?: string | null;
+  /**
+   * 1 to 5
+   */
+  emoji_amount?: number | null;
+  first_price_cents?: number | null;
+  /**
+   * 0 to 10, less than `usual_last_rung`
+   */
+  free_rungs?: number | null;
   /**
    * Freeform text description
    */
@@ -813,10 +916,55 @@ export type UpdateBotRequest = {
    */
   images?: Array<ImageItem> | null;
   /**
+   * Highest price she may ask, in USD cents, at most 70000.
+   */
+  max_price_cents?: number | null;
+  /**
+   * 1 to 5
+   */
+  message_length?: number | null;
+  /**
+   * Lowest price she may ask, in USD cents. Set with `max_price_cents` or not at all.
+   */
+  min_price_cents?: number | null;
+  /**
    * Name of the bot
    */
   name?: string | null;
   orientation?: ApiOrientation | null;
+  /**
+   * `patient`, `balanced` or `eager`
+   */
+  pace?: string | null;
+  /**
+   * `external`. Required when `selling_style` is set.
+   */
+  payment_rails?: string | null;
+  /**
+   * -1 shy to 1 bold
+   */
+  personality_shy_bold?: number | null;
+  /**
+   * -1 sweet to 1 bratty
+   */
+  personality_sweet_bratty?: number | null;
+  price_step_cents?: number | null;
+  /**
+   * How she sells, in your words. Null turns selling off and clears the selling fields this request does not send.
+   */
+  selling_style?: string | null;
+  /**
+   * 0 to 10
+   */
+  usual_last_rung?: number | null;
+  /**
+   * She may send voice notes
+   */
+  voice_enabled?: boolean | null;
+  /**
+   * 1 to 60
+   */
+  welcome_back_days?: number | null;
 };
 
 export type UpdateBotResponse = {

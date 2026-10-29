@@ -1467,34 +1467,41 @@ components:
       - ogg_opus
       - mpeg
     Bot:
-      type: object
-      required:
-      - id
-      - name
-      - freeform
-      - attributes
-      - orientation
-      properties:
-        attributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/APIAttribute'
-          description: List of bot attributes
-        freeform:
-          type: string
-          description: Freeform text description
-          example: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
-        id:
-          type: string
-          format: uuid
-          description: Unique identifier for the bot
-          example: 550e8400-e29b-41d4-a716-446655440000
-        name:
-          type: string
-          description: Name of the bot
-          example: Scarlett
-        orientation:
-          $ref: '#/components/schemas/APIOrientation'
+      allOf:
+      - $ref: '#/components/schemas/BotSelling'
+      - $ref: '#/components/schemas/BotKnobs'
+      - properties:
+          attributes:
+            description: List of bot attributes
+            items:
+              $ref: '#/components/schemas/APIAttribute'
+            type: array
+          freeform:
+            description: Freeform text description
+            example: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
+            type: string
+          id:
+            description: Unique identifier for the bot
+            example: 550e8400-e29b-41d4-a716-446655440000
+            format: uuid
+            type: string
+          name:
+            description: Name of the bot
+            example: Scarlett
+            type: string
+          orientation:
+            $ref: '#/components/schemas/APIOrientation'
+          voice_enabled:
+            description: She may send voice notes
+            type: boolean
+        required:
+        - id
+        - name
+        - freeform
+        - attributes
+        - orientation
+        - voice_enabled
+        type: object
       example:
         attributes:
         - name: full_name
@@ -1520,6 +1527,101 @@ components:
         freeform: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
         id: 550e8400-e29b-41d4-a716-446655440000
         name: Scarlett
+    BotKnobs:
+      description: 'Soft selling preferences. Each set knob adds one line to her selling prompt; code enforces none. Null: not set.'
+      properties:
+        bundles:
+          description: She may offer rungs together for a bit less
+          nullable: true
+          type: boolean
+        discount:
+          description: '`hold` or `drop_once`'
+          nullable: true
+          type: string
+        emoji_amount:
+          description: 1 none to 5 many
+          format: int32
+          nullable: true
+          type: integer
+        first_price_cents:
+          description: Usual first price with a new fan, in USD cents
+          example: 900
+          format: int64
+          nullable: true
+          type: integer
+        free_rungs:
+          description: Rungs of a set she usually gives free, 0 to 10
+          format: int32
+          nullable: true
+          type: integer
+        message_length:
+          description: 1 short to 5 long
+          format: int32
+          nullable: true
+          type: integer
+        pace:
+          description: '`patient`, `balanced` or `eager`'
+          example: balanced
+          nullable: true
+          type: string
+        personality_shy_bold:
+          description: -1 shy to 1 bold
+          format: float
+          nullable: true
+          type: number
+        personality_sweet_bratty:
+          description: -1 sweet to 1 bratty
+          format: float
+          nullable: true
+          type: number
+        price_step_cents:
+          description: Usual step up per rung, in USD cents
+          example: 500
+          format: int64
+          nullable: true
+          type: integer
+        usual_last_rung:
+          description: Rung she rarely sells past, 0 to 10
+          format: int32
+          nullable: true
+          type: integer
+        welcome_back_days:
+          description: Days of silence before a welcome-back gift, 1 to 60
+          format: int32
+          nullable: true
+          type: integer
+      type: object
+    BotSelling:
+      description: How the bot sells. Every field is null when selling is off.
+      properties:
+        checkout_link_in_text:
+          description: She writes the checkout link in her own message. Needs rails that make links.
+          type: boolean
+        max_price_cents:
+          description: Highest price she may ask, in USD cents, at most 70000.
+          example: 4900
+          format: int64
+          nullable: true
+          type: integer
+        min_price_cents:
+          description: Lowest price she may ask, in USD cents. Set with `max_price_cents` or not at all.
+          example: 500
+          format: int64
+          nullable: true
+          type: integer
+        payment_rails:
+          description: 'How fans pay: `external` (your app takes the money and reports it)'
+          example: external
+          nullable: true
+          type: string
+        selling_style:
+          description: 'The operator''s direction for selling, in their own words. Null: she never sells.'
+          example: Playful and warm. She starts with small prices and lets him ask for more.
+          nullable: true
+          type: string
+      required:
+      - checkout_link_in_text
+      type: object
     Chatter:
       type: object
       required:
@@ -2507,35 +2609,6 @@ components:
         message_count: 10
         summary_text: The conversation started with introductions. The user asked about travel experiences, and the bot shared stories about visiting Europe. They discussed favorite destinations and future travel plans.
     UpdateBotRequest:
-      type: object
-      properties:
-        attributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/APIAttribute'
-          description: List of bot attributes
-        freeform:
-          type: string
-          description: Freeform text description
-          example: Scarlett loves to travel, she is fresh out of college.
-          nullable: true
-        images:
-          type: array
-          items:
-            $ref: '#/components/schemas/ImageItem'
-          description: |-
-            Optional list of images to set for this bot.
-            When provided, all existing bot images are replaced with these.
-          nullable: true
-        name:
-          type: string
-          description: Name of the bot
-          example: Scarlett
-          nullable: true
-        orientation:
-          allOf:
-          - $ref: '#/components/schemas/APIOrientation'
-          nullable: true
       example:
         attributes:
         - name: full_name
@@ -2551,6 +2624,121 @@ components:
         - public: false
           url: https://example.com/image2.jpg
         name: Scarlett
+      properties:
+        attributes:
+          description: List of bot attributes
+          items:
+            $ref: '#/components/schemas/APIAttribute'
+          type: array
+        bundles:
+          nullable: true
+          type: boolean
+        checkout_link_in_text:
+          description: She writes the checkout link in her own message. Needs rails that make links.
+          nullable: true
+          type: boolean
+        discount:
+          description: '`hold` or `drop_once`'
+          nullable: true
+          type: string
+        emoji_amount:
+          description: 1 to 5
+          format: int32
+          nullable: true
+          type: integer
+        first_price_cents:
+          example: 900
+          format: int64
+          nullable: true
+          type: integer
+        free_rungs:
+          description: 0 to 10, less than `usual_last_rung`
+          format: int32
+          nullable: true
+          type: integer
+        freeform:
+          description: Freeform text description
+          example: Scarlett loves to travel, she is fresh out of college.
+          nullable: true
+          type: string
+        images:
+          description: 'Optional list of images to set for this bot.
+    
+            When provided, all existing bot images are replaced with these.'
+          items:
+            $ref: '#/components/schemas/ImageItem'
+          nullable: true
+          type: array
+        max_price_cents:
+          description: Highest price she may ask, in USD cents, at most 70000.
+          example: 4900
+          format: int64
+          nullable: true
+          type: integer
+        message_length:
+          description: 1 to 5
+          format: int32
+          nullable: true
+          type: integer
+        min_price_cents:
+          description: Lowest price she may ask, in USD cents. Set with `max_price_cents` or not at all.
+          example: 500
+          format: int64
+          nullable: true
+          type: integer
+        name:
+          description: Name of the bot
+          example: Scarlett
+          nullable: true
+          type: string
+        orientation:
+          allOf:
+          - $ref: '#/components/schemas/APIOrientation'
+          nullable: true
+        pace:
+          description: '`patient`, `balanced` or `eager`'
+          nullable: true
+          type: string
+        payment_rails:
+          description: '`external`. Required when `selling_style` is set.'
+          example: external
+          nullable: true
+          type: string
+        personality_shy_bold:
+          description: -1 shy to 1 bold
+          format: float
+          nullable: true
+          type: number
+        personality_sweet_bratty:
+          description: -1 sweet to 1 bratty
+          format: float
+          nullable: true
+          type: number
+        price_step_cents:
+          example: 500
+          format: int64
+          nullable: true
+          type: integer
+        selling_style:
+          description: How she sells, in your words. Null turns selling off and clears the selling fields this request does not send.
+          example: Playful and warm. She starts with small prices and lets him ask for more.
+          nullable: true
+          type: string
+        usual_last_rung:
+          description: 0 to 10
+          format: int32
+          nullable: true
+          type: integer
+        voice_enabled:
+          description: She may send voice notes
+          nullable: true
+          type: boolean
+        welcome_back_days:
+          description: 1 to 60
+          format: int32
+          nullable: true
+          type: integer
+      type: object
     UpdateBotResponse:
       type: object
       required:

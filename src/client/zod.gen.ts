@@ -197,13 +197,45 @@ export const zApiKeyInfo = z.object({
 
 export const zAudioFormat = z.enum(["ogg_opus", "mpeg"]);
 
-export const zBot = z.object({
-  attributes: z.array(zApiAttribute),
-  freeform: z.string(),
-  id: z.string().uuid(),
-  name: z.string(),
-  orientation: zApiOrientation,
+/**
+ * How the bot sells. Every field is null when selling is off.
+ */
+export const zBotSelling = z.object({
+  checkout_link_in_text: z.boolean(),
+  max_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
+  min_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
+  payment_rails: z.union([z.string(), z.null()]).optional(),
+  selling_style: z.union([z.string(), z.null()]).optional(),
 });
+
+/**
+ * Soft selling preferences. Each set knob adds one line to her selling prompt; code enforces none. Null: not set.
+ */
+export const zBotKnobs = z.object({
+  bundles: z.union([z.boolean(), z.null()]).optional(),
+  discount: z.union([z.string(), z.null()]).optional(),
+  emoji_amount: z.union([z.number().int(), z.null()]).optional(),
+  first_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
+  free_rungs: z.union([z.number().int(), z.null()]).optional(),
+  message_length: z.union([z.number().int(), z.null()]).optional(),
+  pace: z.union([z.string(), z.null()]).optional(),
+  personality_shy_bold: z.union([z.number(), z.null()]).optional(),
+  personality_sweet_bratty: z.union([z.number(), z.null()]).optional(),
+  price_step_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
+  usual_last_rung: z.union([z.number().int(), z.null()]).optional(),
+  welcome_back_days: z.union([z.number().int(), z.null()]).optional(),
+});
+
+export const zBot = zBotSelling.and(zBotKnobs).and(
+  z.object({
+    attributes: z.array(zApiAttribute),
+    freeform: z.string(),
+    id: z.string().uuid(),
+    name: z.string(),
+    orientation: zApiOrientation,
+    voice_enabled: z.boolean(),
+  }),
+);
 
 export const zChatter = z.object({
   id: z.string().uuid(),
@@ -470,10 +502,28 @@ export const zSpeechRequest = z.object({
 
 export const zUpdateBotRequest = z.object({
   attributes: z.array(zApiAttribute).optional(),
+  bundles: z.union([z.boolean(), z.null()]).optional(),
+  checkout_link_in_text: z.union([z.boolean(), z.null()]).optional(),
+  discount: z.union([z.string(), z.null()]).optional(),
+  emoji_amount: z.union([z.number().int(), z.null()]).optional(),
+  first_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
+  free_rungs: z.union([z.number().int(), z.null()]).optional(),
   freeform: z.union([z.string(), z.null()]).optional(),
   images: z.union([z.array(zImageItem), z.null()]).optional(),
+  max_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
+  message_length: z.union([z.number().int(), z.null()]).optional(),
+  min_price_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
   name: z.union([z.string(), z.null()]).optional(),
   orientation: z.union([zApiOrientation, z.null()]).optional(),
+  pace: z.union([z.string(), z.null()]).optional(),
+  payment_rails: z.union([z.string(), z.null()]).optional(),
+  personality_shy_bold: z.union([z.number(), z.null()]).optional(),
+  personality_sweet_bratty: z.union([z.number(), z.null()]).optional(),
+  price_step_cents: z.union([z.coerce.bigint(), z.null()]).optional(),
+  selling_style: z.union([z.string(), z.null()]).optional(),
+  usual_last_rung: z.union([z.number().int(), z.null()]).optional(),
+  voice_enabled: z.union([z.boolean(), z.null()]).optional(),
+  welcome_back_days: z.union([z.number().int(), z.null()]).optional(),
 });
 
 export const zUpdateBotResponse = z.object({
