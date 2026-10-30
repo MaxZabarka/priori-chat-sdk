@@ -139,15 +139,47 @@ export const zContent = z.object({
   url: z.string().url(),
 });
 
+export const zApiMessageLock = z.object({
+    checkout_url: z.union([
+        z.string().url(),
+        z.null()
+    ]).optional(),
+    price_cents: z.number().int().gte(0),
+    purchase_id: z.string().uuid(),
+    unlocked: z.boolean()
+});
+
 export const zMessage = z.object({
-  attached_media: z.union([zContent, z.null()]).optional(),
-  attached_media_items: z.union([z.array(zContent), z.null()]).optional(),
-  from_bot: z.boolean(),
-  id: z.union([z.string().uuid(), z.null()]).optional(),
-  message_tone: z.union([z.string(), z.null()]).optional(),
-  moderation: z.union([zApiModerationInfo, z.null()]).optional(),
-  sent_at: z.union([z.coerce.bigint(), z.null()]).optional(),
-  text: z.string(),
+    lock: z.union([
+        zApiMessageLock,
+        z.null()
+    ]).optional(),
+    attached_media: z.union([
+        zContent,
+        z.null()
+    ]).optional(),
+    attached_media_items: z.union([
+        z.array(zContent),
+        z.null()
+    ]).optional(),
+    from_bot: z.boolean(),
+    id: z.union([
+        z.string().uuid(),
+        z.null()
+    ]).optional(),
+    message_tone: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    moderation: z.union([
+        zApiModerationInfo,
+        z.null()
+    ]).optional(),
+    sent_at: z.union([
+        z.coerce.bigint(),
+        z.null()
+    ]).optional(),
+    text: z.string()
 });
 
 export const zCreateConversationRequest = z.object({

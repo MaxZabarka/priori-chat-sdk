@@ -22,6 +22,7 @@ export {
   type SetSetItemsOptions,
 } from "./methods/sets";
 export type {
+  ApiMessageLock,
   CreateConversationResponse,
   GetConversationResponse,
   ListConversationsResponse,

@@ -1014,6 +1014,7 @@ var Conversation = class _Conversation {
     __publicField(this, "pollingInterval");
     __publicField(this, "pollingTimer");
     __publicField(this, "lastKnownMessageCount", 0);
+    __publicField(this, "polling", false);
     __publicField(this, "lastKnownIsTyping", false);
     __publicField(this, "callbacks", {});
     __publicField(this, "isInitialized", false);
@@ -1098,10 +1099,14 @@ var Conversation = class _Conversation {
       clearInterval(this.pollingTimer);
     }
     this.pollingTimer = setInterval(async () => {
+      if (this.polling || !this.isInitialized) return;
+      this.polling = true;
       try {
         const data = await this.client.getConversation({
           id: this.conversationId
         });
+        if (!this.isInitialized) return;
+        this.callbacks.onMessages?.(data.messages);
         const isTyping = data.is_typing ?? false;
         if (isTyping !== this.lastKnownIsTyping) {
           this.lastKnownIsTyping = isTyping;
@@ -1110,26 +1115,16 @@ var Conversation = class _Conversation {
         if (data.messages.length > this.lastKnownMessageCount) {
           const newMessages = data.messages.slice(this.lastKnownMessageCount);
           this.lastKnownMessageCount = data.messages.length;
-          if (this.callbacks.onNewMessage) {
-            newMessages.forEach((apiMessage) => {
-              const message = {
-                id: apiMessage.id || void 0,
-                text: apiMessage.text,
-                from_bot: apiMessage.from_bot,
-                attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : void 0,
-                attached_media_items: apiMessage.attached_media_items?.map((m) => ({ url: m.url })),
-                sent_at: Math.floor(Date.now() / 1e3),
-                moderation: apiMessage.moderation || void 0,
-                message_tone: apiMessage.message_tone || void 0
-              };
-              this.callbacks.onNewMessage(message);
-            });
+          for (const message of newMessages) {
+            this.callbacks.onNewMessage?.(message);
           }
         }
       } catch (error) {
         if (this.callbacks.onError) {
           this.callbacks.onError(error);
         }
+      } finally {
+        this.polling = false;
       }
     }, this.pollingInterval);
   }
@@ -1211,6 +1206,7 @@ var Conversation = class _Conversation {
    * ```
    */
   disconnect() {
+    this.isInitialized = false;
     if (this.pollingTimer) {
       clearInterval(this.pollingTimer);
       this.pollingTimer = void 0;

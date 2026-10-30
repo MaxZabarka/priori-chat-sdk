@@ -1,6 +1,6 @@
 import { sendMessage, getMemories, generateResponseSync } from "./client/sdk.gen";
 import type { PrioriChat } from "./client";
-import type { GetConversationResponse, GetMemoriesResponse, ApiModerationInfo, GenerateResponseSyncResponse } from "./client/types.gen";
+import type { GetConversationResponse, GetMemoriesResponse, ApiModerationInfo, Message as ApiMessage, GenerateResponseSyncResponse } from "./client/types.gen";
 
 /**
  * Represents media content attached to a message
@@ -35,17 +35,7 @@ export interface AttachedMedia {
  * };
  * ```
  */
-export interface Message {
-  id?: string;
-  text: string;
-  from_bot: boolean;
-  attached_media?: AttachedMedia;
-  /** Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. */
-  attached_media_items?: AttachedMedia[];
-  sent_at?: number;
-  moderation?: ApiModerationInfo;
-  message_tone?: string;
-}
+export type Message = ApiMessage;
 
 /**
  * Configuration for retrieving a conversation by its unique ID
@@ -133,6 +123,8 @@ export type ConversationOptions = ConversationWithId | ConversationWithUserBot;
 export interface ConversationCallbacks {
   onInitialData?: (data: GetConversationResponse) => void;
   onNewMessage?: (message: Message) => void;
+  /** Full server snapshot on each poll, including updates to existing message locks. */
+  onMessages?: (messages: ApiMessage[]) => void;
   /** Fired when the bot starts or stops preparing a reply. Driven by the same
    *  poll as onNewMessage, so it costs no extra requests. */
   onTypingChange?: (isTyping: boolean) => void;
@@ -149,6 +141,7 @@ export class Conversation {
   private pollingInterval: number;
   private pollingTimer?: ReturnType<typeof setInterval>;
   private lastKnownMessageCount = 0;
+  private polling = false;
   private lastKnownIsTyping = false;
   private callbacks: ConversationCallbacks = {};
   private isInitialized = false;
@@ -261,10 +254,15 @@ export class Conversation {
     }
 
     this.pollingTimer = setInterval(async () => {
+      if (this.polling || !this.isInitialized) return;
+      this.polling = true;
       try {
         const data = await this.client.getConversation({
           id: this.conversationId,
         });
+
+        if (!this.isInitialized) return;
+        this.callbacks.onMessages?.(data.messages);
 
         const isTyping = data.is_typing ?? false;
         if (isTyping !== this.lastKnownIsTyping) {
@@ -277,28 +275,16 @@ export class Conversation {
           const newMessages = data.messages.slice(this.lastKnownMessageCount);
           this.lastKnownMessageCount = data.messages.length;
 
-          // Fire callback for each new message
-          if (this.callbacks.onNewMessage) {
-            newMessages.forEach(apiMessage => {
-              const message: Message = {
-                id: apiMessage.id || undefined,
-                text: apiMessage.text,
-                from_bot: apiMessage.from_bot,
-                attached_media: apiMessage.attached_media ? { url: apiMessage.attached_media.url } : undefined,
-                attached_media_items: apiMessage.attached_media_items?.map((m) => ({ url: m.url })),
-                sent_at: Math.floor(Date.now() / 1000),
-                moderation: apiMessage.moderation || undefined,
-                message_tone: apiMessage.message_tone || undefined
-
-              };
-              this.callbacks.onNewMessage!(message);
-            });
+          for (const message of newMessages) {
+            this.callbacks.onNewMessage?.(message);
           }
         }
       } catch (error) {
         if (this.callbacks.onError) {
           this.callbacks.onError(error as Error);
         }
+      } finally {
+        this.polling = false;
       }
     }, this.pollingInterval);
   }
@@ -390,6 +376,7 @@ export class Conversation {
    * ```
    */
   disconnect() {
+    this.isInitialized = false;
     if (this.pollingTimer) {
       clearInterval(this.pollingTimer);
       this.pollingTimer = undefined;

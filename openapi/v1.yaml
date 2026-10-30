@@ -1132,6 +1132,26 @@ paths:
       - content
 components:
   schemas:
+    APIMessageLock:
+      type: object
+      required:
+      - purchase_id
+      - price_cents
+      - unlocked
+      properties:
+        checkout_url:
+          type: string
+          format: uri
+          nullable: true
+        price_cents:
+          type: integer
+          format: int32
+          minimum: 0
+        purchase_id:
+          type: string
+          format: uuid
+        unlocked:
+          type: boolean
     APIContentSet:
       properties:
         bot_id:
@@ -2431,6 +2451,10 @@ components:
       - text
       - from_bot
       properties:
+        lock:
+          allOf:
+          - $ref: '#/components/schemas/APIMessageLock'
+          nullable: true
         attached_media:
           allOf:
           - $ref: '#/components/schemas/Content'

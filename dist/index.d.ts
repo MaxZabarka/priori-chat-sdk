@@ -519,7 +519,14 @@ type MemoryResponse = {
      */
     text: string;
 };
+type ApiMessageLock = {
+    checkout_url?: string | null;
+    price_cents: number;
+    purchase_id: string;
+    unlocked: boolean;
+};
 type Message$1 = {
+    lock?: ApiMessageLock | null;
     attached_media?: Content | null;
     /**
      * Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.
@@ -1064,17 +1071,7 @@ interface AttachedMedia {
  * };
  * ```
  */
-interface Message {
-    id?: string;
-    text: string;
-    from_bot: boolean;
-    attached_media?: AttachedMedia;
-    /** Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. */
-    attached_media_items?: AttachedMedia[];
-    sent_at?: number;
-    moderation?: ApiModerationInfo;
-    message_tone?: string;
-}
+type Message = Message$1;
 /**
  * Configuration for retrieving a conversation by its unique ID
  * @example
@@ -1158,6 +1155,8 @@ type ConversationOptions = ConversationWithId | ConversationWithUserBot;
 interface ConversationCallbacks {
     onInitialData?: (data: GetConversationResponse) => void;
     onNewMessage?: (message: Message) => void;
+    /** Full server snapshot on each poll, including updates to existing message locks. */
+    onMessages?: (messages: Message$1[]) => void;
     /** Fired when the bot starts or stops preparing a reply. Driven by the same
      *  poll as onNewMessage, so it costs no extra requests. */
     onTypingChange?: (isTyping: boolean) => void;
@@ -1173,6 +1172,7 @@ declare class Conversation {
     private pollingInterval;
     private pollingTimer?;
     private lastKnownMessageCount;
+    private polling;
     private lastKnownIsTyping;
     private callbacks;
     private isInitialized;
@@ -1797,4 +1797,4 @@ declare class PrioriChat {
     setSetItems(options: SetSetItemsOptions): Promise<ApiContentSet>;
 }
 
-export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPurchase, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type SetSetItemsOptions, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPurchase, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type SetSetItemsOptions, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };

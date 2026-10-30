@@ -255,3 +255,19 @@ This SDK is written in TypeScript and provides full type safety for all operatio
 ## Developing with priori-chat-ui
 
 To try SDK changes in a local `priori-chat-ui` checkout without publishing, run `pnpm dev:ui`. It rebuilds on every change and copies the build into the UI's `node_modules/priori-chat-sdk`. The UI is expected in a sibling folder; set `PRIORI_CHAT_UI` to point elsewhere. Restart the UI dev server after the first copy. A `pnpm install` in the UI restores the published version.
+
+### Updates to existing messages
+
+`onNewMessage` fires only for newly appended messages. Use `onMessages` to replace
+local message state with the latest polling snapshot, including ownership changes
+to existing `message.lock` values. Initialize from `initialData.messages` as before.
+An unlocked offer can still have an unpaid purchase record when its content was
+bought through another offer; use `message.lock.unlocked` to display access.
+
+```ts
+const connection = await client.conversation(
+  { conversation_id: id },
+  { onMessages: messages => setMessages(messages) },
+);
+setMessages(connection.initialData.messages);
+```

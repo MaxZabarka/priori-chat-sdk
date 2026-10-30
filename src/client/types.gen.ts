@@ -776,34 +776,42 @@ export type MemoryResponse = {
   text: string;
 };
 
+export type ApiMessageLock = {
+    checkout_url?: string | null;
+    price_cents: number;
+    purchase_id: string;
+    unlocked: boolean;
+};
+
 export type Message = {
-  attached_media?: Content | null;
-  /**
-   * Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.
-   */
-  attached_media_items?: Array<Content> | null;
-  /**
-   * Whether this message is from a bot (true) or human (false)
-   */
-  from_bot: boolean;
-  /**
-   * Unique identifier for the content
-   */
-  id?: string | null;
-  /**
-   * What tone was used to generate the message (useful only for debug or display in admin
-   * panel. Does nothing as input parameter, only output)
-   */
-  message_tone?: string | null;
-  moderation?: ApiModerationInfo | null;
-  /**
-   * Unix timestamp when the message was sent
-   */
-  sent_at?: number | null;
-  /**
-   * The text content of the message
-   */
-  text: string;
+    lock?: ApiMessageLock | null;
+    attached_media?: Content | null;
+    /**
+     * Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.
+     */
+    attached_media_items?: Array<Content> | null;
+    /**
+     * Whether this message is from a bot (true) or human (false)
+     */
+    from_bot: boolean;
+    /**
+     * Unique identifier for the content
+     */
+    id?: string | null;
+    /**
+     * What tone was used to generate the message (useful only for debug or display in admin
+     * panel. Does nothing as input parameter, only output)
+     */
+    message_tone?: string | null;
+    moderation?: ApiModerationInfo | null;
+    /**
+     * Unix timestamp when the message was sent
+     */
+    sent_at?: number | null;
+    /**
+     * The text content of the message
+     */
+    text: string;
 };
 
 export type Platform = {
