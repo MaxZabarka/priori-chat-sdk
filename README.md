@@ -271,3 +271,12 @@ const connection = await client.conversation(
 );
 setMessages(connection.initialData.messages);
 ```
+
+### Saved delivery tool calls
+
+For a debugging view, opt in with `client.getConversation({ id, include_tool_calls: true })`
+or `client.conversation({ conversation_id: id, includeToolCalls: true }, callbacks)`.
+Each applicable message includes `tool_call` with `id`, `name`, the original
+`arguments` string, and `result`. The flag applies to the first load and later
+polls. It is off by default. This is the saved successful send/lock call for a
+message, not a complete trace of every tool used during generation.

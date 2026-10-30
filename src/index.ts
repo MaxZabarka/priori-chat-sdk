@@ -23,6 +23,7 @@ export {
 } from "./methods/sets";
 export type {
   ApiMessageLock,
+  ApiToolCall,
   CreateConversationResponse,
   GetConversationResponse,
   ListConversationsResponse,

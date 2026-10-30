@@ -149,7 +149,18 @@ export const zApiMessageLock = z.object({
     unlocked: z.boolean()
 });
 
+export const zApiToolCall = z.object({
+    arguments: z.string(),
+    id: z.string(),
+    name: z.string(),
+    result: z.string()
+});
+
 export const zMessage = z.object({
+    tool_call: z.union([
+        zApiToolCall,
+        z.null()
+    ]).optional(),
     lock: z.union([
         zApiMessageLock,
         z.null()
@@ -913,11 +924,16 @@ export const zUpdateConversationData = z.object({
 export const zUpdateConversationResponse2 = zUpdateConversationResponse;
 
 export const zGetConversationData = z.object({
-  body: z.never().optional(),
-  path: z.object({
-    id: z.string(),
-  }),
-  query: z.never().optional(),
+    body: z.never().optional(),
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.object({
+        include_tool_calls: z.union([
+            z.boolean(),
+            z.null()
+        ]).optional()
+    }).optional()
 });
 
 /**

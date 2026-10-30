@@ -51,6 +51,7 @@ export type Message = ApiMessage;
 export interface ConversationWithId {
   conversation_id: string;
   pollingInterval?: number;
+  includeToolCalls?: boolean;
 }
 
 /**
@@ -72,6 +73,7 @@ export interface ConversationWithUserBot {
   user_id: string;
   bot_id: string;
   pollingInterval?: number;
+  includeToolCalls?: boolean;
 }
 
 /**
@@ -139,6 +141,7 @@ export class Conversation {
   private client: PrioriChat;
   private conversationId!: string;
   private pollingInterval: number;
+  private includeToolCalls: boolean;
   private pollingTimer?: ReturnType<typeof setInterval>;
   private lastKnownMessageCount = 0;
   private polling = false;
@@ -153,6 +156,7 @@ export class Conversation {
   ) {
     this.client = client;
     this.pollingInterval = options.pollingInterval || 500;
+    this.includeToolCalls = options.includeToolCalls ?? false;
     this.callbacks = callbacks;
   }
 
@@ -224,6 +228,7 @@ export class Conversation {
       // Fetch initial data
       const initialData = await this.client.getConversation({
         id: this.conversationId,
+        include_tool_calls: this.includeToolCalls,
       });
 
       this.lastKnownMessageCount = initialData.messages.length;
@@ -259,6 +264,7 @@ export class Conversation {
       try {
         const data = await this.client.getConversation({
           id: this.conversationId,
+          include_tool_calls: this.includeToolCalls,
         });
 
         if (!this.isInitialized) return;
