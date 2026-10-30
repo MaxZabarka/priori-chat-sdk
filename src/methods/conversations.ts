@@ -57,7 +57,6 @@ export async function listConversationsImpl(
  */
 export interface GetConversationOptions {
   id: string;
-  include_tool_calls?: boolean;
 }
 
 export async function getConversationImpl(
@@ -68,7 +67,6 @@ export async function getConversationImpl(
     path: {
       id: options.id,
     },
-    query: { include_tool_calls: options.include_tool_calls },
   });
 
   return result.data!;

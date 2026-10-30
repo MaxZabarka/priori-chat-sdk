@@ -49,24 +49,3 @@ test('slow polls do not overlap or deliver after disconnect', async (t) => {
   await setImmediate();
   assert.deepEqual(snapshots, []);
 });
-
-for (const includeToolCalls of [false, true]) {
-  test(`tool-call debug opt-in is forwarded on initial load and polling: ${includeToolCalls}`, async (t) => {
-    t.mock.timers.enable({ apis: ['setInterval'] });
-    const requests = [], snapshots = [];
-    const debug = { id: 'call-1', name: 'lock', arguments: '{"price_cents":1400}', result: 'Sent, locked at $14.00.' };
-    const reply = { ...message, ...(includeToolCalls ? { tool_call: debug } : {}) };
-    const client = { getConversation: async (request) => { requests.push(request); return snapshot([reply]); } };
-    const { conversation } = await Conversation.create(client,
-      { conversation_id: 'c', pollingInterval: 10, ...(includeToolCalls ? { includeToolCalls: true } : {}) },
-      { onMessages: (messages) => snapshots.push(messages) });
-    t.after(() => conversation.disconnect());
-    t.mock.timers.tick(10);
-    await setImmediate();
-    assert.deepEqual(requests, [
-      { id: 'c', include_tool_calls: includeToolCalls },
-      { id: 'c', include_tool_calls: includeToolCalls },
-    ]);
-    assert.deepEqual(snapshots[0][0].tool_call, includeToolCalls ? debug : undefined);
-  });
-}

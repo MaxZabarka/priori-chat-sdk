@@ -833,8 +833,7 @@ async function getConversationImpl(options) {
   const result = await getConversation({
     path: {
       id: options.id
-    },
-    query: { include_tool_calls: options.include_tool_calls }
+    }
   });
   return result.data;
 }
@@ -1013,7 +1012,6 @@ var Conversation = class _Conversation {
     __publicField(this, "client");
     __publicField(this, "conversationId");
     __publicField(this, "pollingInterval");
-    __publicField(this, "includeToolCalls");
     __publicField(this, "pollingTimer");
     __publicField(this, "lastKnownMessageCount", 0);
     __publicField(this, "polling", false);
@@ -1022,7 +1020,6 @@ var Conversation = class _Conversation {
     __publicField(this, "isInitialized", false);
     this.client = client2;
     this.pollingInterval = options.pollingInterval || 500;
-    this.includeToolCalls = options.includeToolCalls ?? false;
     this.callbacks = callbacks;
   }
   /**
@@ -1080,8 +1077,7 @@ var Conversation = class _Conversation {
         }
       }
       const initialData = await this.client.getConversation({
-        id: this.conversationId,
-        include_tool_calls: this.includeToolCalls
+        id: this.conversationId
       });
       this.lastKnownMessageCount = initialData.messages.length;
       this.lastKnownIsTyping = initialData.is_typing ?? false;
@@ -1107,8 +1103,7 @@ var Conversation = class _Conversation {
       this.polling = true;
       try {
         const data = await this.client.getConversation({
-          id: this.conversationId,
-          include_tool_calls: this.includeToolCalls
+          id: this.conversationId
         });
         if (!this.isInitialized) return;
         this.callbacks.onMessages?.(data.messages);

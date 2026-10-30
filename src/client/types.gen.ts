@@ -783,15 +783,7 @@ export type ApiMessageLock = {
     unlocked: boolean;
 };
 
-export type ApiToolCall = {
-    arguments: string;
-    id: string;
-    name: string;
-    result: string;
-};
-
 export type Message = {
-    tool_call?: ApiToolCall | null;
     lock?: ApiMessageLock | null;
     attached_media?: Content | null;
     /**
@@ -1831,20 +1823,15 @@ export type UpdateConversationResponse2 =
   UpdateConversationResponses[keyof UpdateConversationResponses];
 
 export type GetConversationData = {
-    body?: never;
-    path: {
-        /**
-         * Conversation ID
-         */
-        id: string;
-    };
-    query?: {
-        /**
-         * Include saved delivery tool calls for debugging; defaults to false
-         */
-        include_tool_calls?: boolean | null;
-    };
-    url: '/api/conversations/{id}';
+  body?: never;
+  path: {
+    /**
+     * Conversation ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: "/api/conversations/{id}";
 };
 
 export type GetConversationErrors = {

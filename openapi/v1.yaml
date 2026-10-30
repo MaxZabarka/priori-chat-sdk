@@ -609,13 +609,6 @@ paths:
       - conversations
       operationId: get_conversation
       parameters:
-      - name: include_tool_calls
-        in: query
-        description: Include saved delivery tool calls for debugging; defaults to false
-        required: false
-        schema:
-          type: boolean
-          nullable: true
       - name: id
         in: path
         description: Conversation ID
@@ -1139,22 +1132,6 @@ paths:
       - content
 components:
   schemas:
-    APIToolCall:
-      type: object
-      required:
-      - id
-      - name
-      - arguments
-      - result
-      properties:
-        arguments:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        result:
-          type: string
     APIMessageLock:
       type: object
       required:
@@ -2474,10 +2451,6 @@ components:
       - text
       - from_bot
       properties:
-        tool_call:
-          allOf:
-          - $ref: '#/components/schemas/APIToolCall'
-          nullable: true
         lock:
           allOf:
           - $ref: '#/components/schemas/APIMessageLock'
