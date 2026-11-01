@@ -1012,6 +1012,11 @@ export const zRenameVoiceRequest = z.object({
     name: z.string()
 });
 
+export const zReplySuggestion = z.object({
+    text: z.string(),
+    tone: z.string()
+});
+
 export const zSendMessageRequest = z.object({
     message: zMessage
 });
@@ -1031,6 +1036,10 @@ export const zSpeechRequest = z.object({
         z.boolean(),
         z.null()
     ]).optional()
+});
+
+export const zSuggestRepliesResponse = z.object({
+    suggestions: z.array(zReplySuggestion)
 });
 
 export const zUpdateBotRequest = z.object({
@@ -1651,6 +1660,19 @@ export const zSendMessageData = z.object({
     }),
     query: z.never().optional()
 });
+
+export const zSuggestRepliesData = z.object({
+    body: z.never().optional(),
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+/**
+ * Suggested replies
+ */
+export const zSuggestRepliesResponse2 = zSuggestRepliesResponse;
 
 export const zCreateConversionData = z.object({
     body: zCreateConversionRequestBody,

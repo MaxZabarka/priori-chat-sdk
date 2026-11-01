@@ -989,6 +989,14 @@ export type RenameVoiceRequest = {
     name: string;
 };
 
+export type ReplySuggestion = {
+    text: string;
+    /**
+     * `horny`, `flirty` or `casual`.
+     */
+    tone: string;
+};
+
 export type ResponseCandidate = {
     messages: Array<Message>;
 };
@@ -1089,6 +1097,13 @@ export type StepUsage = {
     completion_tokens: number;
     cost_usd: number;
     prompt_tokens: number;
+};
+
+export type SuggestRepliesResponse = {
+    /**
+     * Three replies the fan could send next, shortest first.
+     */
+    suggestions: Array<ReplySuggestion>;
 };
 
 export type Summary = {
@@ -2182,6 +2197,38 @@ export type SendMessageResponses = {
      */
     202: unknown;
 };
+
+export type SuggestRepliesData = {
+    body?: never;
+    path: {
+        /**
+         * Conversation ID
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/suggestions';
+};
+
+export type SuggestRepliesErrors = {
+    /**
+     * No such conversation
+     */
+    404: unknown;
+    /**
+     * The suggestion model is unavailable; try again
+     */
+    503: unknown;
+};
+
+export type SuggestRepliesResponses = {
+    /**
+     * Suggested replies
+     */
+    200: SuggestRepliesResponse;
+};
+
+export type SuggestRepliesResponse2 = SuggestRepliesResponses[keyof SuggestRepliesResponses];
 
 export type CreateConversionData = {
     body: CreateConversionRequestBody;

@@ -28,6 +28,7 @@ export type {
   DeleteVoiceOptions,
   VoiceSampleOptions,
 } from "./methods/voices";
+export type { SuggestRepliesOptions } from "./methods/suggestions";
 export type {
   ApiMessageLock,
   CreateConversationResponse,
@@ -108,6 +109,8 @@ export type {
   ListSetsResponse,
   ApiVoice,
   ApiVoiceNote,
+  ReplySuggestion,
+  SuggestRepliesResponse,
   ListVoicesResponse,
   VoiceModelName,
 } from "./client/types.gen";

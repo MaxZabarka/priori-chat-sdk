@@ -699,6 +699,31 @@ paths:
           description: Message sent successfully
         '500':
           description: Internal server error
+  /api/conversations/{id}/suggestions:
+    post:
+      tags:
+      - conversations
+      summary: Suggest replies to send as the fan
+      description: Three replies of different lengths, some horny and some not, fitting where the chat is. For testing a bot quickly. Nothing is saved.
+      operationId: suggest_replies
+      parameters:
+      - name: id
+        in: path
+        description: Conversation ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Suggested replies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestRepliesResponse'
+        '404':
+          description: No such conversation
+        '503':
+          description: The suggestion model is unavailable; try again
   /api/conversion:
     post:
       tags:
@@ -3011,6 +3036,17 @@ components:
       properties:
         name:
           type: string
+    ReplySuggestion:
+      type: object
+      required:
+      - text
+      - tone
+      properties:
+        text:
+          type: string
+        tone:
+          type: string
+          description: '`horny`, `flirty` or `casual`.'
     ResponseCandidate:
       type: object
       required:
@@ -3209,6 +3245,16 @@ components:
           type: integer
           format: int64
           minimum: 0
+    SuggestRepliesResponse:
+      type: object
+      required:
+      - suggestions
+      properties:
+        suggestions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReplySuggestion'
+          description: Three replies the fan could send next, shortest first.
     Summary:
       type: object
       required:

@@ -722,6 +722,13 @@ type PricePoint = {
     paid: boolean;
     price_cents: number;
 };
+type ReplySuggestion = {
+    text: string;
+    /**
+     * `horny`, `flirty` or `casual`.
+     */
+    tone: string;
+};
 type ResponseCandidate = {
     messages: Array<Message$1>;
 };
@@ -798,6 +805,12 @@ type StepUsage = {
     completion_tokens: number;
     cost_usd: number;
     prompt_tokens: number;
+};
+type SuggestRepliesResponse = {
+    /**
+     * Three replies the fan could send next, shortest first.
+     */
+    suggestions: Array<ReplySuggestion>;
 };
 type Summary = {
     /**
@@ -1266,6 +1279,10 @@ interface VoiceSampleOptions {
     voice_id: string;
     /** A line in the model's script style, like "[teasing] Hey you. [soft laugh] Miss me?" */
     text: string;
+}
+
+interface SuggestRepliesOptions {
+    conversation_id: string;
 }
 
 /**
@@ -2064,8 +2081,12 @@ declare class PrioriChat {
     renameVoice(options: RenameVoiceOptions): Promise<ApiVoice>;
     /** Deletes one of the client's own voices. Fails with 409 while a bot speaks with it. */
     deleteVoice(options: DeleteVoiceOptions): Promise<void>;
+    /**
+     * Suggests three replies the fan could send next: different lengths, some horny and some not. For testing a bot quickly; nothing is saved.
+     */
+    suggestReplies(options: SuggestRepliesOptions): Promise<SuggestRepliesResponse>;
     /** Records a line in a voice and returns it as MP3 audio. Nothing is saved. */
     voiceSample(options: VoiceSampleOptions): Promise<Blob>;
 }
 
-export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type ApiVoice, type ApiVoiceNote, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateClipVoiceOptions, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateLibraryVoiceOptions, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type DeleteVoiceOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type ListVoicesResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type PhotoStatus, type Platform, PrioriChat, type RenameVoiceOptions, type ResponseCandidate, type SearchedMessage, type Session, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type Summary, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User, type VoiceModelName, type VoiceSampleOptions };
+export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type ApiVoice, type ApiVoiceNote, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateClipVoiceOptions, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateLibraryVoiceOptions, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type DeleteVoiceOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type ListVoicesResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type PhotoStatus, type Platform, PrioriChat, type RenameVoiceOptions, type ReplySuggestion, type ResponseCandidate, type SearchedMessage, type Session, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type SuggestRepliesOptions, type SuggestRepliesResponse, type Summary, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User, type VoiceModelName, type VoiceSampleOptions };

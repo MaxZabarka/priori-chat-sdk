@@ -688,6 +688,13 @@ var sendMessage = (options) => {
     }
   });
 };
+var suggestReplies = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/conversations/{id}/suggestions",
+    ...options
+  });
+};
 var createConversion = (options) => {
   return (options.client ?? client).post({
     url: "/api/conversion",
@@ -1074,6 +1081,12 @@ async function deleteVoiceImpl(options) {
 async function voiceSampleImpl(options) {
   const { voice_id, ...body } = options;
   const result = await voiceSample({ path: { voice_id }, body, responseType: "blob" });
+  return result.data;
+}
+
+// src/methods/suggestions.ts
+async function suggestRepliesImpl(options) {
+  const result = await suggestReplies({ path: { id: options.conversation_id } });
   return result.data;
 }
 
@@ -2008,6 +2021,12 @@ var PrioriChat = class {
   /** Deletes one of the client's own voices. Fails with 409 while a bot speaks with it. */
   async deleteVoice(options) {
     return deleteVoiceImpl.call(this, options);
+  }
+  /**
+   * Suggests three replies the fan could send next: different lengths, some horny and some not. For testing a bot quickly; nothing is saved.
+   */
+  async suggestReplies(options) {
+    return suggestRepliesImpl.call(this, options);
   }
   /** Records a line in a voice and returns it as MP3 audio. Nothing is saved. */
   async voiceSample(options) {

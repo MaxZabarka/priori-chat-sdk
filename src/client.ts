@@ -66,6 +66,7 @@ import {
   type RenameVoiceOptions,
   type VoiceSampleOptions,
 } from "./methods/voices";
+import { suggestRepliesImpl, type SuggestRepliesOptions } from "./methods/suggestions";
 import { getUser, updateUser } from "./client/sdk.gen";
 import type {
   CreateConversationResponse,
@@ -115,6 +116,7 @@ import type {
   ListSetsResponse,
   ApiVoice,
   ListVoicesResponse,
+  SuggestRepliesResponse,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -906,6 +908,13 @@ export class PrioriChat {
   /** Deletes one of the client's own voices. Fails with 409 while a bot speaks with it. */
   async deleteVoice(options: DeleteVoiceOptions): Promise<void> {
     return deleteVoiceImpl.call(this, options);
+  }
+
+  /**
+   * Suggests three replies the fan could send next: different lengths, some horny and some not. For testing a bot quickly; nothing is saved.
+   */
+  async suggestReplies(options: SuggestRepliesOptions): Promise<SuggestRepliesResponse> {
+    return suggestRepliesImpl.call(this, options);
   }
 
   /** Records a line in a voice and returns it as MP3 audio. Nothing is saved. */
