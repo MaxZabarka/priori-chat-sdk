@@ -2405,6 +2405,10 @@ components:
           nullable: true
         thumbnail_url:
           type: string
+        video_url:
+          type: string
+          description: 'Set for a video: the file itself, for playing it.'
+          nullable: true
     ImageItem:
       type: object
       required:

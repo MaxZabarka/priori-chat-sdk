@@ -625,7 +625,11 @@ export const zGridPhoto = z.object({
         zPhotoTag,
         z.null()
     ]).optional(),
-    thumbnail_url: z.string()
+    thumbnail_url: z.string(),
+    video_url: z.union([
+        z.string(),
+        z.null()
+    ]).optional()
 });
 
 export const zSetGrid = z.object({

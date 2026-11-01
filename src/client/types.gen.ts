@@ -701,6 +701,10 @@ export type GridPhoto = {
     status: PhotoStatus;
     tag?: PhotoTag | null;
     thumbnail_url: string;
+    /**
+     * Set for a video: the file itself, for playing it.
+     */
+    video_url?: string | null;
 };
 
 export type ImageItem = {
