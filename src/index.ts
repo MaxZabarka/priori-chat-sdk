@@ -22,6 +22,13 @@ export {
   type SetSetItemsOptions,
 } from "./methods/sets";
 export type {
+  CreateClipVoiceOptions,
+  CreateLibraryVoiceOptions,
+  RenameVoiceOptions,
+  DeleteVoiceOptions,
+  VoiceSampleOptions,
+} from "./methods/voices";
+export type {
   ApiMessageLock,
   CreateConversationResponse,
   GetConversationResponse,
@@ -99,4 +106,8 @@ export type {
   Session,
   PhotoStatus,
   ListSetsResponse,
+  ApiVoice,
+  ApiVoiceNote,
+  ListVoicesResponse,
+  VoiceModelName,
 } from "./client/types.gen";

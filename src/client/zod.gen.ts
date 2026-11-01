@@ -219,6 +219,40 @@ export const zApiUserWithStats = z.object({
 });
 
 /**
+ * The speech model a voice is recorded with. Each brings its own way of writing a script.
+ */
+export const zVoiceModelName = z.enum([
+    'drama-3'
+]);
+
+export const zApiVoice = z.object({
+    built_in: z.boolean(),
+    clip_transcript: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    clip_url: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    id: z.string().uuid(),
+    kind: z.string(),
+    model: zVoiceModelName,
+    name: z.string(),
+    used_by: z.array(z.string())
+});
+
+/**
+ * A voice note: the audio and the words in it.
+ */
+export const zApiVoiceNote = z.object({
+    duration_ms: z.number().int().gte(0),
+    format: z.string(),
+    transcript: z.string(),
+    url: z.string()
+});
+
+/**
  * Controls how frequently the AI sends images in conversation. Stored per-conversation and
  * affects whether image tools are exposed to the LLM and how strongly it is prompted to use them.
  */
@@ -284,7 +318,11 @@ export const zMessage = z.object({
         z.coerce.bigint(),
         z.null()
     ]).optional(),
-    text: z.string()
+    text: z.string(),
+    voice: z.union([
+        zApiVoiceNote,
+        z.null()
+    ]).optional()
 });
 
 export const zCreateConversationRequest = z.object({
@@ -443,6 +481,10 @@ export const zBotKnobs = z.object({
 });
 
 export const zBot = zBotSelling.and(zBotKnobs).and(z.object({
+    assigned_voice_id: z.union([
+        z.string().uuid(),
+        z.null()
+    ]).optional(),
     attributes: z.array(zApiAttribute),
     freeform: z.string(),
     id: z.string().uuid(),
@@ -698,6 +740,18 @@ export const zCreateChatterResponse = z.object({
     password: z.string()
 });
 
+/**
+ * The upload form for a voice made from a clip.
+ */
+export const zCreateClipVoiceForm = z.object({
+    clip: z.string(),
+    name: z.string(),
+    transcript: z.union([
+        z.string(),
+        z.null()
+    ]).optional()
+});
+
 export const zCreateConversationResponse = z.object({
     conversation: zConversation
 });
@@ -721,6 +775,11 @@ export const zCreateConversionRequestBody = z.object({
         z.null()
     ]).optional(),
     user_id: z.string()
+});
+
+export const zCreateLibraryVoiceRequest = z.object({
+    library_voice_id: z.string(),
+    name: z.string()
 });
 
 export const zCreateSetRequest = z.object({
@@ -941,8 +1000,16 @@ export const zListUsersResponse = z.object({
     users: z.array(zApiUserWithStats)
 });
 
+export const zListVoicesResponse = z.object({
+    voices: z.array(zApiVoice)
+});
+
 export const zMarkPurchasePaidResponse = z.object({
     purchase: zApiPurchase
+});
+
+export const zRenameVoiceRequest = z.object({
+    name: z.string()
 });
 
 export const zSendMessageRequest = z.object({
@@ -967,6 +1034,10 @@ export const zSpeechRequest = z.object({
 });
 
 export const zUpdateBotRequest = z.object({
+    assigned_voice_id: z.union([
+        z.string().uuid(),
+        z.null()
+    ]).optional(),
     attributes: z.array(zApiAttribute).optional(),
     bundles: z.union([
         z.boolean(),
@@ -1194,6 +1265,10 @@ export const zUploadContentRequest = z.object({
 export const zUploadContentResponse = z.object({
     content: zContent,
     created: z.boolean()
+});
+
+export const zVoiceSampleRequest = z.object({
+    text: z.string()
 });
 
 export const zListApiKeysData = z.object({
@@ -1789,3 +1864,70 @@ export const zUpdateUserData = z.object({
  * User updated successfully
  */
 export const zUpdateUserResponse2 = zUpdateUserResponse;
+
+export const zListVoicesData = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: z.never().optional()
+});
+
+/**
+ * Voices
+ */
+export const zListVoicesResponse2 = zListVoicesResponse;
+
+export const zCreateClipVoiceData = z.object({
+    body: zCreateClipVoiceForm,
+    path: z.never().optional(),
+    query: z.never().optional()
+});
+
+/**
+ * Voice made
+ */
+export const zCreateClipVoiceResponse = zApiVoice;
+
+export const zCreateLibraryVoiceData = z.object({
+    body: zCreateLibraryVoiceRequest,
+    path: z.never().optional(),
+    query: z.never().optional()
+});
+
+/**
+ * Voice added
+ */
+export const zCreateLibraryVoiceResponse = zApiVoice;
+
+export const zDeleteVoiceData = z.object({
+    body: z.never().optional(),
+    path: z.object({
+        voice_id: z.string().uuid()
+    }),
+    query: z.never().optional()
+});
+
+/**
+ * Deleted
+ */
+export const zDeleteVoiceResponse = z.void();
+
+export const zRenameVoiceData = z.object({
+    body: zRenameVoiceRequest,
+    path: z.object({
+        voice_id: z.string().uuid()
+    }),
+    query: z.never().optional()
+});
+
+/**
+ * Renamed
+ */
+export const zRenameVoiceResponse = zApiVoice;
+
+export const zVoiceSampleData = z.object({
+    body: zVoiceSampleRequest,
+    path: z.object({
+        voice_id: z.string().uuid()
+    }),
+    query: z.never().optional()
+});

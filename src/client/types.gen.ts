@@ -166,6 +166,45 @@ export type ApiUserWithStats = {
     username: string;
 };
 
+export type ApiVoice = {
+    /**
+     * Built in: every client can use it; it can't be renamed or deleted.
+     */
+    built_in: boolean;
+    /**
+     * What the clip says, when given.
+     */
+    clip_transcript?: string | null;
+    /**
+     * The uploaded clip, for a voice made from one.
+     */
+    clip_url?: string | null;
+    id: string;
+    /**
+     * `library`: a voice from the provider's library. `clip`: copied from an uploaded clip.
+     */
+    kind: string;
+    model: VoiceModelName;
+    name: string;
+    /**
+     * Names of the bots that speak with it.
+     */
+    used_by: Array<string>;
+};
+
+/**
+ * A voice note: the audio and the words in it.
+ */
+export type ApiVoiceNote = {
+    duration_ms: number;
+    /**
+     * `mp3`
+     */
+    format: string;
+    transcript: string;
+    url: string;
+};
+
 export type AddMessageRequest = {
     conversation_creation_params: CreateConversationRequest;
     /**
@@ -197,6 +236,10 @@ export type ApiKeyInfo = {
 export type AudioFormat = 'ogg_opus' | 'mpeg';
 
 export type Bot = BotSelling & BotKnobs & {
+    /**
+     * The voice her notes are recorded in.
+     */
+    assigned_voice_id?: string | null;
     /**
      * List of bot attributes
      */
@@ -480,6 +523,18 @@ export type CreateChatterResponse = {
     password: string;
 };
 
+/**
+ * The upload form for a voice made from a clip.
+ */
+export type CreateClipVoiceForm = {
+    clip: Blob | File;
+    name: string;
+    /**
+     * What the clip says; the copy is closer with it.
+     */
+    transcript?: string | null;
+};
+
 export type CreateConversationRequest = {
     /**
      * ID of the bot to associate with this conversation
@@ -550,6 +605,14 @@ export type CreateConversionRequestBody = {
      * User ID of the user who made the conversion. Should be the same as 'user_id' used in /messages
      */
     user_id: string;
+};
+
+export type CreateLibraryVoiceRequest = {
+    /**
+     * The voice's id in the provider's library.
+     */
+    library_voice_id: string;
+    name: string;
 };
 
 export type CreateSetRequest = {
@@ -832,6 +895,10 @@ export type ListUsersResponse = {
     users: Array<ApiUserWithStats>;
 };
 
+export type ListVoicesResponse = {
+    voices: Array<ApiVoice>;
+};
+
 export type LockConversion = {
     /**
      * Median seconds from offer to payment, over paid locks.
@@ -883,6 +950,7 @@ export type Message = {
      * The text content of the message
      */
     text: string;
+    voice?: ApiVoiceNote | null;
 };
 
 export type OpenOffer = {
@@ -915,6 +983,10 @@ export type PricePoint = {
     at: string;
     paid: boolean;
     price_cents: number;
+};
+
+export type RenameVoiceRequest = {
+    name: string;
 };
 
 export type ResponseCandidate = {
@@ -1046,6 +1118,10 @@ export type TurnStep = {
 };
 
 export type UpdateBotRequest = {
+    /**
+     * The voice her notes are recorded in, from `GET /api/voices`; null takes it away.
+     */
+    assigned_voice_id?: string | null;
     /**
      * List of bot attributes
      */
@@ -1266,6 +1342,18 @@ export type User = {
 };
 
 export type VaultImageBehaviour = 'force' | 'never';
+
+/**
+ * The speech model a voice is recorded with. Each brings its own way of writing a script.
+ */
+export type VoiceModelName = 'drama-3';
+
+export type VoiceSampleRequest = {
+    /**
+     * A line in the model's script style, like "[teasing] Hey you. [soft laugh] Miss me?"
+     */
+    text: string;
+};
 
 export type ListApiKeysData = {
     body?: never;
@@ -2609,6 +2697,158 @@ export type UpdateUserResponses = {
 };
 
 export type UpdateUserResponse2 = UpdateUserResponses[keyof UpdateUserResponses];
+
+export type ListVoicesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/voices';
+};
+
+export type ListVoicesResponses = {
+    /**
+     * Voices
+     */
+    200: ListVoicesResponse;
+};
+
+export type ListVoicesResponse2 = ListVoicesResponses[keyof ListVoicesResponses];
+
+export type CreateClipVoiceData = {
+    body: CreateClipVoiceForm;
+    path?: never;
+    query?: never;
+    url: '/api/voices';
+};
+
+export type CreateClipVoiceErrors = {
+    /**
+     * Missing name or clip, or a clip that isn't usable speech
+     */
+    400: unknown;
+};
+
+export type CreateClipVoiceResponses = {
+    /**
+     * Voice made
+     */
+    201: ApiVoice;
+};
+
+export type CreateClipVoiceResponse = CreateClipVoiceResponses[keyof CreateClipVoiceResponses];
+
+export type CreateLibraryVoiceData = {
+    body: CreateLibraryVoiceRequest;
+    path?: never;
+    query?: never;
+    url: '/api/voices/library';
+};
+
+export type CreateLibraryVoiceErrors = {
+    /**
+     * Missing name or id
+     */
+    400: unknown;
+};
+
+export type CreateLibraryVoiceResponses = {
+    /**
+     * Voice added
+     */
+    201: ApiVoice;
+};
+
+export type CreateLibraryVoiceResponse = CreateLibraryVoiceResponses[keyof CreateLibraryVoiceResponses];
+
+export type DeleteVoiceData = {
+    body?: never;
+    path: {
+        /**
+         * Voice ID
+         */
+        voice_id: string;
+    };
+    query?: never;
+    url: '/api/voices/{voice_id}';
+};
+
+export type DeleteVoiceErrors = {
+    /**
+     * No such voice of this client
+     */
+    404: unknown;
+    /**
+     * Bots still speak with it
+     */
+    409: unknown;
+};
+
+export type DeleteVoiceResponses = {
+    /**
+     * Deleted
+     */
+    204: void;
+};
+
+export type DeleteVoiceResponse = DeleteVoiceResponses[keyof DeleteVoiceResponses];
+
+export type RenameVoiceData = {
+    body: RenameVoiceRequest;
+    path: {
+        /**
+         * Voice ID
+         */
+        voice_id: string;
+    };
+    query?: never;
+    url: '/api/voices/{voice_id}';
+};
+
+export type RenameVoiceErrors = {
+    /**
+     * No such voice of this client
+     */
+    404: unknown;
+};
+
+export type RenameVoiceResponses = {
+    /**
+     * Renamed
+     */
+    200: ApiVoice;
+};
+
+export type RenameVoiceResponse = RenameVoiceResponses[keyof RenameVoiceResponses];
+
+export type VoiceSampleData = {
+    body: VoiceSampleRequest;
+    path: {
+        /**
+         * Voice ID
+         */
+        voice_id: string;
+    };
+    query?: never;
+    url: '/api/voices/{voice_id}/sample';
+};
+
+export type VoiceSampleErrors = {
+    /**
+     * No such voice
+     */
+    404: unknown;
+    /**
+     * The voice provider is unavailable; try again shortly
+     */
+    503: unknown;
+};
+
+export type VoiceSampleResponses = {
+    /**
+     * MP3 audio
+     */
+    200: unknown;
+};
 
 export type ClientOptions = {
     baseURL: `${string}://${string}` | (string & {});

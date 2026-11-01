@@ -1132,6 +1132,139 @@ paths:
           description: User not found
         '500':
           description: Internal server error
+  /api/voices:
+    get:
+      tags:
+      - voice
+      summary: 'List the voices bots can speak with: the built-in ones and the client''s own'
+      operationId: list_voices
+      responses:
+        '200':
+          description: Voices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVoicesResponse'
+    post:
+      tags:
+      - voice
+      summary: Make a voice from a clip of someone speaking
+      description: 'One clip, 5 to 60 seconds of clear speech with no music, at most 15 MB: MP3, WAV, M4A, OGG or WebM.'
+      operationId: create_clip_voice
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateClipVoiceForm'
+        required: true
+      responses:
+        '201':
+          description: Voice made
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIVoice'
+        '400':
+          description: Missing name or clip, or a clip that isn't usable speech
+  /api/voices/library:
+    post:
+      tags:
+      - voice
+      summary: Add a voice from the provider's library by its id there
+      operationId: create_library_voice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLibraryVoiceRequest'
+        required: true
+      responses:
+        '201':
+          description: Voice added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIVoice'
+        '400':
+          description: Missing name or id
+  /api/voices/{voice_id}:
+    delete:
+      tags:
+      - voice
+      summary: Delete one of the client's own voices
+      description: Refused while a bot speaks with it.
+      operationId: delete_voice
+      parameters:
+      - name: voice_id
+        in: path
+        description: Voice ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: No such voice of this client
+        '409':
+          description: Bots still speak with it
+    patch:
+      tags:
+      - voice
+      summary: Rename one of the client's own voices
+      operationId: rename_voice
+      parameters:
+      - name: voice_id
+        in: path
+        description: Voice ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenameVoiceRequest'
+        required: true
+      responses:
+        '200':
+          description: Renamed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIVoice'
+        '404':
+          description: No such voice of this client
+  /api/voices/{voice_id}/sample:
+    post:
+      tags:
+      - voice
+      summary: Hear a line in a voice
+      description: Returns MP3 audio. Nothing is saved.
+      operationId: voice_sample
+      parameters:
+      - name: voice_id
+        in: path
+        description: Voice ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoiceSampleRequest'
+        required: true
+      responses:
+        '200':
+          description: MP3 audio
+        '404':
+          description: No such voice
+        '503':
+          description: The voice provider is unavailable; try again shortly
 components:
   schemas:
     APIAttribute:
@@ -1467,6 +1600,62 @@ components:
         latest_message_time: 2024-01-15T16:45:30Z
         message_count: 42
         username: AdventurousJohn28
+    APIVoice:
+      type: object
+      required:
+      - id
+      - name
+      - model
+      - kind
+      - built_in
+      - used_by
+      properties:
+        built_in:
+          type: boolean
+          description: 'Built in: every client can use it; it can''t be renamed or deleted.'
+        clip_transcript:
+          type: string
+          description: What the clip says, when given.
+          nullable: true
+        clip_url:
+          type: string
+          description: The uploaded clip, for a voice made from one.
+          nullable: true
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          description: '`library`: a voice from the provider''s library. `clip`: copied from an uploaded clip.'
+        model:
+          $ref: '#/components/schemas/VoiceModelName'
+        name:
+          type: string
+        used_by:
+          type: array
+          items:
+            type: string
+          description: Names of the bots that speak with it.
+    APIVoiceNote:
+      type: object
+      description: 'A voice note: the audio and the words in it.'
+      required:
+      - url
+      - format
+      - duration_ms
+      - transcript
+      properties:
+        duration_ms:
+          type: integer
+          format: int32
+          minimum: 0
+        format:
+          type: string
+          description: '`mp3`'
+        transcript:
+          type: string
+        url:
+          type: string
     AddMessageRequest:
       type: object
       required:
@@ -1551,6 +1740,11 @@ components:
         - orientation
         - voice_enabled
         properties:
+          assigned_voice_id:
+            type: string
+            format: uuid
+            description: The voice her notes are recorded in.
+            nullable: true
           attributes:
             type: array
             items:
@@ -2017,6 +2211,22 @@ components:
           type: string
           description: The generated password - only shown once at creation time
           example: xK9mP2nQ4rS6tU8v
+    CreateClipVoiceForm:
+      type: object
+      description: The upload form for a voice made from a clip.
+      required:
+      - name
+      - clip
+      properties:
+        clip:
+          type: string
+          format: binary
+        name:
+          type: string
+        transcript:
+          type: string
+          description: What the clip says; the copy is closer with it.
+          nullable: true
     CreateConversationRequest:
       type: object
       required:
@@ -2136,6 +2346,17 @@ components:
         metadata: null
         timestamp: null
         user_id: user123
+    CreateLibraryVoiceRequest:
+      type: object
+      required:
+      - name
+      - library_voice_id
+      properties:
+        library_voice_id:
+          type: string
+          description: The voice's id in the provider's library.
+        name:
+          type: string
     CreateSetRequest:
       type: object
       required:
@@ -2605,6 +2826,15 @@ components:
           items:
             $ref: '#/components/schemas/APIUserWithStats'
           description: List of users
+    ListVoicesResponse:
+      type: object
+      required:
+      - voices
+      properties:
+        voices:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIVoice'
     LockConversion:
       type: object
       required:
@@ -2692,6 +2922,10 @@ components:
           type: string
           description: The text content of the message
           example: Heyyy how are you?
+        voice:
+          allOf:
+          - $ref: '#/components/schemas/APIVoiceNote'
+          nullable: true
       example:
         attached_media: null
         from_bot: true
@@ -2770,6 +3004,13 @@ components:
           type: integer
           format: int32
           minimum: 0
+    RenameVoiceRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
     ResponseCandidate:
       type: object
       required:
@@ -3017,6 +3258,11 @@ components:
     UpdateBotRequest:
       type: object
       properties:
+        assigned_voice_id:
+          type: string
+          format: uuid
+          description: The voice her notes are recorded in, from `GET /api/voices`; null takes it away.
+          nullable: true
         attributes:
           type: array
           items:
@@ -3398,6 +3644,19 @@ components:
       enum:
       - force
       - never
+    VoiceModelName:
+      type: string
+      description: The speech model a voice is recorded with. Each brings its own way of writing a script.
+      enum:
+      - drama-3
+    VoiceSampleRequest:
+      type: object
+      required:
+      - text
+      properties:
+        text:
+          type: string
+          description: A line in the model's script style, like "[teasing] Hey you. [soft laugh] Miss me?"
 tags:
 - name: conversations
   description: Conversation management endpoints

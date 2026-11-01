@@ -120,6 +120,43 @@ type ApiTurnAction = {
     content_ids: Array<string>;
     price_cents?: number | null;
 };
+type ApiVoice = {
+    /**
+     * Built in: every client can use it; it can't be renamed or deleted.
+     */
+    built_in: boolean;
+    /**
+     * What the clip says, when given.
+     */
+    clip_transcript?: string | null;
+    /**
+     * The uploaded clip, for a voice made from one.
+     */
+    clip_url?: string | null;
+    id: string;
+    /**
+     * `library`: a voice from the provider's library. `clip`: copied from an uploaded clip.
+     */
+    kind: string;
+    model: VoiceModelName;
+    name: string;
+    /**
+     * Names of the bots that speak with it.
+     */
+    used_by: Array<string>;
+};
+/**
+ * A voice note: the audio and the words in it.
+ */
+type ApiVoiceNote = {
+    duration_ms: number;
+    /**
+     * `mp3`
+     */
+    format: string;
+    transcript: string;
+    url: string;
+};
 /**
  * Represents an API key info (without the actual key)
  */
@@ -131,6 +168,10 @@ type ApiKeyInfo = {
     name: string;
 };
 type Bot = BotSelling & BotKnobs & {
+    /**
+     * The voice her notes are recorded in.
+     */
+    assigned_voice_id?: string | null;
     /**
      * List of bot attributes
      */
@@ -511,6 +552,10 @@ type GridPhoto = {
     status: PhotoStatus;
     tag?: PhotoTag | null;
     thumbnail_url: string;
+    /**
+     * Set for a video: the file itself, for playing it.
+     */
+    video_url?: string | null;
 };
 type ImageItem = {
     /**
@@ -598,6 +643,9 @@ type ListSetsResponse = {
      */
     sets: Array<ApiContentSet>;
 };
+type ListVoicesResponse = {
+    voices: Array<ApiVoice>;
+};
 type LockConversion = {
     /**
      * Median seconds from offer to payment, over paid locks.
@@ -645,6 +693,7 @@ type Message$1 = {
      * The text content of the message
      */
     text: string;
+    voice?: ApiVoiceNote | null;
 };
 type OpenOffer = {
     content_ids: Array<string>;
@@ -775,6 +824,10 @@ type TurnStep = {
     usage?: StepUsage | null;
 };
 type UpdateBotRequest = {
+    /**
+     * The voice her notes are recorded in, from `GET /api/voices`; null takes it away.
+     */
+    assigned_voice_id?: string | null;
     /**
      * List of bot attributes
      */
@@ -951,6 +1004,10 @@ type User = {
     username: string;
 };
 type VaultImageBehaviour = 'force' | 'never';
+/**
+ * The speech model a voice is recorded with. Each brings its own way of writing a script.
+ */
+type VoiceModelName = 'drama-3';
 type CreateApiKeyData = {
     body: CreateApiKeyRequest;
     path?: never;
@@ -1184,6 +1241,31 @@ interface SetSetItemsOptions {
     set_id: string;
     /** Content ids in suggested order. Items of the set left out become loose; listed items leave any other set. */
     content_ids: string[];
+}
+
+interface CreateClipVoiceOptions {
+    name: string;
+    /** 5 to 60 seconds of clear speech with no music, at most 15 MB: MP3, WAV, M4A, OGG or WebM. */
+    clip: Blob | File;
+    /** What the clip says; the copy is closer with it. */
+    transcript?: string;
+}
+interface CreateLibraryVoiceOptions {
+    name: string;
+    /** The voice's id in the provider's library. */
+    library_voice_id: string;
+}
+interface RenameVoiceOptions {
+    voice_id: string;
+    name: string;
+}
+interface DeleteVoiceOptions {
+    voice_id: string;
+}
+interface VoiceSampleOptions {
+    voice_id: string;
+    /** A line in the model's script style, like "[teasing] Hey you. [soft laugh] Miss me?" */
+    text: string;
 }
 
 /**
@@ -1964,6 +2046,26 @@ declare class PrioriChat {
      * listed items leave any other set. Fails with 422 when an item is not this bot's content or is listed twice.
      */
     setSetItems(options: SetSetItemsOptions): Promise<ApiContentSet>;
+    /** Lists the voices bots can speak with: the built-in ones, then the client's own, each with the bots using it. */
+    listVoices(): Promise<ListVoicesResponse>;
+    /**
+     * Makes a voice from a clip of someone speaking.
+     *
+     * @example
+     * ```ts
+     * const voice = await client.createClipVoice({ name: "Jess", clip: file, transcript: "Hi, it's me…" });
+     * await client.updateBot({ id: botId, voice_enabled: true, assigned_voice_id: voice.id });
+     * ```
+     */
+    createClipVoice(options: CreateClipVoiceOptions): Promise<ApiVoice>;
+    /** Adds a voice from the provider's library by its id there. */
+    createLibraryVoice(options: CreateLibraryVoiceOptions): Promise<ApiVoice>;
+    /** Renames one of the client's own voices. Built-in voices can't be renamed. */
+    renameVoice(options: RenameVoiceOptions): Promise<ApiVoice>;
+    /** Deletes one of the client's own voices. Fails with 409 while a bot speaks with it. */
+    deleteVoice(options: DeleteVoiceOptions): Promise<void>;
+    /** Records a line in a voice and returns it as MP3 audio. Nothing is saved. */
+    voiceSample(options: VoiceSampleOptions): Promise<Blob>;
 }
 
-export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type PhotoStatus, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type Session, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type Summary, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type ApiVoice, type ApiVoiceNote, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateClipVoiceOptions, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateLibraryVoiceOptions, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type DeleteVoiceOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type ListVoicesResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type PhotoStatus, type Platform, PrioriChat, type RenameVoiceOptions, type ResponseCandidate, type SearchedMessage, type Session, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type Summary, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User, type VoiceModelName, type VoiceSampleOptions };

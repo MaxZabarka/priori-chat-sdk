@@ -53,6 +53,19 @@ import {
   type SetSetItemsOptions,
   type UpdateSetOptions,
 } from "./methods/sets";
+import {
+  createClipVoiceImpl,
+  createLibraryVoiceImpl,
+  deleteVoiceImpl,
+  listVoicesImpl,
+  renameVoiceImpl,
+  voiceSampleImpl,
+  type CreateClipVoiceOptions,
+  type CreateLibraryVoiceOptions,
+  type DeleteVoiceOptions,
+  type RenameVoiceOptions,
+  type VoiceSampleOptions,
+} from "./methods/voices";
 import { getUser, updateUser } from "./client/sdk.gen";
 import type {
   CreateConversationResponse,
@@ -100,6 +113,8 @@ import type {
   MarkPurchasePaidResponse,
   ApiContentSet,
   ListSetsResponse,
+  ApiVoice,
+  ListVoicesResponse,
 } from "./client/types.gen";
 import type {
   ListConversationsOptions,
@@ -858,5 +873,43 @@ export class PrioriChat {
    */
   async setSetItems(options: SetSetItemsOptions): Promise<ApiContentSet> {
     return setSetItemsImpl.call(this, options);
+  }
+
+  /** Lists the voices bots can speak with: the built-in ones, then the client's own, each with the bots using it. */
+  async listVoices(): Promise<ListVoicesResponse> {
+    return listVoicesImpl.call(this);
+  }
+
+  /**
+   * Makes a voice from a clip of someone speaking.
+   *
+   * @example
+   * ```ts
+   * const voice = await client.createClipVoice({ name: "Jess", clip: file, transcript: "Hi, it's me…" });
+   * await client.updateBot({ id: botId, voice_enabled: true, assigned_voice_id: voice.id });
+   * ```
+   */
+  async createClipVoice(options: CreateClipVoiceOptions): Promise<ApiVoice> {
+    return createClipVoiceImpl.call(this, options);
+  }
+
+  /** Adds a voice from the provider's library by its id there. */
+  async createLibraryVoice(options: CreateLibraryVoiceOptions): Promise<ApiVoice> {
+    return createLibraryVoiceImpl.call(this, options);
+  }
+
+  /** Renames one of the client's own voices. Built-in voices can't be renamed. */
+  async renameVoice(options: RenameVoiceOptions): Promise<ApiVoice> {
+    return renameVoiceImpl.call(this, options);
+  }
+
+  /** Deletes one of the client's own voices. Fails with 409 while a bot speaks with it. */
+  async deleteVoice(options: DeleteVoiceOptions): Promise<void> {
+    return deleteVoiceImpl.call(this, options);
+  }
+
+  /** Records a line in a voice and returns it as MP3 audio. Nothing is saved. */
+  async voiceSample(options: VoiceSampleOptions): Promise<Blob> {
+    return voiceSampleImpl.call(this, options);
   }
 }

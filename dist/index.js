@@ -38,6 +38,31 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
+// src/client/core/bodySerializer.ts
+var serializeFormDataPair = (data, key, value) => {
+  if (typeof value === "string" || value instanceof Blob) {
+    data.append(key, value);
+  } else {
+    data.append(key, JSON.stringify(value));
+  }
+};
+var formDataBodySerializer = {
+  bodySerializer: (body) => {
+    const data = new FormData();
+    Object.entries(body).forEach(([key, value]) => {
+      if (value === void 0 || value === null) {
+        return;
+      }
+      if (Array.isArray(value)) {
+        value.forEach((v) => serializeFormDataPair(data, key, v));
+      } else {
+        serializeFormDataPair(data, key, value);
+      }
+    });
+    return data;
+  }
+};
+
 // src/client/core/params.ts
 var extraPrefixesMap = {
   $body_: "body",
@@ -805,6 +830,63 @@ var updateUser = (options) => {
     }
   });
 };
+var listVoices = (options) => {
+  return (options?.client ?? client).get({
+    responseType: "json",
+    url: "/api/voices",
+    ...options
+  });
+};
+var createClipVoice = (options) => {
+  return (options.client ?? client).post({
+    ...formDataBodySerializer,
+    responseType: "json",
+    url: "/api/voices",
+    ...options,
+    headers: {
+      "Content-Type": null,
+      ...options.headers
+    }
+  });
+};
+var createLibraryVoice = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/voices/library",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var deleteVoice = (options) => {
+  return (options.client ?? client).delete({
+    url: "/api/voices/{voice_id}",
+    ...options
+  });
+};
+var renameVoice = (options) => {
+  return (options.client ?? client).patch({
+    responseType: "json",
+    url: "/api/voices/{voice_id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var voiceSample = (options) => {
+  return (options.client ?? client).post({
+    url: "/api/voices/{voice_id}/sample",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
 
 // src/methods/conversations.ts
 async function createConversationImpl(options) {
@@ -1001,6 +1083,33 @@ async function deleteSetImpl(options) {
 async function setSetItemsImpl(options) {
   const { set_id, ...body } = options;
   const result = await setSetItems({ path: { set_id }, body });
+  return result.data;
+}
+
+// src/methods/voices.ts
+async function listVoicesImpl() {
+  const result = await listVoices();
+  return result.data;
+}
+async function createClipVoiceImpl(options) {
+  const result = await createClipVoice({ body: options });
+  return result.data;
+}
+async function createLibraryVoiceImpl(options) {
+  const result = await createLibraryVoice({ body: options });
+  return result.data;
+}
+async function renameVoiceImpl(options) {
+  const { voice_id, ...body } = options;
+  const result = await renameVoice({ path: { voice_id }, body });
+  return result.data;
+}
+async function deleteVoiceImpl(options) {
+  await deleteVoice({ path: options });
+}
+async function voiceSampleImpl(options) {
+  const { voice_id, ...body } = options;
+  const result = await voiceSample({ path: { voice_id }, body, responseType: "blob" });
   return result.data;
 }
 
@@ -1907,6 +2016,38 @@ var PrioriChat = class {
    */
   async setSetItems(options) {
     return setSetItemsImpl.call(this, options);
+  }
+  /** Lists the voices bots can speak with: the built-in ones, then the client's own, each with the bots using it. */
+  async listVoices() {
+    return listVoicesImpl.call(this);
+  }
+  /**
+   * Makes a voice from a clip of someone speaking.
+   *
+   * @example
+   * ```ts
+   * const voice = await client.createClipVoice({ name: "Jess", clip: file, transcript: "Hi, it's me…" });
+   * await client.updateBot({ id: botId, voice_enabled: true, assigned_voice_id: voice.id });
+   * ```
+   */
+  async createClipVoice(options) {
+    return createClipVoiceImpl.call(this, options);
+  }
+  /** Adds a voice from the provider's library by its id there. */
+  async createLibraryVoice(options) {
+    return createLibraryVoiceImpl.call(this, options);
+  }
+  /** Renames one of the client's own voices. Built-in voices can't be renamed. */
+  async renameVoice(options) {
+    return renameVoiceImpl.call(this, options);
+  }
+  /** Deletes one of the client's own voices. Fails with 409 while a bot speaks with it. */
+  async deleteVoice(options) {
+    return deleteVoiceImpl.call(this, options);
+  }
+  /** Records a line in a voice and returns it as MP3 audio. Nothing is saved. */
+  async voiceSample(options) {
+    return voiceSampleImpl.call(this, options);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:
