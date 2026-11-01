@@ -1006,6 +1006,10 @@ export type StepCall = {
  * What one model call cost.
  */
 export type StepUsage = {
+    /**
+     * The part of `prompt_tokens` the provider served from its prompt cache.
+     */
+    cached_tokens?: number;
     completion_tokens: number;
     cost_usd: number;
     prompt_tokens: number;

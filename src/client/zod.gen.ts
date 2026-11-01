@@ -141,6 +141,7 @@ export const zStepCall = z.object({
  * What one model call cost.
  */
 export const zStepUsage = z.object({
+    cached_tokens: z.coerce.bigint().gte(BigInt(0)).optional(),
     completion_tokens: z.coerce.bigint().gte(BigInt(0)),
     cost_usd: z.number(),
     prompt_tokens: z.coerce.bigint().gte(BigInt(0))
