@@ -115,16 +115,12 @@ export type ApiTurn = {
      * `rapport`, `tease`, `offer`, `close` or `aftercare`; null until the turn is scored.
      */
     stage?: string | null;
-    stage_scores?: {
-        [key: string]: unknown;
-    } | null;
+    stage_scores?: StageScores | null;
     started_at: string;
     /**
      * Every model call: reasoning, tool calls with arguments and results.
      */
-    steps?: Array<{
-        [key: string]: unknown;
-    }> | null;
+    steps?: Array<TurnStep> | null;
 };
 
 /**
@@ -420,6 +416,20 @@ export type ConversationHeader = {
     user_id?: string | null;
 };
 
+/**
+ * What the insights panel shows for one conversation, built only from what is already stored.
+ */
+export type ConversationInsights = {
+    fan_value: FanValue;
+    locks: LockConversion;
+    open_offers: Array<OpenOffer>;
+    price_line: Array<PricePoint>;
+    readiness_now?: number | null;
+    sessions: Array<Session>;
+    sets: Array<SetGrid>;
+    stage_now?: StageScores | null;
+};
+
 export type CreateApiKeyRequest = {
     /**
      * Name/description for the API key
@@ -584,6 +594,14 @@ export type DeleteContentResponse = {
     message: string;
 };
 
+export type FanValue = {
+    average_price_cents?: number | null;
+    bounds_cents?: Array<number> | null;
+    purchases: number;
+    spent_cents: number;
+    spent_this_session_cents: number;
+};
+
 export type GenerateResponseSyncRequest = {
     batch_size?: number;
     /**
@@ -622,12 +640,7 @@ export type GetConversationResponse = {
      * Optional freeform text to add to the prompt
      */
     freeform?: string | null;
-    /**
-     * The insights panel: stage, fan value, locks, open offers, prices, sessions and the sets grid. Null for bots that don't sell.
-     */
-    insights?: {
-        [key: string]: unknown;
-    } | null;
+    insights?: ConversationInsights | null;
     /**
      * Whether the bot is currently preparing a reply (typing indicator)
      */
@@ -680,6 +693,14 @@ export type GetPlatformResponse = {
 
 export type GetUserResponse = {
     user: User;
+};
+
+export type GridPhoto = {
+    content_id: string;
+    name?: string | null;
+    status: PhotoStatus;
+    tag?: PhotoTag | null;
+    thumbnail_url: string;
 };
 
 export type ImageItem = {
@@ -807,6 +828,15 @@ export type ListUsersResponse = {
     users: Array<ApiUserWithStats>;
 };
 
+export type LockConversion = {
+    /**
+     * Median seconds from offer to payment, over paid locks.
+     */
+    median_seconds_to_pay?: number | null;
+    offered: number;
+    paid: number;
+};
+
 export type MarkPurchasePaidResponse = {
     purchase: ApiPurchase;
 };
@@ -851,6 +881,17 @@ export type Message = {
     text: string;
 };
 
+export type OpenOffer = {
+    content_ids: Array<string>;
+    offered_at: string;
+    price_cents: number;
+    purchase_id: string;
+};
+
+export type PhotoStatus = 'not_sent' | 'sent' | 'locked' | 'unlocked';
+
+export type PhotoTag = 'sfw' | 'risky' | 'nude';
+
 export type Platform = {
     /**
      * Platform-specific instructions injected into the system prompt before bot-specific instructions. Used to customize AI behavior for platform-specific norms and guidelines.
@@ -864,6 +905,12 @@ export type Platform = {
      * Name of the platform (immutable, case-sensitive, must be unique per client)
      */
     name: string;
+};
+
+export type PricePoint = {
+    at: string;
+    paid: boolean;
+    price_cents: number;
 };
 
 export type ResponseCandidate = {
@@ -898,6 +945,28 @@ export type SendMessageRequest = {
     message: Message;
 };
 
+/**
+ * A stretch of chat with no gap of `GAP_SECS` or more, the same gap the history notes mark for her.
+ */
+export type Session = {
+    ended_at: string;
+    messages: number;
+    photos: number;
+    spent_cents: number;
+    started_at: string;
+};
+
+export type SetGrid = {
+    /**
+     * The set of her latest photo this session: where she is right now.
+     */
+    current: boolean;
+    description?: string | null;
+    name: string;
+    photos: Array<GridPhoto>;
+    set_id: string;
+};
+
 export type SetItemsRequest = {
     /**
      * Content ids in suggested order. Items of the set left out become loose; listed items leave any other set.
@@ -910,6 +979,36 @@ export type SpeechRequest = {
     format?: AudioFormat | null;
     message: string;
     url?: boolean | null;
+};
+
+/**
+ * How likely each sales stage is for the turn, 0 to 1.
+ */
+export type StageScores = {
+    aftercare: number;
+    close: number;
+    offer: number;
+    rapport: number;
+    tease: number;
+};
+
+export type StepCall = {
+    arguments: unknown;
+    /**
+     * The library items the call named, so a turn can be shown with thumbnails.
+     */
+    content_ids?: Array<string>;
+    name: string;
+    result: string;
+};
+
+/**
+ * What one model call cost.
+ */
+export type StepUsage = {
+    completion_tokens: number;
+    cost_usd: number;
+    prompt_tokens: number;
 };
 
 export type Summary = {
@@ -925,6 +1024,17 @@ export type Summary = {
      * The text summary of the conversation
      */
     summary_text: string;
+};
+
+export type TurnStep = {
+    calls?: Array<StepCall>;
+    model?: string | null;
+    /**
+     * Text she wrote outside a tool, which never reaches him.
+     */
+    private_text?: string | null;
+    reasoning?: string | null;
+    usage?: StepUsage | null;
 };
 
 export type UpdateBotRequest = {

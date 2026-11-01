@@ -90,5 +90,13 @@ export type {
   ApiPhotoLabel,
   ApiTurn,
   ApiTurnAction,
+  ConversationInsights,
+  GridPhoto,
+  SetGrid,
+  TurnStep,
+  StepCall,
+  StageScores,
+  Session,
+  PhotoStatus,
   ListSetsResponse,
 } from "./client/types.gen";

@@ -1382,7 +1382,8 @@ components:
           description: '`rapport`, `tease`, `offer`, `close` or `aftercare`; null until the turn is scored.'
           nullable: true
         stage_scores:
-          type: object
+          allOf:
+          - $ref: '#/components/schemas/StageScores'
           nullable: true
         started_at:
           type: string
@@ -1390,7 +1391,7 @@ components:
         steps:
           type: array
           items:
-            type: object
+            $ref: '#/components/schemas/TurnStep'
           description: 'Every model call: reasoning, tool calls with arguments and results.'
           nullable: true
     APITurnAction:
@@ -1890,6 +1891,46 @@ components:
           description: ID of the user associated with this conversation
           example: user_123
           nullable: true
+    ConversationInsights:
+      type: object
+      description: What the insights panel shows for one conversation, built only from what is already stored.
+      required:
+      - fan_value
+      - locks
+      - open_offers
+      - price_line
+      - sessions
+      - sets
+      properties:
+        fan_value:
+          $ref: '#/components/schemas/FanValue'
+        locks:
+          $ref: '#/components/schemas/LockConversion'
+        open_offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpenOffer'
+        price_line:
+          type: array
+          items:
+            $ref: '#/components/schemas/PricePoint'
+        readiness_now:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Session'
+        sets:
+          type: array
+          items:
+            $ref: '#/components/schemas/SetGrid'
+        stage_now:
+          allOf:
+          - $ref: '#/components/schemas/StageScores'
+          nullable: true
     CreateApiKeyRequest:
       type: object
       required:
@@ -2165,6 +2206,40 @@ components:
           type: string
           description: Success message
           example: Content deleted successfully
+    FanValue:
+      type: object
+      required:
+      - spent_cents
+      - spent_this_session_cents
+      - purchases
+      properties:
+        average_price_cents:
+          type: integer
+          format: int64
+          nullable: true
+          minimum: 0
+        bounds_cents:
+          type: array
+          items:
+            allOf:
+            - type: integer
+              format: int32
+              minimum: 0
+            - type: integer
+              format: int32
+              minimum: 0
+          nullable: true
+        purchases:
+          type: integer
+          minimum: 0
+        spent_cents:
+          type: integer
+          format: int64
+          minimum: 0
+        spent_this_session_cents:
+          type: integer
+          format: int64
+          minimum: 0
     GenerateResponseSyncRequest:
       type: object
       properties:
@@ -2235,8 +2310,8 @@ components:
           example: put any information here that you want added to the prompt
           nullable: true
         insights:
-          type: object
-          description: 'The insights panel: stage, fan value, locks, open offers, prices, sessions and the sets grid. Null for bots that don''t sell.'
+          allOf:
+          - $ref: '#/components/schemas/ConversationInsights'
           nullable: true
         is_typing:
           type: boolean
@@ -2310,6 +2385,26 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
+    GridPhoto:
+      type: object
+      required:
+      - content_id
+      - thumbnail_url
+      - status
+      properties:
+        content_id:
+          type: string
+        name:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/PhotoStatus'
+        tag:
+          allOf:
+          - $ref: '#/components/schemas/PhotoTag'
+          nullable: true
+        thumbnail_url:
+          type: string
     ImageItem:
       type: object
       required:
@@ -2506,6 +2601,23 @@ components:
           items:
             $ref: '#/components/schemas/APIUserWithStats'
           description: List of users
+    LockConversion:
+      type: object
+      required:
+      - offered
+      - paid
+      properties:
+        median_seconds_to_pay:
+          type: integer
+          format: int64
+          description: Median seconds from offer to payment, over paid locks.
+          nullable: true
+        offered:
+          type: integer
+          minimum: 0
+        paid:
+          type: integer
+          minimum: 0
     MarkPurchasePaidResponse:
       type: object
       required:
@@ -2581,6 +2693,40 @@ components:
         from_bot: true
         sent_at: 1640995200
         text: Heyyy how are you??
+    OpenOffer:
+      type: object
+      required:
+      - purchase_id
+      - offered_at
+      - price_cents
+      - content_ids
+      properties:
+        content_ids:
+          type: array
+          items:
+            type: string
+        offered_at:
+          type: string
+          format: date-time
+        price_cents:
+          type: integer
+          format: int32
+          minimum: 0
+        purchase_id:
+          type: string
+    PhotoStatus:
+      type: string
+      enum:
+      - not_sent
+      - sent
+      - locked
+      - unlocked
+    PhotoTag:
+      type: string
+      enum:
+      - sfw
+      - risky
+      - nude
     Platform:
       type: object
       required:
@@ -2604,6 +2750,22 @@ components:
         custom_instruction: This is for people 55+. Be respectful, take time to chat, and ask about their hobbies and life experience. Avoid slang and keep language clear.
         id: 550e8400-e29b-41d4-a716-446655440000
         name: SilverMatch
+    PricePoint:
+      type: object
+      required:
+      - at
+      - price_cents
+      - paid
+      properties:
+        at:
+          type: string
+          format: date-time
+        paid:
+          type: boolean
+        price_cents:
+          type: integer
+          format: int32
+          minimum: 0
     ResponseCandidate:
       type: object
       required:
@@ -2661,6 +2823,54 @@ components:
           attached_media: null
           from_bot: false
           text: Hey what's your name?
+    Session:
+      type: object
+      description: A stretch of chat with no gap of `GAP_SECS` or more, the same gap the history notes mark for her.
+      required:
+      - started_at
+      - ended_at
+      - messages
+      - photos
+      - spent_cents
+      properties:
+        ended_at:
+          type: string
+          format: date-time
+        messages:
+          type: integer
+          minimum: 0
+        photos:
+          type: integer
+          minimum: 0
+        spent_cents:
+          type: integer
+          format: int64
+          minimum: 0
+        started_at:
+          type: string
+          format: date-time
+    SetGrid:
+      type: object
+      required:
+      - set_id
+      - name
+      - current
+      - photos
+      properties:
+        current:
+          type: boolean
+          description: 'The set of her latest photo this session: where she is right now.'
+        description:
+          type: string
+          nullable: true
+        name:
+          type: string
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/GridPhoto'
+        set_id:
+          type: string
     SetItemsRequest:
       type: object
       required:
@@ -2688,6 +2898,67 @@ components:
         url:
           type: boolean
           nullable: true
+    StageScores:
+      type: object
+      description: How likely each sales stage is for the turn, 0 to 1.
+      required:
+      - rapport
+      - tease
+      - offer
+      - close
+      - aftercare
+      properties:
+        aftercare:
+          type: number
+          format: float
+        close:
+          type: number
+          format: float
+        offer:
+          type: number
+          format: float
+        rapport:
+          type: number
+          format: float
+        tease:
+          type: number
+          format: float
+    StepCall:
+      type: object
+      required:
+      - name
+      - arguments
+      - result
+      properties:
+        arguments: {}
+        content_ids:
+          type: array
+          items:
+            type: string
+          description: The library items the call named, so a turn can be shown with thumbnails.
+        name:
+          type: string
+        result:
+          type: string
+    StepUsage:
+      type: object
+      description: What one model call cost.
+      required:
+      - prompt_tokens
+      - completion_tokens
+      - cost_usd
+      properties:
+        completion_tokens:
+          type: integer
+          format: int64
+          minimum: 0
+        cost_usd:
+          type: number
+          format: double
+        prompt_tokens:
+          type: integer
+          format: int64
+          minimum: 0
     Summary:
       type: object
       required:
@@ -2713,6 +2984,27 @@ components:
         created_at: 1640995200
         message_count: 10
         summary_text: The conversation started with introductions. The user asked about travel experiences, and the bot shared stories about visiting Europe. They discussed favorite destinations and future travel plans.
+    TurnStep:
+      type: object
+      properties:
+        calls:
+          type: array
+          items:
+            $ref: '#/components/schemas/StepCall'
+        model:
+          type: string
+          nullable: true
+        private_text:
+          type: string
+          description: Text she wrote outside a tool, which never reaches him.
+          nullable: true
+        reasoning:
+          type: string
+          nullable: true
+        usage:
+          allOf:
+          - $ref: '#/components/schemas/StepUsage'
+          nullable: true
     UpdateBotRequest:
       type: object
       properties:

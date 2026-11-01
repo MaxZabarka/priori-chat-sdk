@@ -102,16 +102,12 @@ type ApiTurn = {
      * `rapport`, `tease`, `offer`, `close` or `aftercare`; null until the turn is scored.
      */
     stage?: string | null;
-    stage_scores?: {
-        [key: string]: unknown;
-    } | null;
+    stage_scores?: StageScores | null;
     started_at: string;
     /**
      * Every model call: reasoning, tool calls with arguments and results.
      */
-    steps?: Array<{
-        [key: string]: unknown;
-    }> | null;
+    steps?: Array<TurnStep> | null;
 };
 /**
  * One line of her turn, as the chat's turn log shows it: what she did, with the items for thumbnails.
@@ -320,6 +316,19 @@ type ConversationHeader = {
      */
     user_id?: string | null;
 };
+/**
+ * What the insights panel shows for one conversation, built only from what is already stored.
+ */
+type ConversationInsights = {
+    fan_value: FanValue;
+    locks: LockConversion;
+    open_offers: Array<OpenOffer>;
+    price_line: Array<PricePoint>;
+    readiness_now?: number | null;
+    sessions: Array<Session>;
+    sets: Array<SetGrid>;
+    stage_now?: StageScores | null;
+};
 type CreateApiKeyRequest = {
     /**
      * Name/description for the API key
@@ -405,6 +414,13 @@ type DeleteContentResponse = {
      */
     message: string;
 };
+type FanValue = {
+    average_price_cents?: number | null;
+    bounds_cents?: Array<number> | null;
+    purchases: number;
+    spent_cents: number;
+    spent_this_session_cents: number;
+};
 type GenerateResponseSyncRequest = {
     batch_size?: number;
     /**
@@ -438,12 +454,7 @@ type GetConversationResponse = {
      * Optional freeform text to add to the prompt
      */
     freeform?: string | null;
-    /**
-     * The insights panel: stage, fan value, locks, open offers, prices, sessions and the sets grid. Null for bots that don't sell.
-     */
-    insights?: {
-        [key: string]: unknown;
-    } | null;
+    insights?: ConversationInsights | null;
     /**
      * Whether the bot is currently preparing a reply (typing indicator)
      */
@@ -493,6 +504,13 @@ type GetPlatformResponse = {
 };
 type GetUserResponse = {
     user: User;
+};
+type GridPhoto = {
+    content_id: string;
+    name?: string | null;
+    status: PhotoStatus;
+    tag?: PhotoTag | null;
+    thumbnail_url: string;
 };
 type ImageItem = {
     /**
@@ -580,6 +598,14 @@ type ListSetsResponse = {
      */
     sets: Array<ApiContentSet>;
 };
+type LockConversion = {
+    /**
+     * Median seconds from offer to payment, over paid locks.
+     */
+    median_seconds_to_pay?: number | null;
+    offered: number;
+    paid: number;
+};
 type MarkPurchasePaidResponse = {
     purchase: ApiPurchase;
 };
@@ -620,6 +646,14 @@ type Message$1 = {
      */
     text: string;
 };
+type OpenOffer = {
+    content_ids: Array<string>;
+    offered_at: string;
+    price_cents: number;
+    purchase_id: string;
+};
+type PhotoStatus = 'not_sent' | 'sent' | 'locked' | 'unlocked';
+type PhotoTag = 'sfw' | 'risky' | 'nude';
 type Platform = {
     /**
      * Platform-specific instructions injected into the system prompt before bot-specific instructions. Used to customize AI behavior for platform-specific norms and guidelines.
@@ -633,6 +667,11 @@ type Platform = {
      * Name of the platform (immutable, case-sensitive, must be unique per client)
      */
     name: string;
+};
+type PricePoint = {
+    at: string;
+    paid: boolean;
+    price_cents: number;
 };
 type ResponseCandidate = {
     messages: Array<Message$1>;
@@ -660,6 +699,53 @@ type SearchedMessage = {
      */
     sent_at: number;
 };
+/**
+ * A stretch of chat with no gap of `GAP_SECS` or more, the same gap the history notes mark for her.
+ */
+type Session = {
+    ended_at: string;
+    messages: number;
+    photos: number;
+    spent_cents: number;
+    started_at: string;
+};
+type SetGrid = {
+    /**
+     * The set of her latest photo this session: where she is right now.
+     */
+    current: boolean;
+    description?: string | null;
+    name: string;
+    photos: Array<GridPhoto>;
+    set_id: string;
+};
+/**
+ * How likely each sales stage is for the turn, 0 to 1.
+ */
+type StageScores = {
+    aftercare: number;
+    close: number;
+    offer: number;
+    rapport: number;
+    tease: number;
+};
+type StepCall = {
+    arguments: unknown;
+    /**
+     * The library items the call named, so a turn can be shown with thumbnails.
+     */
+    content_ids?: Array<string>;
+    name: string;
+    result: string;
+};
+/**
+ * What one model call cost.
+ */
+type StepUsage = {
+    completion_tokens: number;
+    cost_usd: number;
+    prompt_tokens: number;
+};
 type Summary = {
     /**
      * Unix timestamp when the summary was created
@@ -673,6 +759,16 @@ type Summary = {
      * The text summary of the conversation
      */
     summary_text: string;
+};
+type TurnStep = {
+    calls?: Array<StepCall>;
+    model?: string | null;
+    /**
+     * Text she wrote outside a tool, which never reaches him.
+     */
+    private_text?: string | null;
+    reasoning?: string | null;
+    usage?: StepUsage | null;
 };
 type UpdateBotRequest = {
     /**
@@ -1866,4 +1962,4 @@ declare class PrioriChat {
     setSetItems(options: SetSetItemsOptions): Promise<ApiContentSet>;
 }
 
-export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type SetSetItemsOptions, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type PhotoStatus, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type Session, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type Summary, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };

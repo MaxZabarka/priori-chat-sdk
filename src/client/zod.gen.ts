@@ -120,6 +120,53 @@ export const zApiTurnAction = z.object({
 });
 
 /**
+ * How likely each sales stage is for the turn, 0 to 1.
+ */
+export const zStageScores = z.object({
+    aftercare: z.number(),
+    close: z.number(),
+    offer: z.number(),
+    rapport: z.number(),
+    tease: z.number()
+});
+
+export const zStepCall = z.object({
+    arguments: z.unknown(),
+    content_ids: z.array(z.string()).optional(),
+    name: z.string(),
+    result: z.string()
+});
+
+/**
+ * What one model call cost.
+ */
+export const zStepUsage = z.object({
+    completion_tokens: z.coerce.bigint().gte(BigInt(0)),
+    cost_usd: z.number(),
+    prompt_tokens: z.coerce.bigint().gte(BigInt(0))
+});
+
+export const zTurnStep = z.object({
+    calls: z.array(zStepCall).optional(),
+    model: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    private_text: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    reasoning: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    usage: z.union([
+        zStepUsage,
+        z.null()
+    ]).optional()
+});
+
+/**
  * One of her selling turns. `model`, `cost_usd`, `seconds` and `steps` are present for admins only.
  */
 export const zApiTurn = z.object({
@@ -147,12 +194,12 @@ export const zApiTurn = z.object({
         z.null()
     ]).optional(),
     stage_scores: z.union([
-        z.object({}),
+        zStageScores,
         z.null()
     ]).optional(),
     started_at: z.string().datetime(),
     steps: z.union([
-        z.array(z.object({})),
+        z.array(zTurnStep),
         z.null()
     ]).optional()
 });
@@ -506,6 +553,111 @@ export const zConversationHeader = z.object({
     ]).optional()
 });
 
+export const zFanValue = z.object({
+    average_price_cents: z.union([
+        z.coerce.bigint().gte(BigInt(0)),
+        z.null()
+    ]).optional(),
+    bounds_cents: z.union([
+        z.array(z.number().int().gte(0)),
+        z.null()
+    ]).optional(),
+    purchases: z.number().int().gte(0),
+    spent_cents: z.coerce.bigint().gte(BigInt(0)),
+    spent_this_session_cents: z.coerce.bigint().gte(BigInt(0))
+});
+
+export const zLockConversion = z.object({
+    median_seconds_to_pay: z.union([
+        z.coerce.bigint(),
+        z.null()
+    ]).optional(),
+    offered: z.number().int().gte(0),
+    paid: z.number().int().gte(0)
+});
+
+export const zOpenOffer = z.object({
+    content_ids: z.array(z.string()),
+    offered_at: z.string().datetime(),
+    price_cents: z.number().int().gte(0),
+    purchase_id: z.string()
+});
+
+export const zPricePoint = z.object({
+    at: z.string().datetime(),
+    paid: z.boolean(),
+    price_cents: z.number().int().gte(0)
+});
+
+/**
+ * A stretch of chat with no gap of `GAP_SECS` or more, the same gap the history notes mark for her.
+ */
+export const zSession = z.object({
+    ended_at: z.string().datetime(),
+    messages: z.number().int().gte(0),
+    photos: z.number().int().gte(0),
+    spent_cents: z.coerce.bigint().gte(BigInt(0)),
+    started_at: z.string().datetime()
+});
+
+export const zPhotoStatus = z.enum([
+    'not_sent',
+    'sent',
+    'locked',
+    'unlocked'
+]);
+
+export const zPhotoTag = z.enum([
+    'sfw',
+    'risky',
+    'nude'
+]);
+
+export const zGridPhoto = z.object({
+    content_id: z.string(),
+    name: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    status: zPhotoStatus,
+    tag: z.union([
+        zPhotoTag,
+        z.null()
+    ]).optional(),
+    thumbnail_url: z.string()
+});
+
+export const zSetGrid = z.object({
+    current: z.boolean(),
+    description: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    name: z.string(),
+    photos: z.array(zGridPhoto),
+    set_id: z.string()
+});
+
+/**
+ * What the insights panel shows for one conversation, built only from what is already stored.
+ */
+export const zConversationInsights = z.object({
+    fan_value: zFanValue,
+    locks: zLockConversion,
+    open_offers: z.array(zOpenOffer),
+    price_line: z.array(zPricePoint),
+    readiness_now: z.union([
+        z.number().int().gte(0),
+        z.null()
+    ]).optional(),
+    sessions: z.array(zSession),
+    sets: z.array(zSetGrid),
+    stage_now: z.union([
+        zStageScores,
+        z.null()
+    ]).optional()
+});
+
 export const zCreateApiKeyRequest = z.object({
     name: z.string()
 });
@@ -654,7 +806,7 @@ export const zGetConversationResponse = z.object({
         z.null()
     ]).optional(),
     insights: z.union([
-        z.object({}),
+        zConversationInsights,
         z.null()
     ]).optional(),
     is_typing: z.boolean(),
