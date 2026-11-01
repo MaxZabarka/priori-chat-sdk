@@ -97,6 +97,48 @@ export type ApiPurchase = {
     requested_at: string;
 };
 
+/**
+ * One of her selling turns. `model`, `cost_usd`, `seconds` and `steps` are present for admins only.
+ */
+export type ApiTurn = {
+    actions: Array<ApiTurnAction>;
+    cost_usd?: number | null;
+    finished_at: string;
+    id: string;
+    model?: string | null;
+    /**
+     * 1 to 5
+     */
+    readiness?: number | null;
+    seconds?: number | null;
+    /**
+     * `rapport`, `tease`, `offer`, `close` or `aftercare`; null until the turn is scored.
+     */
+    stage?: string | null;
+    stage_scores?: {
+        [key: string]: unknown;
+    } | null;
+    started_at: string;
+    /**
+     * Every model call: reasoning, tool calls with arguments and results.
+     */
+    steps?: Array<{
+        [key: string]: unknown;
+    }> | null;
+};
+
+/**
+ * One line of her turn, as the chat's turn log shows it: what she did, with the items for thumbnails.
+ */
+export type ApiTurnAction = {
+    /**
+     * `looked`, `sent` or `locked`
+     */
+    action: string;
+    content_ids: Array<string>;
+    price_cents?: number | null;
+};
+
 export type ApiUserWithStats = {
     /**
      * List of user attributes
@@ -581,6 +623,12 @@ export type GetConversationResponse = {
      */
     freeform?: string | null;
     /**
+     * The insights panel: stage, fan value, locks, open offers, prices, sessions and the sets grid. Null for bots that don't sell.
+     */
+    insights?: {
+        [key: string]: unknown;
+    } | null;
+    /**
      * Whether the bot is currently preparing a reply (typing indicator)
      */
     is_typing: boolean;
@@ -601,6 +649,10 @@ export type GetConversationResponse = {
      * Whether to have the bot capable of responding in multiple messages (more realistic)
      */
     segment?: boolean | null;
+    /**
+     * Her selling turns, oldest first, for the turn log in the chat. Empty for bots that don't sell.
+     */
+    turns: Array<ApiTurn>;
     /**
      * ID of the user associated with this conversation
      */

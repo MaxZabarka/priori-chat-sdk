@@ -1341,6 +1341,76 @@ components:
         requested_at:
           type: string
           format: date-time
+    APITurn:
+      type: object
+      description: One of her selling turns. `model`, `cost_usd`, `seconds` and `steps` are present for admins only.
+      required:
+      - id
+      - started_at
+      - finished_at
+      - actions
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/APITurnAction'
+        cost_usd:
+          type: number
+          format: double
+          nullable: true
+        finished_at:
+          type: string
+          format: date-time
+        id:
+          type: string
+          format: uuid
+        model:
+          type: string
+          nullable: true
+        readiness:
+          type: integer
+          format: int32
+          description: 1 to 5
+          nullable: true
+          minimum: 0
+        seconds:
+          type: number
+          format: double
+          nullable: true
+        stage:
+          type: string
+          description: '`rapport`, `tease`, `offer`, `close` or `aftercare`; null until the turn is scored.'
+          nullable: true
+        stage_scores:
+          type: object
+          nullable: true
+        started_at:
+          type: string
+          format: date-time
+        steps:
+          type: array
+          items:
+            type: object
+          description: 'Every model call: reasoning, tool calls with arguments and results.'
+          nullable: true
+    APITurnAction:
+      type: object
+      description: 'One line of her turn, as the chat''s turn log shows it: what she did, with the items for thumbnails.'
+      required:
+      - action
+      - content_ids
+      properties:
+        action:
+          type: string
+          description: '`looked`, `sent` or `locked`'
+        content_ids:
+          type: array
+          items:
+            type: string
+        price_cents:
+          type: integer
+          format: int64
+          nullable: true
     APIUserWithStats:
       type: object
       required:
@@ -2153,6 +2223,7 @@ components:
       - bot_id
       - is_typing
       - purchases
+      - turns
       properties:
         bot_id:
           type: string
@@ -2162,6 +2233,10 @@ components:
           type: string
           description: Optional freeform text to add to the prompt
           example: put any information here that you want added to the prompt
+          nullable: true
+        insights:
+          type: object
+          description: 'The insights panel: stage, fan value, locks, open offers, prices, sessions and the sets grid. Null for bots that don''t sell.'
           nullable: true
         is_typing:
           type: boolean
@@ -2191,6 +2266,11 @@ components:
           description: Whether to have the bot capable of responding in multiple messages (more realistic)
           example: true
           nullable: true
+        turns:
+          type: array
+          items:
+            $ref: '#/components/schemas/APITurn'
+          description: Her selling turns, oldest first, for the turn log in the chat. Empty for bots that don't sell.
         user_id:
           type: string
           description: ID of the user associated with this conversation

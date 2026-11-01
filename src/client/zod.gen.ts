@@ -107,6 +107,56 @@ export const zApiPurchase = z.object({
     requested_at: z.string().datetime()
 });
 
+/**
+ * One line of her turn, as the chat's turn log shows it: what she did, with the items for thumbnails.
+ */
+export const zApiTurnAction = z.object({
+    action: z.string(),
+    content_ids: z.array(z.string()),
+    price_cents: z.union([
+        z.coerce.bigint(),
+        z.null()
+    ]).optional()
+});
+
+/**
+ * One of her selling turns. `model`, `cost_usd`, `seconds` and `steps` are present for admins only.
+ */
+export const zApiTurn = z.object({
+    actions: z.array(zApiTurnAction),
+    cost_usd: z.union([
+        z.number(),
+        z.null()
+    ]).optional(),
+    finished_at: z.string().datetime(),
+    id: z.string().uuid(),
+    model: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    readiness: z.union([
+        z.number().int().gte(0),
+        z.null()
+    ]).optional(),
+    seconds: z.union([
+        z.number(),
+        z.null()
+    ]).optional(),
+    stage: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    stage_scores: z.union([
+        z.object({}),
+        z.null()
+    ]).optional(),
+    started_at: z.string().datetime(),
+    steps: z.union([
+        z.array(z.object({})),
+        z.null()
+    ]).optional()
+});
+
 export const zApiUserWithStats = z.object({
     attributes: z.array(zApiAttribute),
     created_date: z.string().datetime(),
@@ -603,6 +653,10 @@ export const zGetConversationResponse = z.object({
         z.string(),
         z.null()
     ]).optional(),
+    insights: z.union([
+        z.object({}),
+        z.null()
+    ]).optional(),
     is_typing: z.boolean(),
     latest_summary: z.union([
         zSummary,
@@ -618,6 +672,7 @@ export const zGetConversationResponse = z.object({
         z.boolean(),
         z.null()
     ]).optional(),
+    turns: z.array(zApiTurn),
     user_id: z.union([
         z.string(),
         z.null()
