@@ -829,8 +829,8 @@ export class PrioriChat {
    * const set = await client.createSet({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
    *   name: "Bathroom · golden · towel",
-   *   description: "After a shower in golden light.",
    * });
+   * // Its description, and a name and tag per photo, are written from the photos a couple of minutes after the last edit.
    * ```
    */
   async createSet(options: CreateSetOptions): Promise<ApiContentSet> {

@@ -464,11 +464,9 @@ var createClient = (config = {}) => {
 };
 
 // src/client/client.gen.ts
-var client = createClient(
-  createConfig({
-    throwOnError: true
-  })
-);
+var client = createClient(createConfig({
+  throwOnError: true
+}));
 
 // src/client/sdk.gen.ts
 var listApiKeys = (options) => {
@@ -707,24 +705,6 @@ var markPurchasePaid = (options) => {
     ...options
   });
 };
-var getUser = (options) => {
-  return (options.client ?? client).get({
-    responseType: "json",
-    url: "/api/users/{user_id}",
-    ...options
-  });
-};
-var updateUser = (options) => {
-  return (options.client ?? client).put({
-    responseType: "json",
-    url: "/api/users/{user_id}",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers
-    }
-  });
-};
 var listSets = (options) => {
   return (options.client ?? client).get({
     responseType: "json",
@@ -764,6 +744,24 @@ var setSetItems = (options) => {
   return (options.client ?? client).put({
     responseType: "json",
     url: "/api/sets/{set_id}/items",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var getUser = (options) => {
+  return (options.client ?? client).get({
+    responseType: "json",
+    url: "/api/users/{user_id}",
+    ...options
+  });
+};
+var updateUser = (options) => {
+  return (options.client ?? client).put({
+    responseType: "json",
+    url: "/api/users/{user_id}",
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -1848,8 +1846,8 @@ var PrioriChat = class {
    * const set = await client.createSet({
    *   bot_id: "12345678-1234-1234-1234-123456789012",
    *   name: "Bathroom · golden · towel",
-   *   description: "After a shower in golden light.",
    * });
+   * // Its description, and a name and tag per photo, are written from the photos a couple of minutes after the last edit.
    * ```
    */
   async createSet(options) {

@@ -5,7 +5,6 @@ import { ApiContentSet, ListSetsResponse } from '../client/types.gen';
 export interface CreateSetOptions {
   bot_id: string;
   name: string;
-  description: string;
 }
 
 export interface ListSetsOptions {
@@ -15,7 +14,6 @@ export interface ListSetsOptions {
 export interface UpdateSetOptions {
   set_id: string;
   name: string;
-  description: string;
 }
 
 export interface DeleteSetOptions {

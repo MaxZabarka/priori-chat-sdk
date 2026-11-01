@@ -87,5 +87,6 @@ export type {
   ApiCheckout,
   MarkPurchasePaidResponse,
   ApiContentSet,
+  ApiPhotoLabel,
   ListSetsResponse,
 } from "./client/types.gen";

@@ -1,19 +1,3 @@
-type ApiContentSet = {
-    bot_id: string;
-    description: string;
-    id: string;
-    /**
-     * Content ids in suggested order. The bot may follow it loosely.
-     */
-    items: Array<string>;
-    name: string;
-};
-type ListSetsResponse = {
-    /**
-     * Oldest first
-     */
-    sets: Array<ApiContentSet>;
-};
 type ApiAttribute = {
     /**
      * Name of the attribute
@@ -24,11 +8,40 @@ type ApiAttribute = {
      */
     value: string;
 };
+type ApiCheckout = {
+    type: 'external';
+} | {
+    type: 'hosted';
+    url: string;
+};
+type ApiContentSet = {
+    bot_id: string;
+    /**
+     * Written from the photos a couple of minutes after the set was last edited, and read-only. Null until then.
+     */
+    description?: string | null;
+    id: string;
+    /**
+     * Content ids in suggested order. The bot may follow it loosely.
+     */
+    items: Array<string>;
+    name: string;
+    /**
+     * A name and tag per item, in item order, written with the description. Empty until then.
+     */
+    photos: Array<ApiPhotoLabel>;
+};
 /**
  * Image sending behaviour enum for client configuration
  */
-type ApiImageSendingBehaviour = "disabled" | "low" | "moderate" | "high" | "aggressive";
-type ApiModerationCategory = "underage_site_use" | "sexual_minors" | "beastiality" | "sexual_violence" | "prompt_injection";
+type ApiImageSendingBehaviour = 'disabled' | 'low' | 'moderate' | 'high' | 'aggressive';
+type ApiMessageLock = {
+    checkout_url?: string | null;
+    price_cents: number;
+    purchase_id: string;
+    unlocked: boolean;
+};
+type ApiModerationCategory = 'underage_site_use' | 'sexual_minors' | 'beastiality' | 'sexual_violence' | 'prompt_injection';
 type ApiModerationInfo = {
     category: ApiModerationCategory;
     /**
@@ -37,16 +50,18 @@ type ApiModerationInfo = {
     reasoning: string;
     severity: ApiModerationSeverity;
 };
-type ApiModerationSeverity = "Low" | "Medium" | "High" | "Critical";
+type ApiModerationSeverity = 'Low' | 'Medium' | 'High' | 'Critical';
 /**
  * Bot orientation — controls gender identity, pronouns, and attraction in the system prompt.
  */
-type ApiOrientation = "straight_female" | "lesbian_female" | "gay_man" | "straight_man" | "trans_mtf" | "trans_ftm" | "bisexual";
-type ApiCheckout = {
-    type: "external";
-} | {
-    type: "hosted";
-    url: string;
+type ApiOrientation = 'straight_female' | 'lesbian_female' | 'gay_man' | 'straight_man' | 'trans_mtf' | 'trans_ftm' | 'bisexual';
+type ApiPhotoLabel = {
+    content_id: string;
+    name: string;
+    /**
+     * `sfw`, `risky` or `nude`
+     */
+    tag: string;
 };
 type ApiPurchase = {
     checkout: ApiCheckout;
@@ -123,6 +138,10 @@ type BotKnobs = {
      */
     first_price_cents?: number | null;
     /**
+     * Nudes she may send free in a conversation, 0 to 10. A recommendation, not a limit. Null means 1.
+     */
+    free_nudes?: number | null;
+    /**
      * 1 short to 5 long
      */
     message_length?: number | null;
@@ -142,6 +161,10 @@ type BotKnobs = {
      * Usual step up per rung, in USD cents
      */
     price_step_cents?: number | null;
+    /**
+     * `sexting` or `girlfriend`: the kind of chat she starts with; she follows the fan from there. Null means sexting.
+     */
+    vibe?: string | null;
     /**
      * Days of silence before a welcome-back gift, 1 to 60
      */
@@ -187,14 +210,6 @@ type Chatter = {
  */
 type ClientConfig = {
     chat_images_enabled?: boolean | null;
-    /**
-     * Upper bound of the delay before the bot's *first* reply in a conversation. Falls back to `max_delay` when unset.
-     */
-    first_contact_max_delay?: number | null;
-    /**
-     * Lower bound of the delay before the bot's *first* reply in a conversation. Falls back to `min_delay` when unset.
-     */
-    first_contact_min_delay?: number | null;
     image_sending_behaviour?: ApiImageSendingBehaviour | null;
     language?: Language | null;
     max_delay?: number | null;
@@ -393,13 +408,13 @@ type GetConversationResponse = {
      */
     messages: Array<Message$1>;
     /**
-     * Purchases in this conversation, oldest first
-     */
-    purchases: Array<ApiPurchase>;
-    /**
      * Optional platform name describing which site the user and bot are chatting on
      */
     platform?: string | null;
+    /**
+     * Purchases in this conversation, oldest first
+     */
+    purchases: Array<ApiPurchase>;
     /**
      * Whether to have the bot capable of responding in multiple messages (more realistic)
      */
@@ -443,7 +458,7 @@ type ImageItem = {
      */
     url: string;
 };
-type Language = "en" | "de" | "ru" | "ar" | "es" | "nl" | "uk" | "fr" | "it";
+type Language = 'en' | 'de' | 'ru' | 'ar' | 'es' | 'nl' | 'uk' | 'fr' | 'it';
 type ListApiKeysResponse = {
     /**
      * List of API keys for the client
@@ -509,24 +524,23 @@ type ListPlatformsResponse = {
      */
     platforms: Array<Platform>;
 };
+type ListSetsResponse = {
+    /**
+     * Oldest first
+     */
+    sets: Array<ApiContentSet>;
+};
 type MarkPurchasePaidResponse = {
     purchase: ApiPurchase;
 };
-type MediaTypeFilter = "image" | "video";
+type MediaTypeFilter = 'image' | 'video';
 type MemoryResponse = {
     /**
      * Text content of the memory
      */
     text: string;
 };
-type ApiMessageLock = {
-    checkout_url?: string | null;
-    price_cents: number;
-    purchase_id: string;
-    unlocked: boolean;
-};
 type Message$1 = {
-    lock?: ApiMessageLock | null;
     attached_media?: Content | null;
     /**
      * Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.
@@ -540,6 +554,7 @@ type Message$1 = {
      * Unique identifier for the content
      */
     id?: string | null;
+    lock?: ApiMessageLock | null;
     /**
      * What tone was used to generate the message (useful only for debug or display in admin
      * panel. Does nothing as input parameter, only output)
@@ -629,6 +644,10 @@ type UpdateBotRequest = {
     emoji_amount?: number | null;
     first_price_cents?: number | null;
     /**
+     * 0 to 10
+     */
+    free_nudes?: number | null;
+    /**
      * Freeform text description
      */
     freeform?: string | null;
@@ -676,6 +695,10 @@ type UpdateBotRequest = {
      */
     selling_style?: string | null;
     /**
+     * `sexting` or `girlfriend`
+     */
+    vibe?: string | null;
+    /**
      * She may send voice notes
      */
     voice_enabled?: boolean | null;
@@ -692,8 +715,6 @@ type UpdateBotResponse = {
  */
 type UpdateClientConfigRequest = {
     chat_images_enabled?: boolean | null;
-    first_contact_max_delay?: number | null;
-    first_contact_min_delay?: number | null;
     image_sending_behaviour?: ApiImageSendingBehaviour | null;
     language?: Language | null;
     max_delay?: number | null;
@@ -779,12 +800,12 @@ type User = {
      */
     username: string;
 };
-type VaultImageBehaviour = "force" | "never";
+type VaultImageBehaviour = 'force' | 'never';
 type CreateApiKeyData = {
     body: CreateApiKeyRequest;
     path?: never;
     query?: never;
-    url: "/api/api-keys";
+    url: '/api/api-keys';
 };
 type DeactivateApiKeyData = {
     body?: never;
@@ -795,7 +816,7 @@ type DeactivateApiKeyData = {
         key_id: string;
     };
     query?: never;
-    url: "/api/api-keys/{key_id}";
+    url: '/api/api-keys/{key_id}';
 };
 type DeleteBotData = {
     body?: never;
@@ -806,7 +827,7 @@ type DeleteBotData = {
         bot_id: string;
     };
     query?: never;
-    url: "/api/bots/{bot_id}";
+    url: '/api/bots/{bot_id}';
 };
 type GetBotData = {
     body?: never;
@@ -817,7 +838,7 @@ type GetBotData = {
         bot_id: string;
     };
     query?: never;
-    url: "/api/bots/{bot_id}";
+    url: '/api/bots/{bot_id}';
 };
 type UpdateBotData = {
     body: UpdateBotRequest;
@@ -828,7 +849,7 @@ type UpdateBotData = {
         bot_id: string;
     };
     query?: never;
-    url: "/api/bots/{bot_id}";
+    url: '/api/bots/{bot_id}';
 };
 type DeactivateChatterData = {
     body?: never;
@@ -839,7 +860,7 @@ type DeactivateChatterData = {
         chatter_id: string;
     };
     query?: never;
-    url: "/api/chatters/{chatter_id}";
+    url: '/api/chatters/{chatter_id}';
 };
 type GetChatterData = {
     body?: never;
@@ -850,13 +871,13 @@ type GetChatterData = {
         chatter_id: string;
     };
     query?: never;
-    url: "/api/chatters/{chatter_id}";
+    url: '/api/chatters/{chatter_id}';
 };
 type UpdateClientConfigData = {
     body: UpdateClientConfigRequest;
     path?: never;
     query?: never;
-    url: "/api/config";
+    url: '/api/config';
 };
 type ListContentData = {
     body?: never;
@@ -883,13 +904,13 @@ type ListContentData = {
          */
         media_type?: MediaTypeFilter | null;
     };
-    url: "/api/content";
+    url: '/api/content';
 };
 type UploadContentData = {
     body: UploadContentRequest;
     path?: never;
     query?: never;
-    url: "/api/content";
+    url: '/api/content';
 };
 type DeleteContentData = {
     body?: never;
@@ -900,7 +921,7 @@ type DeleteContentData = {
         content_id: string;
     };
     query?: never;
-    url: "/api/content/{content_id}";
+    url: '/api/content/{content_id}';
 };
 type ListConversationsData = {
     body?: never;
@@ -959,7 +980,7 @@ type ListConversationsData = {
          */
         offset?: number | null;
     };
-    url: "/api/conversations";
+    url: '/api/conversations';
 };
 type GetUserData = {
     body?: never;
@@ -970,7 +991,7 @@ type GetUserData = {
         user_id: string;
     };
     query?: never;
-    url: "/api/users/{user_id}";
+    url: '/api/users/{user_id}';
 };
 type UpdateUserData = {
     body: UpdateUserRequest;
@@ -981,7 +1002,7 @@ type UpdateUserData = {
         user_id: string;
     };
     query?: never;
-    url: "/api/users/{user_id}";
+    url: '/api/users/{user_id}';
 };
 
 interface GetPlatformOptions {
@@ -998,7 +1019,6 @@ interface MarkPurchasePaidOptions {
 interface CreateSetOptions {
     bot_id: string;
     name: string;
-    description: string;
 }
 interface ListSetsOptions {
     bot_id: string;
@@ -1006,7 +1026,6 @@ interface ListSetsOptions {
 interface UpdateSetOptions {
     set_id: string;
     name: string;
-    description: string;
 }
 interface DeleteSetOptions {
     set_id: string;
@@ -1779,8 +1798,8 @@ declare class PrioriChat {
      * const set = await client.createSet({
      *   bot_id: "12345678-1234-1234-1234-123456789012",
      *   name: "Bathroom · golden · towel",
-     *   description: "After a shower in golden light.",
      * });
+     * // Its description, and a name and tag per photo, are written from the photos a couple of minutes after the last edit.
      * ```
      */
     createSet(options: CreateSetOptions): Promise<ApiContentSet>;
@@ -1797,4 +1816,4 @@ declare class PrioriChat {
     setSetItems(options: SetSetItemsOptions): Promise<ApiContentSet>;
 }
 
-export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPurchase, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type SetSetItemsOptions, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
+export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type Platform, PrioriChat, type ResponseCandidate, type SearchedMessage, type SetSetItemsOptions, type Summary, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User };
