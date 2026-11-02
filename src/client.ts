@@ -1,3 +1,5 @@
+import { createTestCopyImpl, advanceTestClockImpl } from "./methods/followUps";
+import type { AdvanceClockRequest } from "./client/types.gen";
 import { client } from "./client/client.gen.ts";
 import {
   createConversationImpl,
@@ -326,6 +328,9 @@ export class PrioriChat {
    * console.log(`Found ${conversation.messages.length} messages`);
    * ```
    */
+  async createTestCopy(options: {id: string}) { return createTestCopyImpl.call(this, options); }
+  async advanceTestClock(options: AdvanceClockRequest & {id: string}) { return advanceTestClockImpl.call(this, options); }
+
   async getConversation(
     options: GetConversationOptions,
   ): Promise<GetConversationResponse> {

@@ -222,6 +222,16 @@ export type AddMessageResponse = {
     created_conversation: boolean;
 };
 
+export type AdvanceClockRequest = {
+    revision: number;
+    seconds?: number | null;
+};
+
+export type AdvanceClockResponse = {
+    follow_up: NextFollowUp;
+    test_clock: TestClockResponse;
+};
+
 /**
  * Represents an API key info (without the actual key)
  */
@@ -244,6 +254,7 @@ export type Bot = BotSelling & BotKnobs & {
      * List of bot attributes
      */
     attributes: Array<ApiAttribute>;
+    follow_ups: FollowUpSettings;
     /**
      * Freeform text description
      */
@@ -394,6 +405,11 @@ export type ClientConfig = {
 
 export type CloneVoiceResponse = {
     bot: Bot;
+};
+
+export type ContactHours = {
+    end: string;
+    start: string;
 };
 
 export type Content = {
@@ -665,6 +681,17 @@ export type FanValue = {
     spent_this_session_cents: number;
 };
 
+export type FollowUpSettings = {
+    automatic_enabled: boolean;
+    cadence_hours: Array<number>;
+    contact_window: ContactHours;
+    enabled: boolean;
+    fallback_timezone: string;
+    max_unanswered: number;
+    min_idle_minutes: number;
+    scheduled_enabled: boolean;
+};
+
 export type GenerateResponseSyncRequest = {
     batch_size?: number;
     /**
@@ -699,6 +726,7 @@ export type GetConversationResponse = {
      * ID of the bot associated with this conversation
      */
     bot_id: string;
+    follow_up: NextFollowUp;
     /**
      * Optional freeform text to add to the prompt
      */
@@ -725,6 +753,7 @@ export type GetConversationResponse = {
      * Whether to have the bot capable of responding in multiple messages (more realistic)
      */
     segment?: boolean | null;
+    test_clock?: TestClockResponse | null;
     /**
      * Her selling turns, oldest first, for the turn log in the chat. Empty for bots that don't sell.
      */
@@ -953,6 +982,15 @@ export type Message = {
     voice?: ApiVoiceNote | null;
 };
 
+export type NextFollowUp = {
+    max_unanswered: number;
+    next_at?: string | null;
+    source?: string | null;
+    status: string;
+    timezone: string;
+    unanswered: number;
+};
+
 export type OpenOffer = {
     content_ids: Array<string>;
     offered_at: string;
@@ -1121,6 +1159,16 @@ export type Summary = {
     summary_text: string;
 };
 
+export type TestClockResponse = {
+    now: string;
+    revision: number;
+    source_conversation_id: string;
+};
+
+export type TestCopyResponse = {
+    conversation_id: string;
+};
+
 export type TurnStep = {
     calls?: Array<StepCall>;
     model?: string | null;
@@ -1155,6 +1203,7 @@ export type UpdateBotRequest = {
      */
     emoji_amount?: number | null;
     first_price_cents?: number | null;
+    follow_ups?: FollowUpSettings | null;
     /**
      * 0 to 10
      */
@@ -1245,6 +1294,10 @@ export type UpdateClientConfigResponse = {
 };
 
 export type UpdateConversationRequestBody = {
+    /**
+     * Fan timezone for proactive contact hours. Null restores the bot fallback.
+     */
+    contact_timezone?: string | null;
     /**
      * Optional freeform text to add to the prompt
      */
@@ -2229,6 +2282,60 @@ export type SuggestRepliesResponses = {
 };
 
 export type SuggestRepliesResponse2 = SuggestRepliesResponses[keyof SuggestRepliesResponses];
+
+export type AdvanceTestClockData = {
+    body: AdvanceClockRequest;
+    path: {
+        /**
+         * Test conversation
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/test-clock';
+};
+
+export type AdvanceTestClockErrors = {
+    /**
+     * Conversation changed or busy
+     */
+    409: unknown;
+    /**
+     * Invalid advance or not a test copy
+     */
+    422: unknown;
+};
+
+export type AdvanceTestClockResponses = {
+    200: AdvanceClockResponse;
+};
+
+export type AdvanceTestClockResponse = AdvanceTestClockResponses[keyof AdvanceTestClockResponses];
+
+export type CreateTestCopyData = {
+    body?: never;
+    path: {
+        /**
+         * Source conversation
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/test-copy';
+};
+
+export type CreateTestCopyErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+};
+
+export type CreateTestCopyResponses = {
+    200: TestCopyResponse;
+};
+
+export type CreateTestCopyResponse = CreateTestCopyResponses[keyof CreateTestCopyResponses];
 
 export type CreateConversionData = {
     body: CreateConversionRequestBody;

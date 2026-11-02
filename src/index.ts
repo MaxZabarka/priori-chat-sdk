@@ -114,3 +114,5 @@ export type {
   ListVoicesResponse,
   VoiceModelName,
 } from "./client/types.gen";
+
+export type { FollowUpSettings, ContactHours, NextFollowUp, TestClockResponse, AdvanceClockRequest, AdvanceClockResponse, TestCopyResponse } from "./client/types.gen";

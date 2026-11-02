@@ -387,6 +387,40 @@ export const zAddMessageResponse = z.object({
     created_conversation: z.boolean()
 });
 
+export const zAdvanceClockRequest = z.object({
+    revision: z.number().int().gte(0),
+    seconds: z.union([
+        z.coerce.bigint(),
+        z.null()
+    ]).optional()
+});
+
+export const zNextFollowUp = z.object({
+    max_unanswered: z.number().int().gte(0),
+    next_at: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    source: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
+    status: z.string(),
+    timezone: z.string(),
+    unanswered: z.number().int().gte(0)
+});
+
+export const zTestClockResponse = z.object({
+    now: z.string().datetime(),
+    revision: z.number().int().gte(0),
+    source_conversation_id: z.string()
+});
+
+export const zAdvanceClockResponse = z.object({
+    follow_up: zNextFollowUp,
+    test_clock: zTestClockResponse
+});
+
 /**
  * Represents an API key info (without the actual key)
  */
@@ -480,12 +514,29 @@ export const zBotKnobs = z.object({
     ]).optional()
 });
 
+export const zContactHours = z.object({
+    end: z.string(),
+    start: z.string()
+});
+
+export const zFollowUpSettings = z.object({
+    automatic_enabled: z.boolean(),
+    cadence_hours: z.array(z.number().int().gte(0)),
+    contact_window: zContactHours,
+    enabled: z.boolean(),
+    fallback_timezone: z.string(),
+    max_unanswered: z.number().int().gte(0),
+    min_idle_minutes: z.number().int().gte(0),
+    scheduled_enabled: z.boolean()
+});
+
 export const zBot = zBotSelling.and(zBotKnobs).and(z.object({
     assigned_voice_id: z.union([
         z.string().uuid(),
         z.null()
     ]).optional(),
     attributes: z.array(zApiAttribute),
+    follow_ups: zFollowUpSettings,
     freeform: z.string(),
     id: z.string().uuid(),
     name: z.string(),
@@ -865,6 +916,7 @@ export const zSummary = z.object({
 
 export const zGetConversationResponse = z.object({
     bot_id: z.string().uuid(),
+    follow_up: zNextFollowUp,
     freeform: z.union([
         z.string(),
         z.null()
@@ -886,6 +938,10 @@ export const zGetConversationResponse = z.object({
     purchases: z.array(zApiPurchase),
     segment: z.union([
         z.boolean(),
+        z.null()
+    ]).optional(),
+    test_clock: z.union([
+        zTestClockResponse,
         z.null()
     ]).optional(),
     turns: z.array(zApiTurn),
@@ -1042,6 +1098,10 @@ export const zSuggestRepliesResponse = z.object({
     suggestions: z.array(zReplySuggestion)
 });
 
+export const zTestCopyResponse = z.object({
+    conversation_id: z.string()
+});
+
 export const zUpdateBotRequest = z.object({
     assigned_voice_id: z.union([
         z.string().uuid(),
@@ -1066,6 +1126,10 @@ export const zUpdateBotRequest = z.object({
     ]).optional(),
     first_price_cents: z.union([
         z.coerce.bigint(),
+        z.null()
+    ]).optional(),
+    follow_ups: z.union([
+        zFollowUpSettings,
         z.null()
     ]).optional(),
     free_nudes: z.union([
@@ -1193,6 +1257,10 @@ export const zUpdateClientConfigResponse = z.object({
 });
 
 export const zUpdateConversationRequestBody = z.object({
+    contact_timezone: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
     freeform: z.union([
         z.string(),
         z.null()
@@ -1673,6 +1741,26 @@ export const zSuggestRepliesData = z.object({
  * Suggested replies
  */
 export const zSuggestRepliesResponse2 = zSuggestRepliesResponse;
+
+export const zAdvanceTestClockData = z.object({
+    body: zAdvanceClockRequest,
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+export const zAdvanceTestClockResponse = zAdvanceClockResponse;
+
+export const zCreateTestCopyData = z.object({
+    body: z.never().optional(),
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+export const zCreateTestCopyResponse = zTestCopyResponse;
 
 export const zCreateConversionData = z.object({
     body: zCreateConversionRequestBody,

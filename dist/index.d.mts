@@ -157,6 +157,14 @@ type ApiVoiceNote = {
     transcript: string;
     url: string;
 };
+type AdvanceClockRequest = {
+    revision: number;
+    seconds?: number | null;
+};
+type AdvanceClockResponse = {
+    follow_up: NextFollowUp;
+    test_clock: TestClockResponse;
+};
 /**
  * Represents an API key info (without the actual key)
  */
@@ -176,6 +184,7 @@ type Bot = BotSelling & BotKnobs & {
      * List of bot attributes
      */
     attributes: Array<ApiAttribute>;
+    follow_ups: FollowUpSettings;
     /**
      * Freeform text description
      */
@@ -296,6 +305,10 @@ type ClientConfig = {
     timezone?: string | null;
     typing_speed?: number | null;
     webhook?: string | null;
+};
+type ContactHours = {
+    end: string;
+    start: string;
 };
 type Content = {
     /**
@@ -462,6 +475,16 @@ type FanValue = {
     spent_cents: number;
     spent_this_session_cents: number;
 };
+type FollowUpSettings = {
+    automatic_enabled: boolean;
+    cadence_hours: Array<number>;
+    contact_window: ContactHours;
+    enabled: boolean;
+    fallback_timezone: string;
+    max_unanswered: number;
+    min_idle_minutes: number;
+    scheduled_enabled: boolean;
+};
 type GenerateResponseSyncRequest = {
     batch_size?: number;
     /**
@@ -491,6 +514,7 @@ type GetConversationResponse = {
      * ID of the bot associated with this conversation
      */
     bot_id: string;
+    follow_up: NextFollowUp;
     /**
      * Optional freeform text to add to the prompt
      */
@@ -517,6 +541,7 @@ type GetConversationResponse = {
      * Whether to have the bot capable of responding in multiple messages (more realistic)
      */
     segment?: boolean | null;
+    test_clock?: TestClockResponse | null;
     /**
      * Her selling turns, oldest first, for the turn log in the chat. Empty for bots that don't sell.
      */
@@ -695,6 +720,14 @@ type Message$1 = {
     text: string;
     voice?: ApiVoiceNote | null;
 };
+type NextFollowUp = {
+    max_unanswered: number;
+    next_at?: string | null;
+    source?: string | null;
+    status: string;
+    timezone: string;
+    unanswered: number;
+};
 type OpenOffer = {
     content_ids: Array<string>;
     offered_at: string;
@@ -826,6 +859,14 @@ type Summary = {
      */
     summary_text: string;
 };
+type TestClockResponse = {
+    now: string;
+    revision: number;
+    source_conversation_id: string;
+};
+type TestCopyResponse = {
+    conversation_id: string;
+};
 type TurnStep = {
     calls?: Array<StepCall>;
     model?: string | null;
@@ -859,6 +900,7 @@ type UpdateBotRequest = {
      */
     emoji_amount?: number | null;
     first_price_cents?: number | null;
+    follow_ups?: FollowUpSettings | null;
     /**
      * 0 to 10
      */
@@ -1639,6 +1681,28 @@ declare class PrioriChat {
      * console.log(`Found ${conversation.messages.length} messages`);
      * ```
      */
+    createTestCopy(options: {
+        id: string;
+    }): Promise<{
+        conversation_id: string;
+    }>;
+    advanceTestClock(options: AdvanceClockRequest & {
+        id: string;
+    }): Promise<{
+        follow_up: {
+            status: string;
+            timezone: string;
+            max_unanswered: number;
+            unanswered: number;
+            next_at?: string | null | undefined;
+            source?: string | null | undefined;
+        };
+        test_clock: {
+            revision: number;
+            now: string;
+            source_conversation_id: string;
+        };
+    }>;
     getConversation(options: GetConversationOptions): Promise<GetConversationResponse>;
     /**
      * Generates bot response candidates for a conversation without sending them
@@ -2089,4 +2153,4 @@ declare class PrioriChat {
     voiceSample(options: VoiceSampleOptions): Promise<Blob>;
 }
 
-export { type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type ApiVoice, type ApiVoiceNote, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateClipVoiceOptions, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateLibraryVoiceOptions, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type DeleteVoiceOptions, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type ListVoicesResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type PhotoStatus, type Platform, PrioriChat, type RenameVoiceOptions, type ReplySuggestion, type ResponseCandidate, type SearchedMessage, type Session, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type SuggestRepliesOptions, type SuggestRepliesResponse, type Summary, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User, type VoiceModelName, type VoiceSampleOptions };
+export { type AdvanceClockRequest, type AdvanceClockResponse, type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type ApiVoice, type ApiVoiceNote, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type ContactHours, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateClipVoiceOptions, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateLibraryVoiceOptions, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type DeleteVoiceOptions, type FollowUpSettings, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type ListVoicesResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type NextFollowUp, type PhotoStatus, type Platform, PrioriChat, type RenameVoiceOptions, type ReplySuggestion, type ResponseCandidate, type SearchedMessage, type Session, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type SuggestRepliesOptions, type SuggestRepliesResponse, type Summary, type TestClockResponse, type TestCopyResponse, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User, type VoiceModelName, type VoiceSampleOptions };

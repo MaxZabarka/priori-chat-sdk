@@ -2,6 +2,1595 @@ var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
+// src/client/zod.gen.ts
+import { z } from "zod";
+var zApiAttribute = z.object({
+  name: z.string(),
+  value: z.string()
+});
+var zApiCheckout = z.union([
+  z.object({
+    type: z.enum([
+      "external"
+    ])
+  }),
+  z.object({
+    type: z.enum([
+      "hosted"
+    ]),
+    url: z.string()
+  })
+]);
+var zApiPhotoLabel = z.object({
+  content_id: z.string(),
+  name: z.string(),
+  tag: z.string()
+});
+var zApiContentSet = z.object({
+  bot_id: z.string().uuid(),
+  description: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  id: z.string().uuid(),
+  items: z.array(z.string()),
+  name: z.string(),
+  photos: z.array(zApiPhotoLabel)
+});
+var zApiImageSendingBehaviour = z.enum([
+  "disabled",
+  "low",
+  "moderate",
+  "high",
+  "aggressive"
+]);
+var zApiMessageLock = z.object({
+  checkout_url: z.union([
+    z.string().url(),
+    z.null()
+  ]).optional(),
+  price_cents: z.number().int().gte(0),
+  purchase_id: z.string().uuid(),
+  unlocked: z.boolean()
+});
+var zApiModerationCategory = z.enum([
+  "underage_site_use",
+  "sexual_minors",
+  "beastiality",
+  "sexual_violence",
+  "prompt_injection"
+]);
+var zApiModerationSeverity = z.enum([
+  "Low",
+  "Medium",
+  "High",
+  "Critical"
+]);
+var zApiModerationInfo = z.object({
+  category: zApiModerationCategory,
+  reasoning: z.string(),
+  severity: zApiModerationSeverity
+});
+var zApiOrientation = z.enum([
+  "straight_female",
+  "lesbian_female",
+  "gay_man",
+  "straight_man",
+  "trans_mtf",
+  "trans_ftm",
+  "bisexual"
+]);
+var zApiPurchase = z.object({
+  checkout: zApiCheckout,
+  content_ids: z.array(z.string()),
+  id: z.string().uuid(),
+  message_id: z.string().uuid(),
+  paid_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  price_cents: z.number().int().gte(0),
+  requested_at: z.string().datetime()
+});
+var zApiTurnAction = z.object({
+  action: z.string(),
+  content_ids: z.array(z.string()),
+  price_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional()
+});
+var zStageScores = z.object({
+  aftercare: z.number(),
+  close: z.number(),
+  offer: z.number(),
+  rapport: z.number(),
+  tease: z.number()
+});
+var zStepCall = z.object({
+  arguments: z.unknown(),
+  content_ids: z.array(z.string()).optional(),
+  name: z.string(),
+  result: z.string()
+});
+var zStepUsage = z.object({
+  cached_tokens: z.coerce.bigint().gte(BigInt(0)).optional(),
+  completion_tokens: z.coerce.bigint().gte(BigInt(0)),
+  cost_usd: z.number(),
+  prompt_tokens: z.coerce.bigint().gte(BigInt(0))
+});
+var zTurnStep = z.object({
+  calls: z.array(zStepCall).optional(),
+  model: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  private_text: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  reasoning: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  usage: z.union([
+    zStepUsage,
+    z.null()
+  ]).optional()
+});
+var zApiTurn = z.object({
+  actions: z.array(zApiTurnAction),
+  cost_usd: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  finished_at: z.string().datetime(),
+  id: z.string().uuid(),
+  model: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  readiness: z.union([
+    z.number().int().gte(0),
+    z.null()
+  ]).optional(),
+  seconds: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  stage: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  stage_scores: z.union([
+    zStageScores,
+    z.null()
+  ]).optional(),
+  started_at: z.string().datetime(),
+  steps: z.union([
+    z.array(zTurnStep),
+    z.null()
+  ]).optional()
+});
+var zApiUserWithStats = z.object({
+  attributes: z.array(zApiAttribute),
+  created_date: z.string().datetime(),
+  freeform: z.string(),
+  id: z.string(),
+  latest_message_time: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  message_count: z.coerce.bigint(),
+  username: z.string()
+});
+var zVoiceModelName = z.enum([
+  "drama-3"
+]);
+var zApiVoice = z.object({
+  built_in: z.boolean(),
+  clip_transcript: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  clip_url: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  id: z.string().uuid(),
+  kind: z.string(),
+  model: zVoiceModelName,
+  name: z.string(),
+  used_by: z.array(z.string())
+});
+var zApiVoiceNote = z.object({
+  duration_ms: z.number().int().gte(0),
+  format: z.string(),
+  transcript: z.string(),
+  url: z.string()
+});
+var zImageSendingBehaviour = z.enum([
+  "disabled",
+  "low",
+  "moderate",
+  "high",
+  "aggressive"
+]);
+var zLanguage = z.enum([
+  "en",
+  "de",
+  "ru",
+  "ar",
+  "es",
+  "nl",
+  "uk",
+  "fr",
+  "it"
+]);
+var zContent = z.object({
+  content_hash: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  content_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  url: z.string().url()
+});
+var zMessage = z.object({
+  attached_media: z.union([
+    zContent,
+    z.null()
+  ]).optional(),
+  attached_media_items: z.union([
+    z.array(zContent),
+    z.null()
+  ]).optional(),
+  from_bot: z.boolean(),
+  id: z.union([
+    z.string().uuid(),
+    z.null()
+  ]).optional(),
+  lock: z.union([
+    zApiMessageLock,
+    z.null()
+  ]).optional(),
+  message_tone: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  moderation: z.union([
+    zApiModerationInfo,
+    z.null()
+  ]).optional(),
+  sent_at: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  text: z.string(),
+  voice: z.union([
+    zApiVoiceNote,
+    z.null()
+  ]).optional()
+});
+var zCreateConversationRequest = z.object({
+  bot_id: z.string().uuid(),
+  create_user_if_not_exists: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  freeform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  image_sending_behaviour: z.union([
+    zImageSendingBehaviour,
+    z.null()
+  ]).optional(),
+  language: z.union([
+    zLanguage,
+    z.null()
+  ]).optional(),
+  platform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  segment: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  timezone: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  user_id: z.string(),
+  webhook: z.union([
+    z.string().url(),
+    z.null()
+  ]).optional(),
+  with_messages: z.union([
+    z.array(zMessage),
+    z.null()
+  ]).optional()
+});
+var zAddMessageRequest = z.object({
+  conversation_creation_params: zCreateConversationRequest,
+  create_user_if_not_exists: z.boolean().optional(),
+  message: zMessage
+});
+var zConversation = z.object({
+  bot_id: z.string().uuid(),
+  id: z.string(),
+  messages: z.array(zMessage),
+  user_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zAddMessageResponse = z.object({
+  conversation: zConversation,
+  created_conversation: z.boolean()
+});
+var zAdvanceClockRequest = z.object({
+  revision: z.number().int().gte(0),
+  seconds: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional()
+});
+var zNextFollowUp = z.object({
+  max_unanswered: z.number().int().gte(0),
+  next_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  source: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  status: z.string(),
+  timezone: z.string(),
+  unanswered: z.number().int().gte(0)
+});
+var zTestClockResponse = z.object({
+  now: z.string().datetime(),
+  revision: z.number().int().gte(0),
+  source_conversation_id: z.string()
+});
+var zAdvanceClockResponse = z.object({
+  follow_up: zNextFollowUp,
+  test_clock: zTestClockResponse
+});
+var zApiKeyInfo = z.object({
+  created_at: z.string().datetime(),
+  id: z.string().uuid(),
+  is_active: z.boolean(),
+  key_prefix: z.string(),
+  name: z.string()
+});
+var zAudioFormat = z.enum([
+  "ogg_opus",
+  "mpeg"
+]);
+var zBotSelling = z.object({
+  checkout_link_in_text: z.boolean(),
+  max_price_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  min_price_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  payment_rails: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  selling_style: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zBotKnobs = z.object({
+  bundles: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  discount: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  emoji_amount: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  first_price_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  free_nudes: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  message_length: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  pace: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  personality_shy_bold: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  personality_sweet_bratty: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  price_step_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  vibe: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  welcome_back_days: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional()
+});
+var zContactHours = z.object({
+  end: z.string(),
+  start: z.string()
+});
+var zFollowUpSettings = z.object({
+  automatic_enabled: z.boolean(),
+  cadence_hours: z.array(z.number().int().gte(0)),
+  contact_window: zContactHours,
+  enabled: z.boolean(),
+  fallback_timezone: z.string(),
+  max_unanswered: z.number().int().gte(0),
+  min_idle_minutes: z.number().int().gte(0),
+  scheduled_enabled: z.boolean()
+});
+var zBot = zBotSelling.and(zBotKnobs).and(z.object({
+  assigned_voice_id: z.union([
+    z.string().uuid(),
+    z.null()
+  ]).optional(),
+  attributes: z.array(zApiAttribute),
+  follow_ups: zFollowUpSettings,
+  freeform: z.string(),
+  id: z.string().uuid(),
+  name: z.string(),
+  orientation: zApiOrientation,
+  voice_enabled: z.boolean()
+}));
+var zChatter = z.object({
+  id: z.string().uuid(),
+  username: z.string()
+});
+var zChatterLoginRequest = z.object({
+  password: z.string(),
+  username: z.string()
+});
+var zChatterLoginResponse = z.object({
+  chatter_id: z.string().uuid(),
+  token: z.string()
+});
+var zClientConfig = z.object({
+  chat_images_enabled: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  image_sending_behaviour: z.union([
+    zApiImageSendingBehaviour,
+    z.null()
+  ]).optional(),
+  language: z.union([
+    zLanguage,
+    z.null()
+  ]).optional(),
+  max_delay: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  min_delay: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  platform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  segment: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  timezone: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  typing_speed: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  webhook: z.union([
+    z.string().url(),
+    z.null()
+  ]).optional()
+});
+var zCloneVoiceResponse = z.object({
+  bot: zBot
+});
+var zSearchedMessage = z.object({
+  from_bot: z.boolean(),
+  match_end: z.number().int().gte(0),
+  match_start: z.number().int().gte(0),
+  message_text: z.string(),
+  moderation: z.union([
+    zApiModerationInfo,
+    z.null()
+  ]).optional(),
+  sent_at: z.coerce.bigint()
+});
+var zConversationHeader = z.object({
+  bot_id: z.string().uuid(),
+  id: z.string(),
+  last_message: z.union([
+    zMessage,
+    z.null()
+  ]).optional(),
+  message_count: z.number().int().gte(0),
+  platform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  platform_id: z.union([
+    z.string().uuid(),
+    z.null()
+  ]).optional(),
+  searched_message: z.union([
+    zSearchedMessage,
+    z.null()
+  ]).optional(),
+  user_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zFanValue = z.object({
+  average_price_cents: z.union([
+    z.coerce.bigint().gte(BigInt(0)),
+    z.null()
+  ]).optional(),
+  bounds_cents: z.union([
+    z.array(z.number().int().gte(0)),
+    z.null()
+  ]).optional(),
+  purchases: z.number().int().gte(0),
+  spent_cents: z.coerce.bigint().gte(BigInt(0)),
+  spent_this_session_cents: z.coerce.bigint().gte(BigInt(0))
+});
+var zLockConversion = z.object({
+  median_seconds_to_pay: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  offered: z.number().int().gte(0),
+  paid: z.number().int().gte(0)
+});
+var zOpenOffer = z.object({
+  content_ids: z.array(z.string()),
+  offered_at: z.string().datetime(),
+  price_cents: z.number().int().gte(0),
+  purchase_id: z.string()
+});
+var zPricePoint = z.object({
+  at: z.string().datetime(),
+  paid: z.boolean(),
+  price_cents: z.number().int().gte(0)
+});
+var zSession = z.object({
+  ended_at: z.string().datetime(),
+  messages: z.number().int().gte(0),
+  photos: z.number().int().gte(0),
+  spent_cents: z.coerce.bigint().gte(BigInt(0)),
+  started_at: z.string().datetime()
+});
+var zPhotoStatus = z.enum([
+  "not_sent",
+  "sent",
+  "locked",
+  "unlocked"
+]);
+var zPhotoTag = z.enum([
+  "sfw",
+  "risky",
+  "nude"
+]);
+var zGridPhoto = z.object({
+  content_id: z.string(),
+  name: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  status: zPhotoStatus,
+  tag: z.union([
+    zPhotoTag,
+    z.null()
+  ]).optional(),
+  thumbnail_url: z.string(),
+  video_url: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zSetGrid = z.object({
+  current: z.boolean(),
+  description: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  name: z.string(),
+  photos: z.array(zGridPhoto),
+  set_id: z.string()
+});
+var zConversationInsights = z.object({
+  fan_value: zFanValue,
+  locks: zLockConversion,
+  open_offers: z.array(zOpenOffer),
+  price_line: z.array(zPricePoint),
+  readiness_now: z.union([
+    z.number().int().gte(0),
+    z.null()
+  ]).optional(),
+  sessions: z.array(zSession),
+  sets: z.array(zSetGrid),
+  stage_now: z.union([
+    zStageScores,
+    z.null()
+  ]).optional()
+});
+var zCreateApiKeyRequest = z.object({
+  name: z.string()
+});
+var zCreateApiKeyResponse = z.object({
+  api_key: z.string(),
+  key_info: zApiKeyInfo
+});
+var zCreateBotRequestBody = z.object({
+  attributes: z.array(zApiAttribute).optional(),
+  freeform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  name: z.string(),
+  orientation: z.union([
+    zApiOrientation,
+    z.null()
+  ]).optional()
+});
+var zCreateBotResponse = z.object({
+  bot: zBot
+});
+var zCreateChatterRequestBody = z.object({
+  username: z.string()
+});
+var zCreateChatterResponse = z.object({
+  chatter: zChatter,
+  password: z.string()
+});
+var zCreateClipVoiceForm = z.object({
+  clip: z.string(),
+  name: z.string(),
+  transcript: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zCreateConversationResponse = z.object({
+  conversation: zConversation
+});
+var zCreateConversionRequestBody = z.object({
+  amount: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  bot_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  conversation_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  metadata: z.unknown().optional(),
+  timestamp: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  user_id: z.string()
+});
+var zCreateLibraryVoiceRequest = z.object({
+  library_voice_id: z.string(),
+  name: z.string()
+});
+var zCreateSetRequest = z.object({
+  bot_id: z.string().uuid(),
+  name: z.string()
+});
+var zCreateUserRequestBody = z.object({
+  attributes: z.array(zApiAttribute).optional(),
+  freeform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  id: z.string(),
+  username: z.string()
+});
+var zUser = z.object({
+  attributes: z.array(zApiAttribute),
+  freeform: z.string(),
+  id: z.string(),
+  username: z.string()
+});
+var zCreateUserResponse = z.object({
+  user: zUser
+});
+var zDeactivateApiKeyResponse = z.object({
+  message: z.string()
+});
+var zDeleteContentResponse = z.object({
+  message: z.string()
+});
+var zVaultImageBehaviour = z.enum([
+  "force",
+  "never"
+]);
+var zGenerateResponseSyncRequest = z.object({
+  batch_size: z.number().int().gte(0).optional(),
+  degrade_grammar_factor: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  override_messages: z.union([
+    z.array(zMessage),
+    z.null()
+  ]).optional(),
+  vault_image_behaviour: z.union([
+    zVaultImageBehaviour,
+    z.null()
+  ]).optional()
+});
+var zResponseCandidate = z.object({
+  messages: z.array(zMessage)
+});
+var zGenerateResponseSyncResponse = z.object({
+  candidates: z.array(zResponseCandidate)
+});
+var zGetBotResponse = z.object({
+  bot: zBot
+});
+var zGetChatterResponse = z.object({
+  chatter: zChatter
+});
+var zGetClientConfigResponse = z.object({
+  config: zClientConfig
+});
+var zSummary = z.object({
+  created_at: z.coerce.bigint(),
+  message_count: z.number().int().gte(0),
+  summary_text: z.string()
+});
+var zGetConversationResponse = z.object({
+  bot_id: z.string().uuid(),
+  follow_up: zNextFollowUp,
+  freeform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  insights: z.union([
+    zConversationInsights,
+    z.null()
+  ]).optional(),
+  is_typing: z.boolean(),
+  latest_summary: z.union([
+    zSummary,
+    z.null()
+  ]).optional(),
+  messages: z.array(zMessage),
+  platform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  purchases: z.array(zApiPurchase),
+  segment: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  test_clock: z.union([
+    zTestClockResponse,
+    z.null()
+  ]).optional(),
+  turns: z.array(zApiTurn),
+  user_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  webhook: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zMemoryResponse = z.object({
+  text: z.string()
+});
+var zGetMemoriesResponse = z.object({
+  bot_memories: z.array(zMemoryResponse),
+  user_memories: z.array(zMemoryResponse)
+});
+var zPlatform = z.object({
+  custom_instruction: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  id: z.string(),
+  name: z.string()
+});
+var zGetPlatformResponse = z.object({
+  platform: zPlatform
+});
+var zGetUserResponse = z.object({
+  user: zUser
+});
+var zImageItem = z.object({
+  new_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  public: z.boolean(),
+  url: z.string()
+});
+var zListApiKeysResponse = z.object({
+  api_keys: z.array(zApiKeyInfo)
+});
+var zListBotsResponse = z.object({
+  bots: z.array(zBot)
+});
+var zListChattersResponse = z.object({
+  chatters: z.array(zChatter)
+});
+var zMediaTypeFilter = z.enum([
+  "image",
+  "video"
+]);
+var zListContentQuery = z.object({
+  bot_id: z.union([
+    z.string().uuid(),
+    z.null()
+  ]).optional(),
+  limit: z.union([
+    z.number().int().gte(0),
+    z.null()
+  ]).optional(),
+  media_type: z.union([
+    zMediaTypeFilter,
+    z.null()
+  ]).optional(),
+  search: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  user_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zListContentResponse = z.object({
+  content: z.array(zContent),
+  private_content: z.array(zContent),
+  public_content: z.array(zContent)
+});
+var zListConversationsResponse = z.object({
+  conversations: z.array(zConversationHeader)
+});
+var zListPlatformsResponse = z.object({
+  platforms: z.array(zPlatform)
+});
+var zListSetsResponse = z.object({
+  sets: z.array(zApiContentSet)
+});
+var zListUsersResponse = z.object({
+  has_more: z.boolean(),
+  limit: z.coerce.bigint(),
+  offset: z.coerce.bigint(),
+  total_count: z.coerce.bigint(),
+  users: z.array(zApiUserWithStats)
+});
+var zListVoicesResponse = z.object({
+  voices: z.array(zApiVoice)
+});
+var zMarkPurchasePaidResponse = z.object({
+  purchase: zApiPurchase
+});
+var zRenameVoiceRequest = z.object({
+  name: z.string()
+});
+var zReplySuggestion = z.object({
+  text: z.string(),
+  tone: z.string()
+});
+var zSendMessageRequest = z.object({
+  message: zMessage
+});
+var zSetItemsRequest = z.object({
+  content_ids: z.array(z.string())
+});
+var zSpeechRequest = z.object({
+  bot_id: z.string(),
+  format: z.union([
+    zAudioFormat,
+    z.null()
+  ]).optional(),
+  message: z.string(),
+  url: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional()
+});
+var zSuggestRepliesResponse = z.object({
+  suggestions: z.array(zReplySuggestion)
+});
+var zTestCopyResponse = z.object({
+  conversation_id: z.string()
+});
+var zUpdateBotRequest = z.object({
+  assigned_voice_id: z.union([
+    z.string().uuid(),
+    z.null()
+  ]).optional(),
+  attributes: z.array(zApiAttribute).optional(),
+  bundles: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  checkout_link_in_text: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  discount: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  emoji_amount: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  first_price_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  follow_ups: z.union([
+    zFollowUpSettings,
+    z.null()
+  ]).optional(),
+  free_nudes: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  freeform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  images: z.union([
+    z.array(zImageItem),
+    z.null()
+  ]).optional(),
+  max_price_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  message_length: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  min_price_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  name: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  orientation: z.union([
+    zApiOrientation,
+    z.null()
+  ]).optional(),
+  pace: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  payment_rails: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  personality_shy_bold: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  personality_sweet_bratty: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  price_step_cents: z.union([
+    z.coerce.bigint(),
+    z.null()
+  ]).optional(),
+  selling_style: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  vibe: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  voice_enabled: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  welcome_back_days: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional()
+});
+var zUpdateBotResponse = z.object({
+  bot: zBot
+});
+var zUpdateClientConfigRequest = z.object({
+  chat_images_enabled: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  image_sending_behaviour: z.union([
+    zApiImageSendingBehaviour,
+    z.null()
+  ]).optional(),
+  language: z.union([
+    zLanguage,
+    z.null()
+  ]).optional(),
+  max_delay: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  min_delay: z.union([
+    z.number().int(),
+    z.null()
+  ]).optional(),
+  platform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  segment: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  timezone: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  typing_speed: z.union([
+    z.number(),
+    z.null()
+  ]).optional(),
+  webhook: z.union([
+    z.string().url(),
+    z.null()
+  ]).optional()
+});
+var zUpdateClientConfigResponse = z.object({
+  config: zClientConfig
+});
+var zUpdateConversationRequestBody = z.object({
+  contact_timezone: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  freeform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  image_sending_behaviour: z.union([
+    zImageSendingBehaviour,
+    z.null()
+  ]).optional(),
+  language: z.union([
+    zLanguage,
+    z.null()
+  ]).optional(),
+  platform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  segment: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  timezone: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  webhook: z.union([
+    z.string().url(),
+    z.null()
+  ]).optional()
+});
+var zUpdateConversationResponse = z.object({
+  success: z.boolean()
+});
+var zUpdatePlatformRequestBody = z.object({
+  custom_instruction: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zUpdatePlatformResponse = z.object({
+  success: z.boolean()
+});
+var zUpdateSetRequest = z.object({
+  name: z.string()
+});
+var zUpdateUserRequest = z.object({
+  attributes: z.array(zApiAttribute).optional(),
+  freeform: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  username: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zUpdateUserResponse = z.object({
+  user: zUser
+});
+var zUploadContentRequest = z.object({
+  bot_id: z.union([
+    z.string().uuid(),
+    z.null()
+  ]).optional(),
+  image_url: z.string(),
+  public: z.boolean().optional(),
+  user_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional()
+});
+var zUploadContentResponse = z.object({
+  content: zContent,
+  created: z.boolean()
+});
+var zVoiceSampleRequest = z.object({
+  text: z.string()
+});
+var zListApiKeysData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zCreateApiKeyData = z.object({
+  body: zCreateApiKeyRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zDeactivateApiKeyData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    key_id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zChatterLoginData = z.object({
+  body: zChatterLoginRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zCloneVoiceData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    bot_id: z.string()
+  })
+});
+var zListBotsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zCreateBotData = z.object({
+  body: zCreateBotRequestBody,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zDeleteBotData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    bot_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zDeleteBotResponse = z.void();
+var zGetBotData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    bot_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zUpdateBotData = z.object({
+  body: zUpdateBotRequest,
+  path: z.object({
+    bot_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zListChattersData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zCreateChatterData = z.object({
+  body: zCreateChatterRequestBody,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zDeactivateChatterData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    chatter_id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zDeactivateChatterResponse = z.void();
+var zGetChatterData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    chatter_id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zGetClientConfigData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zUpdateClientConfigData = z.object({
+  body: zUpdateClientConfigRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zListContentData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    bot_id: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    user_id: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    limit: z.union([
+      z.number().int().gte(0),
+      z.null()
+    ]).optional(),
+    search: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    media_type: z.union([
+      zMediaTypeFilter,
+      z.null()
+    ]).optional()
+  }).optional()
+});
+var zUploadContentData = z.object({
+  body: zUploadContentRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zDeleteContentData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    content_id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zListConversationsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    bot_id: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    user_id: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    conversation_id: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    min_messages: z.union([
+      z.number().int(),
+      z.null()
+    ]).optional(),
+    max_messages: z.union([
+      z.number().int(),
+      z.null()
+    ]).optional(),
+    message_content: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    min_last_message_date: z.union([
+      z.number().int(),
+      z.null()
+    ]).optional(),
+    max_last_message_date: z.union([
+      z.number().int(),
+      z.null()
+    ]).optional(),
+    severities: z.union([
+      z.array(z.string()),
+      z.null()
+    ]).optional(),
+    categories: z.union([
+      z.array(z.string()),
+      z.null()
+    ]).optional(),
+    platform_ids: z.union([
+      z.array(z.string()),
+      z.null()
+    ]).optional(),
+    limit: z.union([
+      z.coerce.bigint(),
+      z.null()
+    ]).optional(),
+    offset: z.union([
+      z.coerce.bigint(),
+      z.null()
+    ]).optional()
+  }).optional()
+});
+var zCreateConversationData = z.object({
+  body: zCreateConversationRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zUpdateConversationData = z.object({
+  body: zUpdateConversationRequestBody,
+  path: z.object({
+    conversation_id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zGetConversationData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zGenerateResponseSyncData = z.object({
+  body: zGenerateResponseSyncRequest,
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zGetMemoriesData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zSendMessageData = z.object({
+  body: zSendMessageRequest,
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zSuggestRepliesData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zAdvanceTestClockData = z.object({
+  body: zAdvanceClockRequest,
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zCreateTestCopyData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zCreateConversionData = z.object({
+  body: zCreateConversionRequestBody,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zSendMessageOrCreateConversationData = z.object({
+  body: zAddMessageRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zListPlatformsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zGetPlatformData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    platform_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zUpdatePlatformData = z.object({
+  body: zUpdatePlatformRequestBody,
+  path: z.object({
+    platform_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zMarkPurchasePaidData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    purchase_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zListSetsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    bot_id: z.string().uuid()
+  })
+});
+var zCreateSetData = z.object({
+  body: zCreateSetRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zDeleteSetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    set_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zDeleteSetResponse = z.void();
+var zUpdateSetData = z.object({
+  body: zUpdateSetRequest,
+  path: z.object({
+    set_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zSetSetItemsData = z.object({
+  body: zSetItemsRequest,
+  path: z.object({
+    set_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zSpeakData = z.object({
+  body: zSpeechRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zListUsersData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    limit: z.union([
+      z.coerce.bigint(),
+      z.null()
+    ]).optional(),
+    offset: z.coerce.bigint().optional(),
+    search_id: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    search_username: z.union([
+      z.string(),
+      z.null()
+    ]).optional(),
+    sort_by: z.string().optional(),
+    sort_desc: z.boolean().optional()
+  }).optional()
+});
+var zCreateUserData = z.object({
+  body: zCreateUserRequestBody,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zDeleteUserData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    user_id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zDeleteUserResponse = z.void();
+var zGetUserData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    user_id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zUpdateUserData = z.object({
+  body: zUpdateUserRequest,
+  path: z.object({
+    user_id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zListVoicesData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zCreateClipVoiceData = z.object({
+  body: zCreateClipVoiceForm,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zCreateLibraryVoiceData = z.object({
+  body: zCreateLibraryVoiceRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+});
+var zDeleteVoiceData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    voice_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zDeleteVoiceResponse = z.void();
+var zRenameVoiceData = z.object({
+  body: zRenameVoiceRequest,
+  path: z.object({
+    voice_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zVoiceSampleData = z.object({
+  body: zVoiceSampleRequest,
+  path: z.object({
+    voice_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+
 // src/client/core/bodySerializer.ts
 var serializeFormDataPair = (data, key, value) => {
   if (typeof value === "string" || value instanceof Blob) {
@@ -695,6 +2284,24 @@ var suggestReplies = (options) => {
     ...options
   });
 };
+var advanceTestClock = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/conversations/{id}/test-clock",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var createTestCopy = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/conversations/{id}/test-copy",
+    ...options
+  });
+};
 var createConversion = (options) => {
   return (options.client ?? client).post({
     url: "/api/conversion",
@@ -858,6 +2465,17 @@ var voiceSample = (options) => {
     }
   });
 };
+
+// src/methods/followUps.ts
+async function createTestCopyImpl(options) {
+  const result = await createTestCopy({ path: options });
+  return zTestCopyResponse.parse(result.data);
+}
+async function advanceTestClockImpl(options) {
+  const { id, ...body } = options;
+  const result = await advanceTestClock({ path: { id }, body });
+  return zAdvanceClockResponse.parse(result.data);
+}
 
 // src/methods/conversations.ts
 async function createConversationImpl(options) {
@@ -1499,6 +3117,12 @@ var PrioriChat = class {
    * console.log(`Found ${conversation.messages.length} messages`);
    * ```
    */
+  async createTestCopy(options) {
+    return createTestCopyImpl.call(this, options);
+  }
+  async advanceTestClock(options) {
+    return advanceTestClockImpl.call(this, options);
+  }
   async getConversation(options) {
     return getConversationImpl.call(this, options);
   }

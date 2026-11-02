@@ -204,7 +204,8 @@ paths:
         '404':
           description: Bot not found
         '422':
-          description: A setting breaks a rule; the message starts with the field's name
+          description: A setting breaks a rule; the message starts with the field's
+            name
         '500':
           description: Internal server error
     delete:
@@ -377,7 +378,8 @@ paths:
           nullable: true
       - name: media_type
         in: query
-        description: 'Media type filter: ''image'' or ''video'' (defaults to all types if not specified)'
+        description: 'Media type filter: ''image'' or ''video'' (defaults to all types
+          if not specified)'
         required: false
         schema:
           allOf:
@@ -391,7 +393,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListContentResponse'
         '400':
-          description: Invalid query parameters - either bot_id or user_id must be provided, not both
+          description: Invalid query parameters - either bot_id or user_id must be
+            provided, not both
         '404':
           description: Bot or user not found
         '500':
@@ -414,7 +417,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/UploadContentResponse'
         '400':
-          description: Invalid request - URL is not an image, bot/user not found, or both/neither bot_id and user_id provided
+          description: Invalid request - URL is not an image, bot/user not found,
+            or both/neither bot_id and user_id provided
         '500':
           description: Internal server error
   /api/content/{content_id}:
@@ -492,7 +496,8 @@ paths:
           nullable: true
       - name: min_last_message_date
         in: query
-        description: Filter conversations with last message after this timestamp (Unix epoch)
+        description: Filter conversations with last message after this timestamp (Unix
+          epoch)
         required: false
         schema:
           type: integer
@@ -500,7 +505,8 @@ paths:
           nullable: true
       - name: max_last_message_date
         in: query
-        description: Filter conversations with last message before this timestamp (Unix epoch)
+        description: Filter conversations with last message before this timestamp
+          (Unix epoch)
         required: false
         schema:
           type: integer
@@ -508,7 +514,8 @@ paths:
           nullable: true
       - name: severities
         in: query
-        description: 'Filter by moderation severity (repeatable). Values: Low, Medium, High, Critical'
+        description: 'Filter by moderation severity (repeatable). Values: Low, Medium,
+          High, Critical'
         required: false
         schema:
           type: array
@@ -517,7 +524,8 @@ paths:
           nullable: true
       - name: categories
         in: query
-        description: 'Filter by moderation category (repeatable). Values: underage_site_use, sexual_minors, beastiality, sexual_violence, prompt_injection'
+        description: 'Filter by moderation category (repeatable). Values: underage_site_use,
+          sexual_minors, beastiality, sexual_violence, prompt_injection'
         required: false
         schema:
           type: array
@@ -543,7 +551,8 @@ paths:
           nullable: true
       - name: offset
         in: query
-        description: 'Number of conversations to skip before returning results (default: 0)'
+        description: 'Number of conversations to skip before returning results (default:
+          0)'
         required: false
         schema:
           type: integer
@@ -704,7 +713,8 @@ paths:
       tags:
       - conversations
       summary: Suggest replies to send as the fan
-      description: Three replies of different lengths, some horny and some not, fitting where the chat is. For testing a bot quickly. Nothing is saved.
+      description: Three replies of different lengths, some horny and some not, fitting
+        where the chat is. For testing a bot quickly. Nothing is saved.
       operationId: suggest_replies
       parameters:
       - name: id
@@ -724,6 +734,56 @@ paths:
           description: No such conversation
         '503':
           description: The suggestion model is unavailable; try again
+  /api/conversations/{id}/test-clock:
+    post:
+      tags:
+      - conversations
+      operationId: advance_test_clock
+      parameters:
+      - name: id
+        in: path
+        description: Test conversation
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvanceClockRequest'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvanceClockResponse'
+        '409':
+          description: Conversation changed or busy
+        '422':
+          description: Invalid advance or not a test copy
+  /api/conversations/{id}/test-copy:
+    post:
+      tags:
+      - conversations
+      operationId: create_test_copy
+      parameters:
+      - name: id
+        in: path
+        description: Source conversation
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCopyResponse'
+        '404':
+          description: Not found
   /api/conversion:
     post:
       tags:
@@ -748,15 +808,25 @@ paths:
     post:
       tags:
       - messages
-      summary: Send a message by finding an existing conversation or creating a new one
-      description: |-
-        This endpoint searches for an existing conversation between the specified user and bot.
-        If found, it adds the message to that conversation. If no conversation exists, it creates
-        a new conversation using the provided creation parameters and then adds the message.
+      summary: Send a message by finding an existing conversation or creating a new
+        one
+      description: 'This endpoint searches for an existing conversation between the
+        specified user and bot.
 
-        The conversation lookup is performed using the user_id and bot_id from the conversation_creation_params.
-        When creating a new conversation, the full conversation_creation_params are used, including
-        any initial messages and webhook configuration.
+        If found, it adds the message to that conversation. If no conversation exists,
+        it creates
+
+        a new conversation using the provided creation parameters and then adds the
+        message.
+
+
+        The conversation lookup is performed using the user_id and bot_id from the
+        conversation_creation_params.
+
+        When creating a new conversation, the full conversation_creation_params are
+        used, including
+
+        any initial messages and webhook configuration.'
       operationId: send_message_or_create_conversation
       requestBody:
         content:
@@ -845,7 +915,8 @@ paths:
       tags:
       - purchases
       summary: Mark a purchase paid
-      description: Clients that take payment themselves call this once the fan has paid. The bot then reacts to the payment.
+      description: Clients that take payment themselves call this once the fan has
+        paid. The bot then reacts to the payment.
       operationId: mark_purchase_paid
       parameters:
       - name: purchase_id
@@ -992,7 +1063,8 @@ paths:
         '404':
           description: Set not found
         '422':
-          description: An id is not active content of this set's bot, or is listed twice
+          description: An id is not active content of this set's bot, or is listed
+            twice
   /api/speak:
     post:
       tags:
@@ -1161,7 +1233,8 @@ paths:
     get:
       tags:
       - voice
-      summary: 'List the voices bots can speak with: the built-in ones and the client''s own'
+      summary: 'List the voices bots can speak with: the built-in ones and the client''s
+        own'
       operationId: list_voices
       responses:
         '200':
@@ -1174,7 +1247,8 @@ paths:
       tags:
       - voice
       summary: Make a voice from a clip of someone speaking
-      description: 'One clip, 5 to 60 seconds of clear speech with no music, at most 15 MB: MP3, WAV, M4A, OGG or WebM.'
+      description: 'One clip, 5 to 60 seconds of clear speech with no music, at most
+        15 MB: MP3, WAV, M4A, OGG or WebM.'
       operationId: create_clip_voice
       requestBody:
         content:
@@ -1347,8 +1421,10 @@ components:
           format: uuid
         description:
           type: string
-          description: Written from the photos a couple of minutes after the set was last edited, and read-only. Null until then.
-          example: In a parked car in the afternoon in a white sundress, slowly undressing until she is fully nude in the back seat. 4 sfw selfies, 3 nudes.
+          description: Written from the photos a couple of minutes after the set was
+            last edited, and read-only. Null until then.
+          example: In a parked car in the afternoon in a white sundress, slowly undressing
+            until she is fully nude in the back seat. 4 sfw selfies, 3 nudes.
           nullable: true
         id:
           type: string
@@ -1368,7 +1444,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/APIPhotoLabel'
-          description: A name and tag per item, in item order, written with the description. Empty until then.
+          description: A name and tag per item, in item order, written with the description.
+            Empty until then.
     APIImageSendingBehaviour:
       type: string
       description: Image sending behaviour enum for client configuration
@@ -1418,12 +1495,14 @@ components:
         reasoning:
           type: string
           description: Explanation of why this message was flagged
-          example: User explicitly stated they are 16 years old, which is under the required age of 18 for this site.
+          example: User explicitly stated they are 16 years old, which is under the
+            required age of 18 for this site.
         severity:
           $ref: '#/components/schemas/APIModerationSeverity'
       example:
         category: underage_site_use
-        reasoning: User explicitly stated they are 16 years old, which is under the required age of 18 for this site.
+        reasoning: User explicitly stated they are 16 years old, which is under the
+          required age of 18 for this site.
         severity: Critical
     APIModerationSeverity:
       type: string
@@ -1434,7 +1513,8 @@ components:
       - Critical
     APIOrientation:
       type: string
-      description: Bot orientation — controls gender identity, pronouns, and attraction in the system prompt.
+      description: Bot orientation — controls gender identity, pronouns, and attraction
+        in the system prompt.
       enum:
       - straight_female
       - lesbian_female
@@ -1501,7 +1581,8 @@ components:
           format: date-time
     APITurn:
       type: object
-      description: One of her selling turns. `model`, `cost_usd`, `seconds` and `steps` are present for admins only.
+      description: One of her selling turns. `model`, `cost_usd`, `seconds` and `steps`
+        are present for admins only.
       required:
       - id
       - started_at
@@ -1537,7 +1618,8 @@ components:
           nullable: true
         stage:
           type: string
-          description: '`rapport`, `tease`, `offer`, `close` or `aftercare`; null until the turn is scored.'
+          description: '`rapport`, `tease`, `offer`, `close` or `aftercare`; null
+            until the turn is scored.'
           nullable: true
         stage_scores:
           allOf:
@@ -1550,11 +1632,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TurnStep'
-          description: 'Every model call: reasoning, tool calls with arguments and results.'
+          description: 'Every model call: reasoning, tool calls with arguments and
+            results.'
           nullable: true
     APITurnAction:
       type: object
-      description: 'One line of her turn, as the chat''s turn log shows it: what she did, with the items for thumbnails.'
+      description: 'One line of her turn, as the chat''s turn log shows it: what she
+        did, with the items for thumbnails.'
       required:
       - action
       - content_ids
@@ -1619,10 +1703,10 @@ components:
           value: San Francisco
         - name: occupation
           value: Software Engineer
-        created_date: 2023-12-15T10:30:00Z
+        created_date: '2023-12-15T10:30:00Z'
         freeform: John is a 28-year-old software engineer who loves hiking and photography.
         id: user123
-        latest_message_time: 2024-01-15T16:45:30Z
+        latest_message_time: '2024-01-15T16:45:30Z'
         message_count: 42
         username: AdventurousJohn28
     APIVoice:
@@ -1637,7 +1721,8 @@ components:
       properties:
         built_in:
           type: boolean
-          description: 'Built in: every client can use it; it can''t be renamed or deleted.'
+          description: 'Built in: every client can use it; it can''t be renamed or
+            deleted.'
         clip_transcript:
           type: string
           description: What the clip says, when given.
@@ -1651,7 +1736,8 @@ components:
           format: uuid
         kind:
           type: string
-          description: '`library`: a voice from the provider''s library. `clip`: copied from an uploaded clip.'
+          description: '`library`: a voice from the provider''s library. `clip`: copied
+            from an uploaded clip.'
         model:
           $ref: '#/components/schemas/VoiceModelName'
         name:
@@ -1691,7 +1777,8 @@ components:
           $ref: '#/components/schemas/CreateConversationRequest'
         create_user_if_not_exists:
           type: boolean
-          description: Whether to create the user if they don't exist. Defaults to false
+          description: Whether to create the user if they don't exist. Defaults to
+            false
           example: true
         message:
           $ref: '#/components/schemas/Message'
@@ -1725,6 +1812,30 @@ components:
           id: conv_abc123def456
           messages: []
         created_conversation: false
+    AdvanceClockRequest:
+      type: object
+      required:
+      - revision
+      properties:
+        revision:
+          type: integer
+          format: int32
+          minimum: 0
+        seconds:
+          type: integer
+          format: int64
+          nullable: true
+      additionalProperties: false
+    AdvanceClockResponse:
+      type: object
+      required:
+      - follow_up
+      - test_clock
+      properties:
+        follow_up:
+          $ref: '#/components/schemas/NextFollowUp'
+        test_clock:
+          $ref: '#/components/schemas/TestClockResponse'
     ApiKeyInfo:
       type: object
       description: Represents an API key info (without the actual key)
@@ -1758,6 +1869,7 @@ components:
       - $ref: '#/components/schemas/BotKnobs'
       - type: object
         required:
+        - follow_ups
         - id
         - name
         - freeform
@@ -1775,10 +1887,14 @@ components:
             items:
               $ref: '#/components/schemas/APIAttribute'
             description: List of bot attributes
+          follow_ups:
+            $ref: '#/components/schemas/FollowUpSettings'
           freeform:
             type: string
             description: Freeform text description
-            example: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
+            example: Scarlett loves to travel, she is fresh out of college. Her personality
+              is shy. She enjoys going to fancy restaurants and especially loves tropical
+              destinations. Scarlett's favorite food is cheesecake
           id:
             type: string
             format: uuid
@@ -1815,12 +1931,15 @@ components:
           value: Real estate agent
         - name: orientation
           value: bisexual
-        freeform: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
+        freeform: Scarlett loves to travel, she is fresh out of college. Her personality
+          is shy. She enjoys going to fancy restaurants and especially loves tropical
+          destinations. Scarlett's favorite food is cheesecake
         id: 550e8400-e29b-41d4-a716-446655440000
         name: Scarlett
     BotKnobs:
       type: object
-      description: 'Soft selling preferences. Each set knob adds one line to her selling prompt; code enforces none. Null: not set.'
+      description: 'Soft selling preferences. Each set knob adds one line to her selling
+        prompt; code enforces none. Null: not set.'
       properties:
         bundles:
           type: boolean
@@ -1844,7 +1963,8 @@ components:
         free_nudes:
           type: integer
           format: int32
-          description: Nudes she may send free in a conversation, 0 to 10. A recommendation, not a limit. Null means 1.
+          description: Nudes she may send free in a conversation, 0 to 10. A recommendation,
+            not a limit. Null means 1.
           example: 1
           nullable: true
         message_length:
@@ -1875,7 +1995,8 @@ components:
           nullable: true
         vibe:
           type: string
-          description: '`sexting` or `girlfriend`: the kind of chat she starts with; she follows the fan from there. Null means sexting.'
+          description: '`sexting` or `girlfriend`: the kind of chat she starts with;
+            she follows the fan from there. Null means sexting.'
           example: sexting
           nullable: true
         welcome_back_days:
@@ -1891,7 +2012,8 @@ components:
       properties:
         checkout_link_in_text:
           type: boolean
-          description: She writes the checkout link in her own message. Needs rails that make links.
+          description: She writes the checkout link in her own message. Needs rails
+            that make links.
         max_price_cents:
           type: integer
           format: int64
@@ -1901,18 +2023,22 @@ components:
         min_price_cents:
           type: integer
           format: int64
-          description: Lowest price she may ask, in USD cents. Set with `max_price_cents` or not at all.
+          description: Lowest price she may ask, in USD cents. Set with `max_price_cents`
+            or not at all.
           example: 500
           nullable: true
         payment_rails:
           type: string
-          description: 'How fans pay: `external` (your app takes the money and reports it)'
+          description: 'How fans pay: `external` (your app takes the money and reports
+            it)'
           example: external
           nullable: true
         selling_style:
           type: string
-          description: 'The operator''s direction for selling, in their own words. Null: she never sells.'
-          example: Playful and warm. She starts with small prices and lets him ask for more.
+          description: 'The operator''s direction for selling, in their own words.
+            Null: she never sells.'
+          example: Playful and warm. She starts with small prices and lets him ask
+            for more.
           nullable: true
     Chatter:
       type: object
@@ -2018,6 +2144,17 @@ components:
       properties:
         bot:
           $ref: '#/components/schemas/Bot'
+    ContactHours:
+      type: object
+      required:
+      - start
+      - end
+      properties:
+        end:
+          type: string
+        start:
+          type: string
+      additionalProperties: false
     Content:
       type: object
       required:
@@ -2092,7 +2229,8 @@ components:
           minimum: 0
         platform:
           type: string
-          description: Platform name associated with this conversation (legacy text field)
+          description: Platform name associated with this conversation (legacy text
+            field)
           example: MyDatingApp
           nullable: true
         platform_id:
@@ -2112,7 +2250,8 @@ components:
           nullable: true
     ConversationInsights:
       type: object
-      description: What the insights panel shows for one conversation, built only from what is already stored.
+      description: What the insights panel shows for one conversation, built only
+        from what is already stored.
       required:
       - fan_value
       - locks
@@ -2204,7 +2343,9 @@ components:
           value: '23'
         - name: residence
           value: New York
-        freeform: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
+        freeform: Scarlett loves to travel, she is fresh out of college. Her personality
+          is shy. She enjoys going to fancy restaurants and especially loves tropical
+          destinations. Scarlett's favorite food is cheesecake
         name: Scarlett
     CreateBotResponse:
       type: object
@@ -2265,7 +2406,8 @@ components:
           example: 550e8400-e29b-41d4-a716-446655440000
         create_user_if_not_exists:
           type: boolean
-          description: Whether to create the user if they don't exist. Defaults to true for seamless user onboarding
+          description: Whether to create the user if they don't exist. Defaults to
+            true for seamless user onboarding
           example: true
           nullable: true
         freeform:
@@ -2283,12 +2425,14 @@ components:
           nullable: true
         platform:
           type: string
-          description: Optional platform name describing which site the user and bot are chatting on
+          description: Optional platform name describing which site the user and bot
+            are chatting on
           example: MyDatingApp
           nullable: true
         segment:
           type: boolean
-          description: Whether to have the bot capable of responding in multiple messages (more realistic)
+          description: Whether to have the bot capable of responding in multiple messages
+            (more realistic)
           example: true
           nullable: true
         timezone:
@@ -2298,12 +2442,14 @@ components:
           nullable: true
         user_id:
           type: string
-          description: ID of the user to associate with this conversation. Use whatever user ID format you use in your system
+          description: ID of the user to associate with this conversation. Use whatever
+            user ID format you use in your system
           example: user_123
         webhook:
           type: string
           format: uri
-          description: Optional webhook URL to call when messages are received in this conversation
+          description: Optional webhook URL to call when messages are received in
+            this conversation
           example: https://example.com/webhook
           nullable: true
         with_messages:
@@ -2340,7 +2486,8 @@ components:
         amount:
           type: integer
           format: int32
-          description: Amount of the conversion, can be negative for refunds. Value in cents.
+          description: Amount of the conversion, can be negative for refunds. Value
+            in cents.
           example: 4999
           nullable: true
         bot_id:
@@ -2349,21 +2496,25 @@ components:
           nullable: true
         conversation_id:
           type: string
-          description: Optional conversation ID to attribute the conversion to a specific conversation
+          description: Optional conversation ID to attribute the conversion to a specific
+            conversation
           example: abc
           nullable: true
         metadata:
-          description: Optional metadata to attach to the conversion, can be any JSON object
+          description: Optional metadata to attach to the conversion, can be any JSON
+            object
           nullable: true
         timestamp:
           type: integer
           format: int64
-          description: Optional unix timestamp (seconds) of when the conversion happened. Defaults to current time.
+          description: Optional unix timestamp (seconds) of when the conversion happened.
+            Defaults to current time.
           example: 1615760000
           nullable: true
         user_id:
           type: string
-          description: User ID of the user who made the conversion. Should be the same as 'user_id' used in /messages
+          description: User ID of the user who made the conversion. Should be the
+            same as 'user_id' used in /messages
       example:
         amount: 4999
         bot_id: null
@@ -2425,7 +2576,8 @@ components:
           value: San Francisco
         - name: occupation
           value: Software Engineer
-        freeform: John is a 28-year-old software engineer who loves hiking and photography. He enjoys traveling and trying new cuisines.
+        freeform: John is a 28-year-old software engineer who loves hiking and photography.
+          He enjoys traveling and trying new cuisines.
         id: user123
         username: AdventurousJohn28
     CreateUserResponse:
@@ -2486,6 +2638,43 @@ components:
           type: integer
           format: int64
           minimum: 0
+    FollowUpSettings:
+      type: object
+      required:
+      - enabled
+      - automatic_enabled
+      - scheduled_enabled
+      - cadence_hours
+      - min_idle_minutes
+      - max_unanswered
+      - contact_window
+      - fallback_timezone
+      properties:
+        automatic_enabled:
+          type: boolean
+        cadence_hours:
+          type: array
+          items:
+            type: integer
+            format: int32
+            minimum: 0
+        contact_window:
+          $ref: '#/components/schemas/ContactHours'
+        enabled:
+          type: boolean
+        fallback_timezone:
+          type: string
+        max_unanswered:
+          type: integer
+          format: int32
+          minimum: 0
+        min_idle_minutes:
+          type: integer
+          format: int32
+          minimum: 0
+        scheduled_enabled:
+          type: boolean
+      additionalProperties: false
     GenerateResponseSyncRequest:
       type: object
       properties:
@@ -2495,13 +2684,15 @@ components:
         degrade_grammar_factor:
           type: number
           format: float
-          description: Grammar degradation multiplier (0.0 = no degradation, 1.0 = full). Omit to disable.
+          description: Grammar degradation multiplier (0.0 = no degradation, 1.0 =
+            full). Omit to disable.
           nullable: true
         override_messages:
           type: array
           items:
             $ref: '#/components/schemas/Message'
-          description: Optional list of messages to use instead of the conversation's stored message history.
+          description: Optional list of messages to use instead of the conversation's
+            stored message history.
           nullable: true
         vault_image_behaviour:
           allOf:
@@ -2540,6 +2731,7 @@ components:
     GetConversationResponse:
       type: object
       required:
+      - follow_up
       - messages
       - bot_id
       - is_typing
@@ -2550,6 +2742,8 @@ components:
           type: string
           format: uuid
           description: ID of the bot associated with this conversation
+        follow_up:
+          $ref: '#/components/schemas/NextFollowUp'
         freeform:
           type: string
           description: Optional freeform text to add to the prompt
@@ -2574,7 +2768,8 @@ components:
           description: Messages in the conversation
         platform:
           type: string
-          description: Optional platform name describing which site the user and bot are chatting on
+          description: Optional platform name describing which site the user and bot
+            are chatting on
           example: MyDatingApp
           nullable: true
         purchases:
@@ -2584,21 +2779,28 @@ components:
           description: Purchases in this conversation, oldest first
         segment:
           type: boolean
-          description: Whether to have the bot capable of responding in multiple messages (more realistic)
+          description: Whether to have the bot capable of responding in multiple messages
+            (more realistic)
           example: true
+          nullable: true
+        test_clock:
+          allOf:
+          - $ref: '#/components/schemas/TestClockResponse'
           nullable: true
         turns:
           type: array
           items:
             $ref: '#/components/schemas/APITurn'
-          description: Her selling turns, oldest first, for the turn log in the chat. Empty for bots that don't sell.
+          description: Her selling turns, oldest first, for the turn log in the chat.
+            Empty for bots that don't sell.
         user_id:
           type: string
           description: ID of the user associated with this conversation
           nullable: true
         webhook:
           type: string
-          description: Optional webhook URL to call when messages are received in this conversation
+          description: Optional webhook URL to call when messages are received in
+            this conversation
           example: https://example.com/webhook
           nullable: true
     GetMemoriesResponse:
@@ -2667,20 +2869,24 @@ components:
           nullable: true
         public:
           type: boolean
-          description: Whether this image is public (displayed on profile) or private (vault)
+          description: Whether this image is public (displayed on profile) or private
+            (vault)
           example: true
         url:
           type: string
-          description: URL of the image (S3 URL for existing content, or external URL for new upload)
+          description: URL of the image (S3 URL for existing content, or external
+            URL for new upload)
           example: https://example.com/image.jpg
       example:
         public: true
         url: https://example.com/image.jpg
     ImageSendingBehaviour:
       type: string
-      description: |-
-        Controls how frequently the AI sends images in conversation. Stored per-conversation and
-        affects whether image tools are exposed to the LLM and how strongly it is prompted to use them.
+      description: 'Controls how frequently the AI sends images in conversation. Stored
+        per-conversation and
+
+        affects whether image tools are exposed to the LLM and how strongly it is
+        prompted to use them.'
       enum:
       - disabled
       - low
@@ -2735,13 +2941,15 @@ components:
         bot_id:
           type: string
           format: uuid
-          description: ID of the bot to list content for (either bot_id or user_id must be provided)
+          description: ID of the bot to list content for (either bot_id or user_id
+            must be provided)
           example: 550e8400-e29b-41d4-a716-446655440000
           nullable: true
         limit:
           type: integer
           format: int32
-          description: 'Maximum number of content items to return (default: 30, max: 30)'
+          description: 'Maximum number of content items to return (default: 30, max:
+            30)'
           example: 20
           nullable: true
           minimum: 0
@@ -2756,7 +2964,8 @@ components:
           nullable: true
         user_id:
           type: string
-          description: ID of the user to list content for (either bot_id or user_id must be provided)
+          description: ID of the user to list content for (either bot_id or user_id
+            must be provided)
           example: user123
           nullable: true
     ListContentResponse:
@@ -2770,9 +2979,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Content'
-          description: |-
-            List of all content items (public + private combined)
-            @deprecated Use public_content and private_content instead. This field is only here for backwards compatiblity
+          description: 'List of all content items (public + private combined)
+
+            @deprecated Use public_content and private_content instead. This field
+            is only here for backwards compatiblity'
           deprecated: true
         private_content:
           type: array
@@ -2911,7 +3121,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Content'
-          description: Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.
+          description: Every item of an album, in order, starting with `attached_media`.
+            Present only when there are two or more. Output only.
           nullable: true
         from_bot:
           type: boolean
@@ -2928,9 +3139,10 @@ components:
           nullable: true
         message_tone:
           type: string
-          description: |-
-            What tone was used to generate the message (useful only for debug or display in admin
-            panel. Does nothing as input parameter, only output)
+          description: 'What tone was used to generate the message (useful only for
+            debug or display in admin
+
+            panel. Does nothing as input parameter, only output)'
           example: Flirty
           nullable: true
         moderation:
@@ -2956,6 +3168,33 @@ components:
         from_bot: true
         sent_at: 1640995200
         text: Heyyy how are you??
+    NextFollowUp:
+      type: object
+      required:
+      - status
+      - unanswered
+      - max_unanswered
+      - timezone
+      properties:
+        max_unanswered:
+          type: integer
+          format: int32
+          minimum: 0
+        next_at:
+          type: string
+          format: date-time
+          nullable: true
+        source:
+          type: string
+          nullable: true
+        status:
+          type: string
+        timezone:
+          type: string
+        unanswered:
+          type: integer
+          format: int32
+          minimum: 0
     OpenOffer:
       type: object
       required:
@@ -2998,8 +3237,12 @@ components:
       properties:
         custom_instruction:
           type: string
-          description: Platform-specific instructions injected into the system prompt before bot-specific instructions. Used to customize AI behavior for platform-specific norms and guidelines.
-          example: This is for people 55+. Be respectful, take time to chat, and ask about their hobbies and life experience. Avoid slang and keep language clear.
+          description: Platform-specific instructions injected into the system prompt
+            before bot-specific instructions. Used to customize AI behavior for platform-specific
+            norms and guidelines.
+          example: This is for people 55+. Be respectful, take time to chat, and ask
+            about their hobbies and life experience. Avoid slang and keep language
+            clear.
           nullable: true
         id:
           type: string
@@ -3007,10 +3250,13 @@ components:
           example: 550e8400-e29b-41d4-a716-446655440000
         name:
           type: string
-          description: Name of the platform (immutable, case-sensitive, must be unique per client)
+          description: Name of the platform (immutable, case-sensitive, must be unique
+            per client)
           example: SilverMatch
       example:
-        custom_instruction: This is for people 55+. Be respectful, take time to chat, and ask about their hobbies and life experience. Avoid slang and keep language clear.
+        custom_instruction: This is for people 55+. Be respectful, take time to chat,
+          and ask about their hobbies and life experience. Avoid slang and keep language
+          clear.
         id: 550e8400-e29b-41d4-a716-446655440000
         name: SilverMatch
     PricePoint:
@@ -3106,7 +3352,8 @@ components:
           text: Hey what's your name?
     Session:
       type: object
-      description: A stretch of chat with no gap of `GAP_SECS` or more, the same gap the history notes mark for her.
+      description: A stretch of chat with no gap of `GAP_SECS` or more, the same gap
+        the history notes mark for her.
       required:
       - started_at
       - ended_at
@@ -3140,7 +3387,8 @@ components:
       properties:
         current:
           type: boolean
-          description: 'The set of her latest photo this session: where she is right now.'
+          description: 'The set of her latest photo this session: where she is right
+            now.'
         description:
           type: string
           nullable: true
@@ -3161,7 +3409,8 @@ components:
           type: array
           items:
             type: string
-          description: Content ids in suggested order. Items of the set left out become loose; listed items leave any other set.
+          description: Content ids in suggested order. Items of the set left out become
+            loose; listed items leave any other set.
     SpeechRequest:
       type: object
       required:
@@ -3216,7 +3465,8 @@ components:
           type: array
           items:
             type: string
-          description: The library items the call named, so a turn can be shown with thumbnails.
+          description: The library items the call named, so a turn can be shown with
+            thumbnails.
         name:
           type: string
         result:
@@ -3232,7 +3482,8 @@ components:
         cached_tokens:
           type: integer
           format: int64
-          description: The part of `prompt_tokens` the provider served from its prompt cache.
+          description: The part of `prompt_tokens` the provider served from its prompt
+            cache.
           minimum: 0
         completion_tokens:
           type: integer
@@ -3275,11 +3526,37 @@ components:
         summary_text:
           type: string
           description: The text summary of the conversation
-          example: The conversation started with introductions. The user asked about travel experiences.
+          example: The conversation started with introductions. The user asked about
+            travel experiences.
       example:
         created_at: 1640995200
         message_count: 10
-        summary_text: The conversation started with introductions. The user asked about travel experiences, and the bot shared stories about visiting Europe. They discussed favorite destinations and future travel plans.
+        summary_text: The conversation started with introductions. The user asked
+          about travel experiences, and the bot shared stories about visiting Europe.
+          They discussed favorite destinations and future travel plans.
+    TestClockResponse:
+      type: object
+      required:
+      - now
+      - revision
+      - source_conversation_id
+      properties:
+        now:
+          type: string
+          format: date-time
+        revision:
+          type: integer
+          format: int32
+          minimum: 0
+        source_conversation_id:
+          type: string
+    TestCopyResponse:
+      type: object
+      required:
+      - conversation_id
+      properties:
+        conversation_id:
+          type: string
     TurnStep:
       type: object
       properties:
@@ -3307,7 +3584,8 @@ components:
         assigned_voice_id:
           type: string
           format: uuid
-          description: The voice her notes are recorded in, from `GET /api/voices`; null takes it away.
+          description: The voice her notes are recorded in, from `GET /api/voices`;
+            null takes it away.
           nullable: true
         attributes:
           type: array
@@ -3319,7 +3597,8 @@ components:
           nullable: true
         checkout_link_in_text:
           type: boolean
-          description: She writes the checkout link in her own message. Needs rails that make links.
+          description: She writes the checkout link in her own message. Needs rails
+            that make links.
           nullable: true
         discount:
           type: string
@@ -3335,6 +3614,10 @@ components:
           format: int64
           example: 900
           nullable: true
+        follow_ups:
+          allOf:
+          - $ref: '#/components/schemas/FollowUpSettings'
+          nullable: true
         free_nudes:
           type: integer
           format: int32
@@ -3349,9 +3632,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ImageItem'
-          description: |-
-            Optional list of images to set for this bot.
-            When provided, all existing bot images are replaced with these.
+          description: 'Optional list of images to set for this bot.
+
+            When provided, all existing bot images are replaced with these.'
           nullable: true
         max_price_cents:
           type: integer
@@ -3367,7 +3650,8 @@ components:
         min_price_cents:
           type: integer
           format: int64
-          description: Lowest price she may ask, in USD cents. Set with `max_price_cents` or not at all.
+          description: Lowest price she may ask, in USD cents. Set with `max_price_cents`
+            or not at all.
           example: 500
           nullable: true
         name:
@@ -3405,8 +3689,10 @@ components:
           nullable: true
         selling_style:
           type: string
-          description: How she sells, in your words. Null turns selling off and clears the selling fields this request does not send.
-          example: Playful and warm. She starts with small prices and lets him ask for more.
+          description: How she sells, in your words. Null turns selling off and clears
+            the selling fields this request does not send.
+          example: Playful and warm. She starts with small prices and lets him ask
+            for more.
           nullable: true
         vibe:
           type: string
@@ -3429,7 +3715,9 @@ components:
           value: '23'
         - name: residence
           value: New York
-        freeform: Scarlett loves to travel, she is fresh out of college. Her personality is shy. She enjoys going to fancy restaurants and especially loves tropical destinations. Scarlett's favorite food is cheesecake
+        freeform: Scarlett loves to travel, she is fresh out of college. Her personality
+          is shy. She enjoys going to fancy restaurants and especially loves tropical
+          destinations. Scarlett's favorite food is cheesecake
         images:
         - public: true
           url: https://example.com/image1.jpg
@@ -3445,7 +3733,8 @@ components:
           $ref: '#/components/schemas/Bot'
     UpdateClientConfigRequest:
       type: object
-      description: Request to update client configuration (all fields optional for PATCH semantics)
+      description: Request to update client configuration (all fields optional for
+        PATCH semantics)
       properties:
         chat_images_enabled:
           type: boolean
@@ -3496,6 +3785,11 @@ components:
     UpdateConversationRequestBody:
       type: object
       properties:
+        contact_timezone:
+          type: string
+          description: Fan timezone for proactive contact hours. Null restores the
+            bot fallback.
+          nullable: true
         freeform:
           type: string
           description: Optional freeform text to add to the prompt
@@ -3511,12 +3805,14 @@ components:
           nullable: true
         platform:
           type: string
-          description: Optional platform name describing which site the user and bot are chatting on
+          description: Optional platform name describing which site the user and bot
+            are chatting on
           example: MyDatingApp
           nullable: true
         segment:
           type: boolean
-          description: Whether to have the bot capable of responding in multiple messages (more realistic)
+          description: Whether to have the bot capable of responding in multiple messages
+            (more realistic)
           example: true
           nullable: true
         timezone:
@@ -3527,7 +3823,8 @@ components:
         webhook:
           type: string
           format: uri
-          description: Optional webhook URL to call when messages are received in this conversation
+          description: Optional webhook URL to call when messages are received in
+            this conversation
           example: https://example.com/webhook
           nullable: true
       example:
@@ -3547,11 +3844,14 @@ components:
       properties:
         custom_instruction:
           type: string
-          description: Platform-specific instructions to inject into the system prompt before bot-specific instructions
-          example: Be extra warm and patient with this platform's users. They prefer longer, more thoughtful responses.
+          description: Platform-specific instructions to inject into the system prompt
+            before bot-specific instructions
+          example: Be extra warm and patient with this platform's users. They prefer
+            longer, more thoughtful responses.
           nullable: true
       example:
-        custom_instruction: Be extra warm and patient with this platform's users. They prefer longer, more thoughtful responses.
+        custom_instruction: Be extra warm and patient with this platform's users.
+          They prefer longer, more thoughtful responses.
     UpdatePlatformResponse:
       type: object
       required:
@@ -3595,7 +3895,9 @@ components:
           value: Seattle
         - name: occupation
           value: Photographer
-        freeform: Mike is a 30-year-old photographer who loves outdoor adventures and spontaneous weekend trips. Always up for trying new restaurants and meeting interesting people.
+        freeform: Mike is a 30-year-old photographer who loves outdoor adventures
+          and spontaneous weekend trips. Always up for trying new restaurants and
+          meeting interesting people.
         username: AdventurousMike28
     UpdateUserResponse:
       type: object
@@ -3612,20 +3914,25 @@ components:
         bot_id:
           type: string
           format: uuid
-          description: ID of the bot this content belongs to (either bot_id or user_id must be provided)
+          description: ID of the bot this content belongs to (either bot_id or user_id
+            must be provided)
           example: 550e8400-e29b-41d4-a716-446655440000
           nullable: true
         image_url:
           type: string
-          description: URL of the image to upload (can be a remote URL like https://example.com/image.jpg or a data URL like data:image/jpeg;base64,...)
+          description: URL of the image to upload (can be a remote URL like https://example.com/image.jpg
+            or a data URL like data:image/jpeg;base64,...)
           example: https://example.com/image.jpg
         public:
           type: boolean
-          description: Whether this content is public (displayed on profile) or private (bot's vault for conversations). Only valid for bot content; user content is always public.
+          description: Whether this content is public (displayed on profile) or private
+            (bot's vault for conversations). Only valid for bot content; user content
+            is always public.
           example: false
         user_id:
           type: string
-          description: ID of the user this content belongs to (either bot_id or user_id must be provided)
+          description: ID of the user this content belongs to (either bot_id or user_id
+            must be provided)
           example: user123
           nullable: true
       example:
@@ -3642,7 +3949,8 @@ components:
           $ref: '#/components/schemas/Content'
         created:
           type: boolean
-          description: Whether the content was newly created (true) or already existed (false)
+          description: Whether the content was newly created (true) or already existed
+            (false)
     User:
       type: object
       required:
@@ -3682,7 +3990,8 @@ components:
           value: Single
         - name: preferences
           value: Outdoor activities, Tech meetups
-        freeform: John is a 28-year-old software engineer who loves hiking and photography. He enjoys traveling and trying new cuisines.
+        freeform: John is a 28-year-old software engineer who loves hiking and photography.
+          He enjoys traveling and trying new cuisines.
         id: user123
         username: AdventurousJohn28
     VaultImageBehaviour:
@@ -3692,7 +4001,8 @@ components:
       - never
     VoiceModelName:
       type: string
-      description: The speech model a voice is recorded with. Each brings its own way of writing a script.
+      description: The speech model a voice is recorded with. Each brings its own
+        way of writing a script.
       enum:
       - drama-3
     VoiceSampleRequest:
@@ -3702,7 +4012,8 @@ components:
       properties:
         text:
           type: string
-          description: A line in the model's script style, like "[teasing] Hey you. [soft laugh] Miss me?"
+          description: A line in the model's script style, like "[teasing] Hey you.
+            [soft laugh] Miss me?"
 tags:
 - name: conversations
   description: Conversation management endpoints
