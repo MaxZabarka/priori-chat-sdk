@@ -12,6 +12,7 @@ export default defineConfig({
   },
   plugins: [
     ...defaultPlugins,
+    { name: '@hey-api/typescript', readOnlyWriteOnlyBehavior: 'off' },
     { name: '@hey-api/client-axios', throwOnError: true },
     { name: 'zod', exportFromIndex: true }
   ],

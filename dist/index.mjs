@@ -241,6 +241,10 @@ var zLanguage = z.enum([
   "it"
 ]);
 var zMessage = z.object({
+  video_transcript: z.union([
+    z.string().readonly(),
+    z.null()
+  ]).readonly().optional(),
   attached_media: z.union([
     zContent,
     z.null()

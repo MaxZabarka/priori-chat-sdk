@@ -957,6 +957,10 @@ export type MemoryResponse = {
 };
 
 export type Message = {
+    /**
+     * Recognized video speech, displayed separately from the sender's message. Output only.
+     */
+    readonly video_transcript?: string | null;
     attached_media?: Content | null;
     /**
      * Every item of an album, in order, starting with `attached_media`. Present only when there are two or more. Output only.

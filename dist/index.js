@@ -277,6 +277,10 @@ var zLanguage = import_zod.z.enum([
   "it"
 ]);
 var zMessage = import_zod.z.object({
+  video_transcript: import_zod.z.union([
+    import_zod.z.string().readonly(),
+    import_zod.z.null()
+  ]).readonly().optional(),
   attached_media: import_zod.z.union([
     zContent,
     import_zod.z.null()

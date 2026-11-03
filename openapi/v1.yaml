@@ -3046,6 +3046,12 @@ components:
       - text
       - from_bot
       properties:
+        video_transcript:
+          description: Recognized video speech, displayed separately from the sender's message.
+            Output only.
+          nullable: true
+          readOnly: true
+          type: string
         attached_media:
           allOf:
           - $ref: '#/components/schemas/Content'
