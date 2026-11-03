@@ -11,6 +11,7 @@ type ApiAttribute = {
 type ApiCheckout = {
     type: 'external';
 } | {
+    payment_mode: string;
     type: 'hosted';
     url: string;
 };
@@ -65,6 +66,10 @@ type ApiPhotoLabel = {
 };
 type ApiPurchase = {
     checkout: ApiCheckout;
+    /**
+     * Purchase media for operator review; these are not message attachments.
+     */
+    content?: Array<Content>;
     /**
      * The items, in the order sent. The first is the cover.
      */
@@ -272,6 +277,7 @@ type BotSelling = {
      * Lowest price she may ask, in USD cents. Set with `max_price_cents` or not at all.
      */
     min_price_cents?: number | null;
+    payment_mode: string;
     /**
      * How fans pay: `external` (your app takes the money and reports it)
      */
@@ -935,6 +941,7 @@ type UpdateBotRequest = {
      * `patient`, `balanced` or `eager`
      */
     pace?: string | null;
+    payment_mode?: string | null;
     /**
      * `external`. Required when `selling_style` is set.
      */

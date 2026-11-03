@@ -15,6 +15,7 @@ var zApiCheckout = z.union([
     ])
   }),
   z.object({
+    payment_mode: z.string(),
     type: z.enum([
       "hosted"
     ]),
@@ -80,8 +81,20 @@ var zApiOrientation = z.enum([
   "trans_ftm",
   "bisexual"
 ]);
+var zContent = z.object({
+  content_hash: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  content_id: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  url: z.string().url()
+});
 var zApiPurchase = z.object({
   checkout: zApiCheckout,
+  content: z.array(zContent).optional(),
   content_ids: z.array(z.string()),
   id: z.string().uuid(),
   message_id: z.string().uuid(),
@@ -227,17 +240,6 @@ var zLanguage = z.enum([
   "fr",
   "it"
 ]);
-var zContent = z.object({
-  content_hash: z.union([
-    z.string(),
-    z.null()
-  ]).optional(),
-  content_id: z.union([
-    z.string(),
-    z.null()
-  ]).optional(),
-  url: z.string().url()
-});
 var zMessage = z.object({
   attached_media: z.union([
     zContent,
@@ -383,6 +385,7 @@ var zBotSelling = z.object({
     z.coerce.bigint(),
     z.null()
   ]).optional(),
+  payment_mode: z.string(),
   payment_rails: z.union([
     z.string(),
     z.null()
@@ -1011,6 +1014,10 @@ var zUpdateBotRequest = z.object({
     z.null()
   ]).optional(),
   pace: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
+  payment_mode: z.union([
     z.string(),
     z.null()
   ]).optional(),

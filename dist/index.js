@@ -51,6 +51,7 @@ var zApiCheckout = import_zod.z.union([
     ])
   }),
   import_zod.z.object({
+    payment_mode: import_zod.z.string(),
     type: import_zod.z.enum([
       "hosted"
     ]),
@@ -116,8 +117,20 @@ var zApiOrientation = import_zod.z.enum([
   "trans_ftm",
   "bisexual"
 ]);
+var zContent = import_zod.z.object({
+  content_hash: import_zod.z.union([
+    import_zod.z.string(),
+    import_zod.z.null()
+  ]).optional(),
+  content_id: import_zod.z.union([
+    import_zod.z.string(),
+    import_zod.z.null()
+  ]).optional(),
+  url: import_zod.z.string().url()
+});
 var zApiPurchase = import_zod.z.object({
   checkout: zApiCheckout,
+  content: import_zod.z.array(zContent).optional(),
   content_ids: import_zod.z.array(import_zod.z.string()),
   id: import_zod.z.string().uuid(),
   message_id: import_zod.z.string().uuid(),
@@ -263,17 +276,6 @@ var zLanguage = import_zod.z.enum([
   "fr",
   "it"
 ]);
-var zContent = import_zod.z.object({
-  content_hash: import_zod.z.union([
-    import_zod.z.string(),
-    import_zod.z.null()
-  ]).optional(),
-  content_id: import_zod.z.union([
-    import_zod.z.string(),
-    import_zod.z.null()
-  ]).optional(),
-  url: import_zod.z.string().url()
-});
 var zMessage = import_zod.z.object({
   attached_media: import_zod.z.union([
     zContent,
@@ -419,6 +421,7 @@ var zBotSelling = import_zod.z.object({
     import_zod.z.coerce.bigint(),
     import_zod.z.null()
   ]).optional(),
+  payment_mode: import_zod.z.string(),
   payment_rails: import_zod.z.union([
     import_zod.z.string(),
     import_zod.z.null()
@@ -1047,6 +1050,10 @@ var zUpdateBotRequest = import_zod.z.object({
     import_zod.z.null()
   ]).optional(),
   pace: import_zod.z.union([
+    import_zod.z.string(),
+    import_zod.z.null()
+  ]).optional(),
+  payment_mode: import_zod.z.union([
     import_zod.z.string(),
     import_zod.z.null()
   ]).optional(),
