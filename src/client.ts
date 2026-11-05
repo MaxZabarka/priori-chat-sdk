@@ -1,5 +1,5 @@
-import { createTestCopyImpl, advanceTestClockImpl } from "./methods/followUps";
-import type { AdvanceClockRequest } from "./client/types.gen";
+import { createTestCopyImpl, advanceTestClockImpl, setFollowUpOverrideImpl, followUpActionImpl, startTestClockImpl, previewFollowUpImpl } from "./methods/followUps";
+import type { AdvanceClockRequest, FollowUpActionRequest, SetFollowUpOverrideRequest } from "./client/types.gen";
 import { client } from "./client/client.gen.ts";
 import {
   createConversationImpl,
@@ -330,6 +330,14 @@ export class PrioriChat {
    */
   async createTestCopy(options: {id: string}) { return createTestCopyImpl.call(this, options); }
   async advanceTestClock(options: AdvanceClockRequest & {id: string}) { return advanceTestClockImpl.call(this, options); }
+  /** On or off for this conversation only; `override: null` follows the bot. */
+  async setFollowUpOverride(options: SetFollowUpOverrideRequest & {id: string}) { return setFollowUpOverrideImpl.call(this, options); }
+  /** push_back (with hours), skip, cancel_reminder, restart or reset; `revision` from the last read. */
+  async followUpAction(options: FollowUpActionRequest & {id: string}) { return followUpActionImpl.call(this, options); }
+  /** Gives a chat with no outside channel its own test clock. */
+  async startTestClock(options: {id: string}) { return startTestClockImpl.call(this, options); }
+  /** The next follow-up as it would be written now; nothing is saved or sent. */
+  async previewFollowUp(options: {id: string}) { return previewFollowUpImpl.call(this, options); }
 
   async getConversation(
     options: GetConversationOptions,

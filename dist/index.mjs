@@ -25,6 +25,10 @@ var zApiCheckout = z.union([
 var zApiPhotoLabel = z.object({
   content_id: z.string(),
   name: z.string(),
+  same_as: z.union([
+    z.string(),
+    z.null()
+  ]).optional(),
   tag: z.string()
 });
 var zApiContentSet = z.object({
@@ -345,17 +349,109 @@ var zAdvanceClockRequest = z.object({
     z.null()
   ]).optional()
 });
+var zFollowUpExplanation = z.object({
+  at: z.string().datetime(),
+  automatic_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  hold_until: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  idle_at: z.string().datetime(),
+  picked_at: z.string().datetime(),
+  reminder_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  source: z.string(),
+  spacing_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  zone: z.string()
+});
+var zFollowUpReminder = z.object({
+  at: z.string().datetime(),
+  intent: z.string()
+});
+var zSentFollowUpView = z.object({
+  id: z.string(),
+  replied_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  sent_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  source: z.string(),
+  started_at: z.string().datetime(),
+  status: z.string(),
+  text: z.string()
+});
+var zContactHours = z.object({
+  end: z.string(),
+  start: z.string()
+});
+var zFollowUpSettings = z.object({
+  automatic_enabled: z.boolean(),
+  cadence_hours: z.array(z.number().int().gte(0)),
+  contact_window: zContactHours,
+  enabled: z.boolean(),
+  fallback_timezone: z.string(),
+  max_unanswered: z.number().int().gte(0),
+  min_idle_minutes: z.number().int().gte(0),
+  scheduled_enabled: z.boolean()
+});
 var zNextFollowUp = z.object({
+  bot_enabled: z.boolean(),
+  enabled: z.boolean(),
+  explanation: z.union([
+    zFollowUpExplanation,
+    z.null()
+  ]).optional(),
+  external: z.boolean(),
+  failures: z.number().int().gte(0),
+  hold_until: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  last_follow_up_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
+  last_message_at: z.union([
+    z.string().datetime(),
+    z.null()
+  ]).optional(),
   max_unanswered: z.number().int().gte(0),
   next_at: z.union([
     z.string().datetime(),
     z.null()
   ]).optional(),
+  override: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional(),
+  reminder: z.union([
+    zFollowUpReminder,
+    z.null()
+  ]).optional(),
+  revision: z.coerce.bigint(),
+  sent: z.array(zSentFollowUpView),
+  settings: zFollowUpSettings,
   source: z.union([
     z.string(),
     z.null()
   ]).optional(),
   status: z.string(),
+  step: z.union([
+    z.number().int().gte(0),
+    z.null()
+  ]).optional(),
+  steps: z.number().int().gte(0),
   timezone: z.string(),
   unanswered: z.number().int().gte(0)
 });
@@ -448,20 +544,6 @@ var zBotKnobs = z.object({
     z.number().int(),
     z.null()
   ]).optional()
-});
-var zContactHours = z.object({
-  end: z.string(),
-  start: z.string()
-});
-var zFollowUpSettings = z.object({
-  automatic_enabled: z.boolean(),
-  cadence_hours: z.array(z.number().int().gte(0)),
-  contact_window: zContactHours,
-  enabled: z.boolean(),
-  fallback_timezone: z.string(),
-  max_unanswered: z.number().int().gte(0),
-  min_idle_minutes: z.number().int().gte(0),
-  scheduled_enabled: z.boolean()
 });
 var zBot = zBotSelling.and(zBotKnobs).and(z.object({
   assigned_voice_id: z.union([
@@ -1188,6 +1270,30 @@ var zUploadContentResponse = z.object({
 var zVoiceSampleRequest = z.object({
   text: z.string()
 });
+var zSetFollowUpOverrideRequest = z.object({
+  override: z.union([
+    z.boolean(),
+    z.null()
+  ]).optional()
+});
+var zFollowUpActionKind = z.enum([
+  "push_back",
+  "skip",
+  "cancel_reminder",
+  "restart",
+  "reset"
+]);
+var zFollowUpActionRequest = z.object({
+  action: zFollowUpActionKind,
+  hours: z.union([
+    z.number().int().gte(0),
+    z.null()
+  ]).optional(),
+  revision: z.coerce.bigint()
+});
+var zFollowUpPreviewResponse = z.object({
+  messages: z.array(zMessage)
+});
 var zListApiKeysData = z.object({
   body: z.never().optional(),
   path: z.never().optional(),
@@ -1598,6 +1704,34 @@ var zVoiceSampleData = z.object({
   body: zVoiceSampleRequest,
   path: z.object({
     voice_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+});
+var zSetFollowUpOverrideData = z.object({
+  body: zSetFollowUpOverrideRequest,
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zFollowUpActionData = z.object({
+  body: zFollowUpActionRequest,
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zPreviewFollowUpData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
+var zStartTestClockData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string()
   }),
   query: z.never().optional()
 });
@@ -2476,6 +2610,42 @@ var voiceSample = (options) => {
     }
   });
 };
+var setFollowUpOverride = (options) => {
+  return (options.client ?? client).put({
+    responseType: "json",
+    url: "/api/conversations/{id}/follow-ups",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var followUpAction = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/conversations/{id}/follow-ups/actions",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
+var previewFollowUp = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/conversations/{id}/follow-ups/preview",
+    ...options
+  });
+};
+var startTestClock = (options) => {
+  return (options.client ?? client).post({
+    responseType: "json",
+    url: "/api/conversations/{id}/test-clock/start",
+    ...options
+  });
+};
 
 // src/methods/followUps.ts
 async function createTestCopyImpl(options) {
@@ -2486,6 +2656,24 @@ async function advanceTestClockImpl(options) {
   const { id, ...body } = options;
   const result = await advanceTestClock({ path: { id }, body });
   return zAdvanceClockResponse.parse(result.data);
+}
+async function setFollowUpOverrideImpl(options) {
+  const { id, ...body } = options;
+  const result = await setFollowUpOverride({ path: { id }, body });
+  return zNextFollowUp.parse(result.data);
+}
+async function followUpActionImpl(options) {
+  const { id, ...body } = options;
+  const result = await followUpAction({ path: { id }, body });
+  return zNextFollowUp.parse(result.data);
+}
+async function startTestClockImpl(options) {
+  const result = await startTestClock({ path: options });
+  return zAdvanceClockResponse.parse(result.data);
+}
+async function previewFollowUpImpl(options) {
+  const result = await previewFollowUp({ path: options });
+  return zFollowUpPreviewResponse.parse(result.data);
 }
 
 // src/methods/conversations.ts
@@ -3133,6 +3321,22 @@ var PrioriChat = class {
   }
   async advanceTestClock(options) {
     return advanceTestClockImpl.call(this, options);
+  }
+  /** On or off for this conversation only; `override: null` follows the bot. */
+  async setFollowUpOverride(options) {
+    return setFollowUpOverrideImpl.call(this, options);
+  }
+  /** push_back (with hours), skip, cancel_reminder, restart or reset; `revision` from the last read. */
+  async followUpAction(options) {
+    return followUpActionImpl.call(this, options);
+  }
+  /** Gives a chat with no outside channel its own test clock. */
+  async startTestClock(options) {
+    return startTestClockImpl.call(this, options);
+  }
+  /** The next follow-up as it would be written now; nothing is saved or sent. */
+  async previewFollowUp(options) {
+    return previewFollowUpImpl.call(this, options);
   }
   async getConversation(options) {
     return getConversationImpl.call(this, options);

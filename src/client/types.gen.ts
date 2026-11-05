@@ -71,6 +71,10 @@ export type ApiPhotoLabel = {
     content_id: string;
     name: string;
     /**
+     * The content id of the first photo of the same moment, when this photo is a near-copy of it.
+     */
+    same_as?: string | null;
+    /**
      * `sfw`, `risky` or `nude`
      */
     tag: string;
@@ -993,10 +997,37 @@ export type Message = {
 };
 
 export type NextFollowUp = {
+    bot_enabled: boolean;
+    /**
+     * On for this conversation: the override if set, otherwise the bot's switch.
+     */
+    enabled: boolean;
+    explanation?: FollowUpExplanation | null;
+    /**
+     * The chat reaches a real person, so testing needs a copy.
+     */
+    external: boolean;
+    failures: number;
+    hold_until?: string | null;
+    last_follow_up_at?: string | null;
+    last_message_at?: string | null;
     max_unanswered: number;
     next_at?: string | null;
+    /**
+     * Null follows the bot.
+     */
+    override?: boolean | null;
+    reminder?: FollowUpReminder | null;
+    revision: number;
+    sent: Array<SentFollowUpView>;
+    settings: FollowUpSettings;
     source?: string | null;
     status: string;
+    /**
+     * 1-based cadence step that comes next; null once every step has passed.
+     */
+    step?: number | null;
+    steps: number;
     timezone: string;
     unanswered: number;
 };
@@ -1432,6 +1463,76 @@ export type VoiceSampleRequest = {
      * A line in the model's script style, like "[teasing] Hey you. [soft laugh] Miss me?"
      */
     text: string;
+};
+
+export type FollowUpReminder = {
+    at: string;
+    intent: string;
+};
+
+/**
+ * How the next time was worked out, step by step.
+ */
+export type FollowUpExplanation = {
+    at: string;
+    /**
+     * Step 1: the cadence step's time and the reminder's time; the earlier one is picked.
+     */
+    automatic_at?: string | null;
+    hold_until?: string | null;
+    /**
+     * Step 2: the latest of the picked time and these.
+     */
+    idle_at: string;
+    picked_at: string;
+    reminder_at?: string | null;
+    source: string;
+    spacing_at?: string | null;
+    /**
+     * Step 3: moved into contact hours in this zone.
+     */
+    zone: string;
+};
+
+export type SentFollowUpView = {
+    id: string;
+    /**
+     * His first message after this follow-up and before the next one.
+     */
+    replied_at?: string | null;
+    sent_at?: string | null;
+    source: string;
+    started_at: string;
+    /**
+     * generating, delivering, delivered, delivery_uncertain or cancelled
+     */
+    status: string;
+    text: string;
+};
+
+export type SetFollowUpOverrideRequest = {
+    /**
+     * true or false for this conversation only; null follows the bot.
+     */
+    override?: boolean | null;
+};
+
+export type FollowUpActionKind = 'push_back' | 'skip' | 'cancel_reminder' | 'restart' | 'reset';
+
+export type FollowUpActionRequest = {
+    action: FollowUpActionKind;
+    /**
+     * For push_back: hours after the time it was due, 1 to 720.
+     */
+    hours?: number | null;
+    /**
+     * The follow-up revision the caller saw; a stale one gets 409.
+     */
+    revision: number;
+};
+
+export type FollowUpPreviewResponse = {
+    messages: Array<Message>;
 };
 
 export type ListApiKeysData = {
@@ -3014,6 +3115,110 @@ export type VoiceSampleResponses = {
      */
     200: unknown;
 };
+
+export type SetFollowUpOverrideData = {
+    body: SetFollowUpOverrideRequest;
+    path: {
+        /**
+         * Conversation
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/follow-ups';
+};
+
+export type SetFollowUpOverrideErrors = {
+    /**
+     * Not found
+     */
+    404: unknown;
+};
+
+export type SetFollowUpOverrideResponses = {
+    200: NextFollowUp;
+};
+
+export type SetFollowUpOverrideResponse = SetFollowUpOverrideResponses[keyof SetFollowUpOverrideResponses];
+
+export type FollowUpActionData = {
+    body: FollowUpActionRequest;
+    path: {
+        /**
+         * Conversation
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/follow-ups/actions';
+};
+
+export type FollowUpActionErrors = {
+    /**
+     * Conversation changed
+     */
+    409: unknown;
+    /**
+     * Action not possible now
+     */
+    422: unknown;
+};
+
+export type FollowUpActionResponses = {
+    200: NextFollowUp;
+};
+
+export type FollowUpActionResponse = FollowUpActionResponses[keyof FollowUpActionResponses];
+
+export type PreviewFollowUpData = {
+    body?: never;
+    path: {
+        /**
+         * Conversation
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/follow-ups/preview';
+};
+
+export type PreviewFollowUpErrors = {
+    /**
+     * Not a selling conversation
+     */
+    422: unknown;
+};
+
+export type PreviewFollowUpResponses = {
+    200: FollowUpPreviewResponse;
+};
+
+export type PreviewFollowUpResponse = PreviewFollowUpResponses[keyof PreviewFollowUpResponses];
+
+export type StartTestClockData = {
+    body?: never;
+    path: {
+        /**
+         * Conversation with no outside channel
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/test-clock/start';
+};
+
+export type StartTestClockErrors = {
+    /**
+     * The chat reaches a real fan; use a test copy
+     */
+    409: unknown;
+};
+
+export type StartTestClockResponses = {
+    200: AdvanceClockResponse;
+};
+
+export type StartTestClockResponse = StartTestClockResponses[keyof StartTestClockResponses];
 
 export type ClientOptions = {
     baseURL: `${string}://${string}` | (string & {});

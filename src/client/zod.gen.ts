@@ -25,6 +25,10 @@ export const zApiCheckout = z.union([
 export const zApiPhotoLabel = z.object({
     content_id: z.string(),
     name: z.string(),
+    same_as: z.union([
+        z.string(),
+        z.null()
+    ]).optional(),
     tag: z.string()
 });
 
@@ -401,17 +405,117 @@ export const zAdvanceClockRequest = z.object({
     ]).optional()
 });
 
+/**
+ * How the next time was worked out, step by step.
+ */
+export const zFollowUpExplanation = z.object({
+    at: z.string().datetime(),
+    automatic_at: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    hold_until: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    idle_at: z.string().datetime(),
+    picked_at: z.string().datetime(),
+    reminder_at: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    source: z.string(),
+    spacing_at: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    zone: z.string()
+});
+
+export const zFollowUpReminder = z.object({
+    at: z.string().datetime(),
+    intent: z.string()
+});
+
+export const zSentFollowUpView = z.object({
+    id: z.string(),
+    replied_at: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    sent_at: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    source: z.string(),
+    started_at: z.string().datetime(),
+    status: z.string(),
+    text: z.string()
+});
+
+export const zContactHours = z.object({
+    end: z.string(),
+    start: z.string()
+});
+
+export const zFollowUpSettings = z.object({
+    automatic_enabled: z.boolean(),
+    cadence_hours: z.array(z.number().int().gte(0)),
+    contact_window: zContactHours,
+    enabled: z.boolean(),
+    fallback_timezone: z.string(),
+    max_unanswered: z.number().int().gte(0),
+    min_idle_minutes: z.number().int().gte(0),
+    scheduled_enabled: z.boolean()
+});
+
 export const zNextFollowUp = z.object({
+    bot_enabled: z.boolean(),
+    enabled: z.boolean(),
+    explanation: z.union([
+        zFollowUpExplanation,
+        z.null()
+    ]).optional(),
+    external: z.boolean(),
+    failures: z.number().int().gte(0),
+    hold_until: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    last_follow_up_at: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
+    last_message_at: z.union([
+        z.string().datetime(),
+        z.null()
+    ]).optional(),
     max_unanswered: z.number().int().gte(0),
     next_at: z.union([
         z.string().datetime(),
         z.null()
     ]).optional(),
+    override: z.union([
+        z.boolean(),
+        z.null()
+    ]).optional(),
+    reminder: z.union([
+        zFollowUpReminder,
+        z.null()
+    ]).optional(),
+    revision: z.coerce.bigint(),
+    sent: z.array(zSentFollowUpView),
+    settings: zFollowUpSettings,
     source: z.union([
         z.string(),
         z.null()
     ]).optional(),
     status: z.string(),
+    step: z.union([
+        z.number().int().gte(0),
+        z.null()
+    ]).optional(),
+    steps: z.number().int().gte(0),
     timezone: z.string(),
     unanswered: z.number().int().gte(0)
 });
@@ -519,22 +623,6 @@ export const zBotKnobs = z.object({
         z.number().int(),
         z.null()
     ]).optional()
-});
-
-export const zContactHours = z.object({
-    end: z.string(),
-    start: z.string()
-});
-
-export const zFollowUpSettings = z.object({
-    automatic_enabled: z.boolean(),
-    cadence_hours: z.array(z.number().int().gte(0)),
-    contact_window: zContactHours,
-    enabled: z.boolean(),
-    fallback_timezone: z.string(),
-    max_unanswered: z.number().int().gte(0),
-    min_idle_minutes: z.number().int().gte(0),
-    scheduled_enabled: z.boolean()
 });
 
 export const zBot = zBotSelling.and(zBotKnobs).and(z.object({
@@ -1359,6 +1447,34 @@ export const zVoiceSampleRequest = z.object({
     text: z.string()
 });
 
+export const zSetFollowUpOverrideRequest = z.object({
+    override: z.union([
+        z.boolean(),
+        z.null()
+    ]).optional()
+});
+
+export const zFollowUpActionKind = z.enum([
+    'push_back',
+    'skip',
+    'cancel_reminder',
+    'restart',
+    'reset'
+]);
+
+export const zFollowUpActionRequest = z.object({
+    action: zFollowUpActionKind,
+    hours: z.union([
+        z.number().int().gte(0),
+        z.null()
+    ]).optional(),
+    revision: z.coerce.bigint()
+});
+
+export const zFollowUpPreviewResponse = z.object({
+    messages: z.array(zMessage)
+});
+
 export const zListApiKeysData = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
@@ -2052,3 +2168,43 @@ export const zVoiceSampleData = z.object({
     }),
     query: z.never().optional()
 });
+
+export const zSetFollowUpOverrideData = z.object({
+    body: zSetFollowUpOverrideRequest,
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+export const zSetFollowUpOverrideResponse = zNextFollowUp;
+
+export const zFollowUpActionData = z.object({
+    body: zFollowUpActionRequest,
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+export const zFollowUpActionResponse = zNextFollowUp;
+
+export const zPreviewFollowUpData = z.object({
+    body: z.never().optional(),
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+export const zPreviewFollowUpResponse = zFollowUpPreviewResponse;
+
+export const zStartTestClockData = z.object({
+    body: z.never().optional(),
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+export const zStartTestClockResponse = zAdvanceClockResponse;
