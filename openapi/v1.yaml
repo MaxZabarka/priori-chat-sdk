@@ -1420,6 +1420,33 @@ paths:
           description: Conversation changed
         '422':
           description: Action not possible now
+  /api/conversations/{id}/follow-ups/rules:
+    put:
+      tags:
+      - conversations
+      operationId: set_follow_up_rules
+      parameters:
+      - name: id
+        in: path
+        description: Conversation
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowUpRules'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NextFollowUp'
+        '422':
+          description: Invalid rules
   /api/conversations/{id}/follow-ups/preview:
     post:
       tags:
@@ -3304,6 +3331,7 @@ components:
       - steps
       - failures
       - settings
+      - rules
       - sent
       properties:
         bot_enabled:
@@ -3355,6 +3383,8 @@ components:
           type: integer
           format: int32
           minimum: 0
+        rules:
+          $ref: '#/components/schemas/FollowUpRules'
         sent:
           type: array
           items:
@@ -4336,6 +4366,28 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Message'
+    FollowUpRules:
+      type: object
+      description: This conversation's own rules; null follows the bot.
+      properties:
+        cadence_hours:
+          type: array
+          items:
+            type: integer
+            format: int32
+            minimum: 0
+          nullable: true
+        max_unanswered:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+        min_idle_minutes:
+          type: integer
+          format: int32
+          nullable: true
+          minimum: 0
+      additionalProperties: false
 tags:
 - name: conversations
   description: Conversation management endpoints

@@ -1,7 +1,7 @@
 import { zAdvanceClockResponse, zTestCopyResponse, zNextFollowUp, zFollowUpPreviewResponse } from "../client/zod.gen";
 import { PrioriChat } from '../client';
-import { createTestCopy, advanceTestClock, setFollowUpOverride, followUpAction, startTestClock, previewFollowUp } from '../client/sdk.gen';
-import type { AdvanceClockRequest, FollowUpActionRequest, SetFollowUpOverrideRequest } from '../client/types.gen';
+import { createTestCopy, advanceTestClock, setFollowUpOverride, setFollowUpRules, followUpAction, startTestClock, previewFollowUp } from '../client/sdk.gen';
+import type { AdvanceClockRequest, FollowUpActionRequest, FollowUpRules, SetFollowUpOverrideRequest } from '../client/types.gen';
 
 export async function createTestCopyImpl(this: PrioriChat, options: {id: string}) {
   const result = await createTestCopy({path: options});
@@ -29,4 +29,9 @@ export async function startTestClockImpl(this: PrioriChat, options: {id: string}
 export async function previewFollowUpImpl(this: PrioriChat, options: {id: string}) {
   const result = await previewFollowUp({path: options});
   return zFollowUpPreviewResponse.parse(result.data);
+}
+export async function setFollowUpRulesImpl(this: PrioriChat, options: FollowUpRules & {id: string}) {
+  const {id, ...body} = options;
+  const result = await setFollowUpRules({path: {id}, body});
+  return zNextFollowUp.parse(result.data);
 }

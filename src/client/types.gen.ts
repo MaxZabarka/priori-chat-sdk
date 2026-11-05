@@ -1019,6 +1019,7 @@ export type NextFollowUp = {
     override?: boolean | null;
     reminder?: FollowUpReminder | null;
     revision: number;
+    rules: FollowUpRules;
     sent: Array<SentFollowUpView>;
     settings: FollowUpSettings;
     source?: string | null;
@@ -1533,6 +1534,15 @@ export type FollowUpActionRequest = {
 
 export type FollowUpPreviewResponse = {
     messages: Array<Message>;
+};
+
+/**
+ * This conversation's own rules; null follows the bot.
+ */
+export type FollowUpRules = {
+    cadence_hours?: Array<number> | null;
+    max_unanswered?: number | null;
+    min_idle_minutes?: number | null;
 };
 
 export type ListApiKeysData = {
@@ -3169,6 +3179,31 @@ export type FollowUpActionResponses = {
 };
 
 export type FollowUpActionResponse = FollowUpActionResponses[keyof FollowUpActionResponses];
+
+export type SetFollowUpRulesData = {
+    body: FollowUpRules;
+    path: {
+        /**
+         * Conversation
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/api/conversations/{id}/follow-ups/rules';
+};
+
+export type SetFollowUpRulesErrors = {
+    /**
+     * Invalid rules
+     */
+    422: unknown;
+};
+
+export type SetFollowUpRulesResponses = {
+    200: NextFollowUp;
+};
+
+export type SetFollowUpRulesResponse = SetFollowUpRulesResponses[keyof SetFollowUpRulesResponses];
 
 export type PreviewFollowUpData = {
     body?: never;

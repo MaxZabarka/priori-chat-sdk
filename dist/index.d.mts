@@ -757,6 +757,7 @@ type NextFollowUp = {
     override?: boolean | null;
     reminder?: FollowUpReminder | null;
     revision: number;
+    rules: FollowUpRules;
     sent: Array<SentFollowUpView>;
     settings: FollowUpSettings;
     source?: string | null;
@@ -1167,6 +1168,14 @@ type FollowUpActionRequest = {
 };
 type FollowUpPreviewResponse = {
     messages: Array<Message$1>;
+};
+/**
+ * This conversation's own rules; null follows the bot.
+ */
+type FollowUpRules = {
+    cadence_hours?: Array<number> | null;
+    max_unanswered?: number | null;
+    min_idle_minutes?: number | null;
 };
 type CreateApiKeyData = {
     body: CreateApiKeyRequest;
@@ -1800,10 +1809,15 @@ declare class PrioriChat {
             steps: number;
             timezone: string;
             revision: number;
-            enabled: boolean;
             max_unanswered: number;
+            enabled: boolean;
             bot_enabled: boolean;
             failures: number;
+            rules: {
+                cadence_hours?: number[] | null | undefined;
+                max_unanswered?: number | null | undefined;
+                min_idle_minutes?: number | null | undefined;
+            };
             sent: {
                 status: string;
                 id: string;
@@ -1814,16 +1828,16 @@ declare class PrioriChat {
                 replied_at?: string | null | undefined;
             }[];
             settings: {
-                automatic_enabled: boolean;
                 cadence_hours: number[];
+                max_unanswered: number;
+                min_idle_minutes: number;
+                automatic_enabled: boolean;
                 contact_window: {
                     end: string;
                     start: string;
                 };
                 enabled: boolean;
                 fallback_timezone: string;
-                max_unanswered: number;
-                min_idle_minutes: number;
                 scheduled_enabled: boolean;
             };
             unanswered: number;
@@ -1865,10 +1879,15 @@ declare class PrioriChat {
         steps: number;
         timezone: string;
         revision: number;
-        enabled: boolean;
         max_unanswered: number;
+        enabled: boolean;
         bot_enabled: boolean;
         failures: number;
+        rules: {
+            cadence_hours?: number[] | null | undefined;
+            max_unanswered?: number | null | undefined;
+            min_idle_minutes?: number | null | undefined;
+        };
         sent: {
             status: string;
             id: string;
@@ -1879,16 +1898,80 @@ declare class PrioriChat {
             replied_at?: string | null | undefined;
         }[];
         settings: {
-            automatic_enabled: boolean;
             cadence_hours: number[];
+            max_unanswered: number;
+            min_idle_minutes: number;
+            automatic_enabled: boolean;
             contact_window: {
                 end: string;
                 start: string;
             };
             enabled: boolean;
             fallback_timezone: string;
+            scheduled_enabled: boolean;
+        };
+        unanswered: number;
+        hold_until?: string | null | undefined;
+        source?: string | null | undefined;
+        explanation?: {
+            at: string;
+            idle_at: string;
+            picked_at: string;
+            source: string;
+            zone: string;
+            automatic_at?: string | null | undefined;
+            hold_until?: string | null | undefined;
+            reminder_at?: string | null | undefined;
+            spacing_at?: string | null | undefined;
+        } | null | undefined;
+        last_follow_up_at?: string | null | undefined;
+        last_message_at?: string | null | undefined;
+        next_at?: string | null | undefined;
+        override?: boolean | null | undefined;
+        reminder?: {
+            at: string;
+            intent: string;
+        } | null | undefined;
+        step?: number | null | undefined;
+    }>;
+    /** This conversation's own cadence, stop count and minimum gap; null fields follow the bot. */
+    setFollowUpRules(options: FollowUpRules & {
+        id: string;
+    }): Promise<{
+        status: string;
+        external: boolean;
+        steps: number;
+        timezone: string;
+        revision: number;
+        max_unanswered: number;
+        enabled: boolean;
+        bot_enabled: boolean;
+        failures: number;
+        rules: {
+            cadence_hours?: number[] | null | undefined;
+            max_unanswered?: number | null | undefined;
+            min_idle_minutes?: number | null | undefined;
+        };
+        sent: {
+            status: string;
+            id: string;
+            started_at: string;
+            text: string;
+            source: string;
+            sent_at?: string | null | undefined;
+            replied_at?: string | null | undefined;
+        }[];
+        settings: {
+            cadence_hours: number[];
             max_unanswered: number;
             min_idle_minutes: number;
+            automatic_enabled: boolean;
+            contact_window: {
+                end: string;
+                start: string;
+            };
+            enabled: boolean;
+            fallback_timezone: string;
             scheduled_enabled: boolean;
         };
         unanswered: number;
@@ -1924,10 +2007,15 @@ declare class PrioriChat {
         steps: number;
         timezone: string;
         revision: number;
-        enabled: boolean;
         max_unanswered: number;
+        enabled: boolean;
         bot_enabled: boolean;
         failures: number;
+        rules: {
+            cadence_hours?: number[] | null | undefined;
+            max_unanswered?: number | null | undefined;
+            min_idle_minutes?: number | null | undefined;
+        };
         sent: {
             status: string;
             id: string;
@@ -1938,16 +2026,16 @@ declare class PrioriChat {
             replied_at?: string | null | undefined;
         }[];
         settings: {
-            automatic_enabled: boolean;
             cadence_hours: number[];
+            max_unanswered: number;
+            min_idle_minutes: number;
+            automatic_enabled: boolean;
             contact_window: {
                 end: string;
                 start: string;
             };
             enabled: boolean;
             fallback_timezone: string;
-            max_unanswered: number;
-            min_idle_minutes: number;
             scheduled_enabled: boolean;
         };
         unanswered: number;
@@ -1984,10 +2072,15 @@ declare class PrioriChat {
             steps: number;
             timezone: string;
             revision: number;
-            enabled: boolean;
             max_unanswered: number;
+            enabled: boolean;
             bot_enabled: boolean;
             failures: number;
+            rules: {
+                cadence_hours?: number[] | null | undefined;
+                max_unanswered?: number | null | undefined;
+                min_idle_minutes?: number | null | undefined;
+            };
             sent: {
                 status: string;
                 id: string;
@@ -1998,16 +2091,16 @@ declare class PrioriChat {
                 replied_at?: string | null | undefined;
             }[];
             settings: {
-                automatic_enabled: boolean;
                 cadence_hours: number[];
+                max_unanswered: number;
+                min_idle_minutes: number;
+                automatic_enabled: boolean;
                 contact_window: {
                     end: string;
                     start: string;
                 };
                 enabled: boolean;
                 fallback_timezone: string;
-                max_unanswered: number;
-                min_idle_minutes: number;
                 scheduled_enabled: boolean;
             };
             unanswered: number;
@@ -2530,4 +2623,4 @@ declare class PrioriChat {
     voiceSample(options: VoiceSampleOptions): Promise<Blob>;
 }
 
-export { type AdvanceClockRequest, type AdvanceClockResponse, type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type ApiVoice, type ApiVoiceNote, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type ContactHours, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateClipVoiceOptions, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateLibraryVoiceOptions, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type DeleteVoiceOptions, type FollowUpActionKind, type FollowUpActionRequest, type FollowUpExplanation, type FollowUpPreviewResponse, type FollowUpReminder, type FollowUpSettings, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type ListVoicesResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type NextFollowUp, type PhotoStatus, type Platform, PrioriChat, type RenameVoiceOptions, type ReplySuggestion, type ResponseCandidate, type SearchedMessage, type SentFollowUpView, type Session, type SetFollowUpOverrideRequest, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type SuggestRepliesOptions, type SuggestRepliesResponse, type Summary, type TestClockResponse, type TestCopyResponse, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User, type VoiceModelName, type VoiceSampleOptions };
+export { type AdvanceClockRequest, type AdvanceClockResponse, type ApiAttribute, type ApiCheckout, type ApiContentSet, ApiError, type ApiKeyInfo, type ApiMessageLock, type ApiModerationCategory, type ApiModerationInfo, type ApiModerationSeverity, type ApiPhotoLabel, type ApiPurchase, type ApiTurn, type ApiTurnAction, type ApiVoice, type ApiVoiceNote, type AttachedMedia, type Bot, type Chatter, type ClientConfig, type ContactHours, type Content, Conversation, type ConversationCallbacks, type ConversationHeader, type ConversationInsights, type ConversationOptions, type Conversation$1 as ConversationType, type ConversationWithId, type ConversationWithUserBot, type CreateApiKeyRequest, type CreateApiKeyResponse, type CreateBotRequestBody, type CreateBotResponse, type CreateChatterRequestBody, type CreateChatterResponse, type CreateClipVoiceOptions, type CreateConversationOptions, type CreateConversationResponse, type CreateConversionRequestBody, type CreateLibraryVoiceOptions, type CreateSetOptions, type DeactivateApiKeyData, type DeactivateApiKeyResponse, type DeactivateChatterData, type DeleteContentResponse, type DeleteSetOptions, type DeleteVoiceOptions, type FollowUpActionKind, type FollowUpActionRequest, type FollowUpExplanation, type FollowUpPreviewResponse, type FollowUpReminder, type FollowUpRules, type FollowUpSettings, type GenerateResponseOptions, type GenerateResponseSyncRequest, type GenerateResponseSyncResponse, type GetBotResponse, type GetChatterData, type GetChatterResponse, type GetClientConfigResponse, type GetConversationOptions, type GetConversationResponse, type GetMemoriesResponse, type GetPlatformResponse, type GetUserData, type GetUserResponse, type GridPhoto, type Language, type ListApiKeysResponse, type ListBotsResponse, type ListChattersResponse, type ListContentQuery, type ListContentResponse, type ListConversationsOptions, type ListConversationsResponse, type ListPlatformsResponse, type ListSetsOptions, type ListSetsResponse, type ListVoicesResponse, type MarkPurchasePaidOptions, type MarkPurchasePaidResponse, type MediaTypeFilter, type MemoryResponse, type Message, type NextFollowUp, type PhotoStatus, type Platform, PrioriChat, type RenameVoiceOptions, type ReplySuggestion, type ResponseCandidate, type SearchedMessage, type SentFollowUpView, type Session, type SetFollowUpOverrideRequest, type SetGrid, type SetSetItemsOptions, type StageScores, type StepCall, type SuggestRepliesOptions, type SuggestRepliesResponse, type Summary, type TestClockResponse, type TestCopyResponse, type TurnStep, type UpdateBotRequest, type UpdateBotResponse, type UpdateClientConfigRequest, type UpdateClientConfigResponse, type UpdatePlatformRequestBody, type UpdatePlatformResponse, type UpdateSetOptions, type UpdateUserData, type UpdateUserRequest, type UpdateUserResponse, type UploadContentRequest, type UploadContentResponse, type User, type VoiceModelName, type VoiceSampleOptions };

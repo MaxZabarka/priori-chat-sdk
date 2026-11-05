@@ -437,6 +437,24 @@ export const zFollowUpReminder = z.object({
     intent: z.string()
 });
 
+/**
+ * This conversation's own rules; null follows the bot.
+ */
+export const zFollowUpRules = z.object({
+    cadence_hours: z.union([
+        z.array(z.number().int().gte(0)),
+        z.null()
+    ]).optional(),
+    max_unanswered: z.union([
+        z.number().int().gte(0),
+        z.null()
+    ]).optional(),
+    min_idle_minutes: z.union([
+        z.number().int().gte(0),
+        z.null()
+    ]).optional()
+});
+
 export const zSentFollowUpView = z.object({
     id: z.string(),
     replied_at: z.union([
@@ -504,6 +522,7 @@ export const zNextFollowUp = z.object({
         z.null()
     ]).optional(),
     revision: z.number().int().gte(0),
+    rules: zFollowUpRules,
     sent: z.array(zSentFollowUpView),
     settings: zFollowUpSettings,
     source: z.union([
@@ -2188,6 +2207,16 @@ export const zFollowUpActionData = z.object({
 });
 
 export const zFollowUpActionResponse = zNextFollowUp;
+
+export const zSetFollowUpRulesData = z.object({
+    body: zFollowUpRules,
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.never().optional()
+});
+
+export const zSetFollowUpRulesResponse = zNextFollowUp;
 
 export const zPreviewFollowUpData = z.object({
     body: z.never().optional(),

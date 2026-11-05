@@ -115,4 +115,4 @@ export type {
   VoiceModelName,
 } from "./client/types.gen";
 
-export type { FollowUpSettings, ContactHours, NextFollowUp, TestClockResponse, AdvanceClockRequest, AdvanceClockResponse, TestCopyResponse, FollowUpReminder, FollowUpExplanation, SentFollowUpView, SetFollowUpOverrideRequest, FollowUpActionKind, FollowUpActionRequest, FollowUpPreviewResponse } from "./client/types.gen";
+export type { FollowUpSettings, ContactHours, NextFollowUp, TestClockResponse, AdvanceClockRequest, AdvanceClockResponse, TestCopyResponse, FollowUpReminder, FollowUpExplanation, SentFollowUpView, SetFollowUpOverrideRequest, FollowUpActionKind, FollowUpActionRequest, FollowUpPreviewResponse, FollowUpRules } from "./client/types.gen";

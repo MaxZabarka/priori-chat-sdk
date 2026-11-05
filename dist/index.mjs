@@ -376,6 +376,20 @@ var zFollowUpReminder = z.object({
   at: z.string().datetime(),
   intent: z.string()
 });
+var zFollowUpRules = z.object({
+  cadence_hours: z.union([
+    z.array(z.number().int().gte(0)),
+    z.null()
+  ]).optional(),
+  max_unanswered: z.union([
+    z.number().int().gte(0),
+    z.null()
+  ]).optional(),
+  min_idle_minutes: z.union([
+    z.number().int().gte(0),
+    z.null()
+  ]).optional()
+});
 var zSentFollowUpView = z.object({
   id: z.string(),
   replied_at: z.union([
@@ -440,6 +454,7 @@ var zNextFollowUp = z.object({
     z.null()
   ]).optional(),
   revision: z.number().int().gte(0),
+  rules: zFollowUpRules,
   sent: z.array(zSentFollowUpView),
   settings: zFollowUpSettings,
   source: z.union([
@@ -1721,6 +1736,13 @@ var zFollowUpActionData = z.object({
   }),
   query: z.never().optional()
 });
+var zSetFollowUpRulesData = z.object({
+  body: zFollowUpRules,
+  path: z.object({
+    id: z.string()
+  }),
+  query: z.never().optional()
+});
 var zPreviewFollowUpData = z.object({
   body: z.never().optional(),
   path: z.object({
@@ -2632,6 +2654,17 @@ var followUpAction = (options) => {
     }
   });
 };
+var setFollowUpRules = (options) => {
+  return (options.client ?? client).put({
+    responseType: "json",
+    url: "/api/conversations/{id}/follow-ups/rules",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
 var previewFollowUp = (options) => {
   return (options.client ?? client).post({
     responseType: "json",
@@ -2674,6 +2707,11 @@ async function startTestClockImpl(options) {
 async function previewFollowUpImpl(options) {
   const result = await previewFollowUp({ path: options });
   return zFollowUpPreviewResponse.parse(result.data);
+}
+async function setFollowUpRulesImpl(options) {
+  const { id, ...body } = options;
+  const result = await setFollowUpRules({ path: { id }, body });
+  return zNextFollowUp.parse(result.data);
 }
 
 // src/methods/conversations.ts
@@ -3325,6 +3363,10 @@ var PrioriChat = class {
   /** On or off for this conversation only; `override: null` follows the bot. */
   async setFollowUpOverride(options) {
     return setFollowUpOverrideImpl.call(this, options);
+  }
+  /** This conversation's own cadence, stop count and minimum gap; null fields follow the bot. */
+  async setFollowUpRules(options) {
+    return setFollowUpRulesImpl.call(this, options);
   }
   /** push_back (with hours), skip, cancel_reminder, restart or reset; `revision` from the last read. */
   async followUpAction(options) {

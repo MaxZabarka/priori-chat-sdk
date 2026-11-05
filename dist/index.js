@@ -412,6 +412,20 @@ var zFollowUpReminder = import_zod.z.object({
   at: import_zod.z.string().datetime(),
   intent: import_zod.z.string()
 });
+var zFollowUpRules = import_zod.z.object({
+  cadence_hours: import_zod.z.union([
+    import_zod.z.array(import_zod.z.number().int().gte(0)),
+    import_zod.z.null()
+  ]).optional(),
+  max_unanswered: import_zod.z.union([
+    import_zod.z.number().int().gte(0),
+    import_zod.z.null()
+  ]).optional(),
+  min_idle_minutes: import_zod.z.union([
+    import_zod.z.number().int().gte(0),
+    import_zod.z.null()
+  ]).optional()
+});
 var zSentFollowUpView = import_zod.z.object({
   id: import_zod.z.string(),
   replied_at: import_zod.z.union([
@@ -476,6 +490,7 @@ var zNextFollowUp = import_zod.z.object({
     import_zod.z.null()
   ]).optional(),
   revision: import_zod.z.number().int().gte(0),
+  rules: zFollowUpRules,
   sent: import_zod.z.array(zSentFollowUpView),
   settings: zFollowUpSettings,
   source: import_zod.z.union([
@@ -1757,6 +1772,13 @@ var zFollowUpActionData = import_zod.z.object({
   }),
   query: import_zod.z.never().optional()
 });
+var zSetFollowUpRulesData = import_zod.z.object({
+  body: zFollowUpRules,
+  path: import_zod.z.object({
+    id: import_zod.z.string()
+  }),
+  query: import_zod.z.never().optional()
+});
 var zPreviewFollowUpData = import_zod.z.object({
   body: import_zod.z.never().optional(),
   path: import_zod.z.object({
@@ -2668,6 +2690,17 @@ var followUpAction = (options) => {
     }
   });
 };
+var setFollowUpRules = (options) => {
+  return (options.client ?? client).put({
+    responseType: "json",
+    url: "/api/conversations/{id}/follow-ups/rules",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+};
 var previewFollowUp = (options) => {
   return (options.client ?? client).post({
     responseType: "json",
@@ -2710,6 +2743,11 @@ async function startTestClockImpl(options) {
 async function previewFollowUpImpl(options) {
   const result = await previewFollowUp({ path: options });
   return zFollowUpPreviewResponse.parse(result.data);
+}
+async function setFollowUpRulesImpl(options) {
+  const { id, ...body } = options;
+  const result = await setFollowUpRules({ path: { id }, body });
+  return zNextFollowUp.parse(result.data);
 }
 
 // src/methods/conversations.ts
@@ -3361,6 +3399,10 @@ var PrioriChat = class {
   /** On or off for this conversation only; `override: null` follows the bot. */
   async setFollowUpOverride(options) {
     return setFollowUpOverrideImpl.call(this, options);
+  }
+  /** This conversation's own cadence, stop count and minimum gap; null fields follow the bot. */
+  async setFollowUpRules(options) {
+    return setFollowUpRulesImpl.call(this, options);
   }
   /** push_back (with hours), skip, cancel_reminder, restart or reset; `revision` from the last read. */
   async followUpAction(options) {
