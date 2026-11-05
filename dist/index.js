@@ -475,7 +475,7 @@ var zNextFollowUp = import_zod.z.object({
     zFollowUpReminder,
     import_zod.z.null()
   ]).optional(),
-  revision: import_zod.z.coerce.bigint(),
+  revision: import_zod.z.number().int().gte(0),
   sent: import_zod.z.array(zSentFollowUpView),
   settings: zFollowUpSettings,
   source: import_zod.z.union([
@@ -1325,7 +1325,7 @@ var zFollowUpActionRequest = import_zod.z.object({
     import_zod.z.number().int().gte(0),
     import_zod.z.null()
   ]).optional(),
-  revision: import_zod.z.coerce.bigint()
+  revision: import_zod.z.number().int().gte(0)
 });
 var zFollowUpPreviewResponse = import_zod.z.object({
   messages: import_zod.z.array(zMessage)

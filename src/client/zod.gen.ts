@@ -503,7 +503,7 @@ export const zNextFollowUp = z.object({
         zFollowUpReminder,
         z.null()
     ]).optional(),
-    revision: z.coerce.bigint(),
+    revision: z.number().int().gte(0),
     sent: z.array(zSentFollowUpView),
     settings: zFollowUpSettings,
     source: z.union([
@@ -1468,7 +1468,7 @@ export const zFollowUpActionRequest = z.object({
         z.number().int().gte(0),
         z.null()
     ]).optional(),
-    revision: z.coerce.bigint()
+    revision: z.number().int().gte(0)
 });
 
 export const zFollowUpPreviewResponse = z.object({

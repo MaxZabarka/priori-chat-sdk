@@ -3353,7 +3353,8 @@ components:
           nullable: true
         revision:
           type: integer
-          format: int64
+          format: int32
+          minimum: 0
         sent:
           type: array
           items:
@@ -4322,8 +4323,9 @@ components:
           minimum: 0
         revision:
           type: integer
-          format: int64
+          format: int32
           description: The follow-up revision the caller saw; a stale one gets 409.
+          minimum: 0
       additionalProperties: false
     FollowUpPreviewResponse:
       type: object

@@ -1799,7 +1799,7 @@ declare class PrioriChat {
             external: boolean;
             steps: number;
             timezone: string;
-            revision: bigint;
+            revision: number;
             enabled: boolean;
             max_unanswered: number;
             bot_enabled: boolean;
@@ -1864,7 +1864,7 @@ declare class PrioriChat {
         external: boolean;
         steps: number;
         timezone: string;
-        revision: bigint;
+        revision: number;
         enabled: boolean;
         max_unanswered: number;
         bot_enabled: boolean;
@@ -1923,7 +1923,7 @@ declare class PrioriChat {
         external: boolean;
         steps: number;
         timezone: string;
-        revision: bigint;
+        revision: number;
         enabled: boolean;
         max_unanswered: number;
         bot_enabled: boolean;
@@ -1983,7 +1983,7 @@ declare class PrioriChat {
             external: boolean;
             steps: number;
             timezone: string;
-            revision: bigint;
+            revision: number;
             enabled: boolean;
             max_unanswered: number;
             bot_enabled: boolean;
